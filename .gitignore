@@ -48,3 +48,14 @@ frontend/package-lock.json
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+
+# Oracle wallet
+**/Wallet_telegrambot/
+Wallet_telegrambot/
+backend/src/main/resources/application.properties
+**/Wallet_*
+*.sso
+*.p12
+*.jks
+*.pem
+*.wallet
