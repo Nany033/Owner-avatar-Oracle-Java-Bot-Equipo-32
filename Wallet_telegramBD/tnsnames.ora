@@ -1,0 +1,12 @@
+telegrambd_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.mx-queretaro-1.oraclecloud.com))(connect_data=(service_name=g72ca389de6ae34_telegrambd_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+telegrambd_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.mx-queretaro-1.oraclecloud.com))(connect_data=(service_name=g72ca389de6ae34_telegrambd_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+telegrambd_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.mx-queretaro-1.oraclecloud.com))(connect_data=(service_name=g72ca389de6ae34_telegrambd_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+telegrambd_tp = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.mx-queretaro-1.oraclecloud.com))(connect_data=(service_name=g72ca389de6ae34_telegrambd_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+telegrambd_tpurgent = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.mx-queretaro-1.oraclecloud.com))(connect_data=(service_name=g72ca389de6ae34_telegrambd_tpurgent.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+
