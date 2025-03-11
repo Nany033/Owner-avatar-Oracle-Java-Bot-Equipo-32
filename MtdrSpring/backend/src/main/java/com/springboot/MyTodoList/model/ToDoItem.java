@@ -1,6 +1,5 @@
 package com.springboot.MyTodoList.model;
 
-
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -14,15 +13,23 @@ public class ToDoItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int ID;
+    
     @Column(name = "DESCRIPTION")
     String description;
+    
     @Column(name = "CREATION_TS")
     OffsetDateTime creation_ts;
+    
     @Column(name = "done")
     boolean done;
+    
+    // Nuevo campo para la fecha límite
+    @Column(name = "DEADLINE")
+    OffsetDateTime deadline;
+    
     public ToDoItem(){
-
     }
+    
     public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done) {
         this.ID = ID;
         this.description = description;
@@ -61,6 +68,14 @@ public class ToDoItem {
     public void setDone(boolean done) {
         this.done = done;
     }
+ 
+    public OffsetDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(OffsetDateTime deadline) {
+        this.deadline = deadline;
+    }
 
     @Override
     public String toString() {
@@ -68,6 +83,7 @@ public class ToDoItem {
                 "ID=" + ID +
                 ", description='" + description + '\'' +
                 ", creation_ts=" + creation_ts +
+                ", deadline=" + deadline +
                 ", done=" + done +
                 '}';
     }
