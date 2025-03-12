@@ -185,7 +185,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                     String itemText = item.getDescription();
                     if (item.getDeadline() != null) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        itemText += " (Fecha: " + item.getDeadline().format(formatter) + ")";
+                        itemText += " (Fecha límite: " + item.getDeadline().format(formatter) + ")";
                     }
                     
                     currentRow.add(itemText);
@@ -294,7 +294,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                         String confirmationText;
                         if (newItem.getDeadline() != null) {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                            confirmationText = "Nueva tarea añadida con fecha límite: " + newItem.getDeadline().format(formatter);
+                            confirmationText = "Nueva tarea añadida con fecha límite: " + newItem.getDeadline().format(formatter) + "Select /todolist to return to the list of todo items, or /start to go to the main screen.";
                         } else {
                             confirmationText = BotMessages.NEW_ITEM_ADDED.getMessage();
                         }
