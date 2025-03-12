@@ -13,16 +13,16 @@ public class BotHelper {
 	public static void sendMessageToTelegram(Long chatId, String text, TelegramLongPollingBot bot) {
 
 		try {
-			// prepare message
+
 			SendMessage messageToTelegram = new SendMessage();
 			messageToTelegram.setChatId(chatId);
 			messageToTelegram.setText(text);
 
-			// hide keyboard
+
 			ReplyKeyboardRemove keyboardMarkup = new ReplyKeyboardRemove(true);
 			messageToTelegram.setReplyMarkup(keyboardMarkup);
 
-			// send message
+		
 			bot.execute(messageToTelegram);
 
 		} catch (Exception e) {

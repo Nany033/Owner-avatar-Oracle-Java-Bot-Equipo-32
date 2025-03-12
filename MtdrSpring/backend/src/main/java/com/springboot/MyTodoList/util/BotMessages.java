@@ -12,6 +12,10 @@ public enum BotMessages {
     BYE("Bye! Select /start to resume!"),
     REQUEST_DEADLINE("Please enter a deadline for this task (format: YYYY-MM-DD), or type 'NONE' if there's no deadline:"),
     INVALID_DATE_FORMAT("Invalid date format. Please use YYYY-MM-DD format or type 'NONE':"),
+    NO_UPCOMING_DEADLINES("You don't have any upcoming deadlines."),
+    NO_OVERDUE_TASKS("Good job! You don't have any overdue tasks."),
+    UPCOMING_DEADLINES_TITLE("Upcoming deadlines:"),
+    OVERDUE_TASKS_TITLE("Overdue tasks:"),
     COMMAND_NOT_RECOGNIZED("Command not recognized. Here are the available commands:");
 
     private String message;

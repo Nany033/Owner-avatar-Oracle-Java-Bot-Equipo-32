@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.controller;
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,8 @@ import java.util.List;
 public class ToDoItemController {
     @Autowired
     private ToDoItemService toDoItemService;
+    @Autowired
+    private DeadlineService deadlineService;
     
     //@CrossOrigin
     @GetMapping(value = "/todolist")
@@ -69,5 +72,39 @@ public class ToDoItemController {
         }catch (Exception e){
             return new ResponseEntity<>(flag,HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping(value = "/todolist/upcoming/{days}")
+public ResponseEntity<List<ToDoItem>> getUpcomingDeadlines(@PathVariable int days) {
+    List<ToDoItem> upcomingItems = deadlineService.getUpcomingDeadlines(days);
+    return new ResponseEntity<>(upcomingItems, HttpStatus.OK);
+}
+
+@GetMapping(value = "/todolist/overdue")
+public ResponseEntity<List<ToDoItem>> getOverdueItems() {
+    List<ToDoItem> overdueItems = deadlineService.getOverdueItems();
+    return new ResponseEntity<>(overdueItems, HttpStatus.OK);
+}
+
+@PostMapping(value = "/todolist/{id}/deadline")
+public ResponseEntity<ToDoItem> setDeadline(@PathVariable int id, @RequestBody String deadlineStr) {
+    ToDoItem updatedItem = deadlineService.setDeadlineFromString(id, deadlineStr);
+    
+    if (updatedItem == null) {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    
+    return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+}
+
+    @DeleteMapping(value = "/todolist/{id}/deadline")
+    public ResponseEntity<ToDoItem> removeDeadline(@PathVariable int id) {
+        ToDoItem updatedItem = deadlineService.removeDeadline(id);
+        
+        if (updatedItem == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        
+        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 }

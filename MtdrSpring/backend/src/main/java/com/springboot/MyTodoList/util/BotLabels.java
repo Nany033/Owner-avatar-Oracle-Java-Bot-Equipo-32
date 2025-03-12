@@ -6,6 +6,8 @@ public enum BotLabels {
     HIDE_MAIN_SCREEN("Hide Main Screen"),
     LIST_ALL_ITEMS("List All Items"), 
     ADD_NEW_ITEM("Add New Item"),
+    UPCOMING_DEADLINES("Upcoming Deadlines"),  
+    OVERDUE_TASKS("Overdue Tasks"),            
     DONE("DONE"),
     UNDO("UNDO"),
     DELETE("DELETE"),
