@@ -203,6 +203,7 @@ function App() {
               <td className="description">{item.description}</td>
               { /*<td>{JSON.stringify(item, null, 2) }</td>*/ }
               <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
+              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.duedate}</Moment></td>
               <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
                     Done
                   </Button></td>
@@ -221,6 +222,7 @@ function App() {
             <tr key={item.id}>
               <td className="description">{item.description}</td>
               <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
+              <td className="date"><Moment format="MMM Do YYYY">{item.dueDate}</Moment></td>
               <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
                     Undo
                   </Button></td>
