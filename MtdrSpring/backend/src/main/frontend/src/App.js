@@ -149,7 +149,9 @@ function App() {
     function addItem(text){
       console.log("addItem("+text+")")
       setInserting(true);
+
       var data = {};
+
       console.log(data);
       data.description = text;
       fetch(API_LIST, {
@@ -173,7 +175,8 @@ function App() {
       }).then(
         (result) => {
           var id = result.headers.get('location');
-          var newItem = {"id": id, "description": text}
+          var deadline = result.headers.get('location')
+          var newItem = {"id": id, "description": text, "date": deadline}
           setItems([newItem, ...items]);
           setInserting(false);
         },
@@ -196,13 +199,19 @@ function App() {
         { !isLoading &&
         <div id="maincontent">
         <table id="itemlistNotDone" className="itemlist">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Due Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
           <TableBody>
           {items.map(item => (
             !item.done && (
             <tr key={item.id}>
               <td className="description">{item.description}</td>
               { /*<td>{JSON.stringify(item, null, 2) }</td>*/ }
-              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
               <td className="date"><Moment format="MMM Do hh:mm:ss">{item.duedate}</Moment></td>
               <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
                     Done
@@ -215,13 +224,19 @@ function App() {
           Done items
         </h2>
         <table id="itemlistDone" className="itemlist">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Due Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
           <TableBody>
           {items.map(item => (
             item.done && (
 
             <tr key={item.id}>
               <td className="description">{item.description}</td>
-              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
               <td className="date"><Moment format="MMM Do YYYY">{item.dueDate}</Moment></td>
               <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
                     Undo

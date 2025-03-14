@@ -30,11 +30,12 @@ public class ToDoItem {
     public ToDoItem(){
     }
     
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
         this.done = done;
+        this.deadline = deadline;
     }
 
     public int getID() {
