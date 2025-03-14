@@ -15,48 +15,72 @@ import Button from '@mui/material/Button';
 
 function NewItem(props) {
   const [item, setItem] = useState('');
+  const [deadline, setDeadline] = useState('');
+  
   function handleSubmit(e) {
-    // console.log("NewItem.handleSubmit("+e+")");
+    e.preventDefault();
     if (!item.trim()) {
       return;
     }
-    // addItem makes the REST API call:
-    props.addItem(item);
+    
+    props.addItem(item, deadline);
     setItem("");
-    e.preventDefault();
+    setDeadline("");
   }
+  
   function handleChange(e) {
     setItem(e.target.value);
   }
+  
+  function handleDeadlineChange(e) {
+    setDeadline(e.target.value);
+  }
+  
   return (
     <div id="newinputform">
-    <form>
-      <input
-        id="newiteminput"
-        placeholder="New item"
-        type="text"
-        autoComplete="off"
-        value={item}
-        onChange={handleChange}
-        // No need to click on the "ADD" button to add a todo item. You
-        // can simply press "Enter":
-        onKeyDown={event => {
-          if (event.key === 'Enter') {
-            handleSubmit(event);
-          }
-        }}
-      />
-      <span>&nbsp;&nbsp;</span>
-      <Button
-        className="AddButton"
-        variant="contained"
-        disabled={props.isInserting}
-        onClick={!props.isInserting ? handleSubmit : null}
-        size="small"
-      >
-        {props.isInserting ? 'Adding…' : 'Add'}
-      </Button>
-    </form>
+        <table className="table-input">
+            <tr>
+                <th className="primera-columna">Task description</th>
+                <th className="segunda-columna">Deadline</th>
+                <th className="tercera-columna"></th>
+            </tr>
+            <tr>
+                <td className="primera-columna">
+                  <input
+                    id="newiteminput"
+                    placeholder="New item"
+                    type="text"
+                    autoComplete="off"
+                    value={item}
+                    onChange={handleChange}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') {
+                        handleSubmit(event);
+                      }
+                    }}
+                  />
+                </td>
+                <td className="segunda-columna">
+                  <input
+                    id="deadlineinput"
+                    type="date"
+                    value={deadline}
+                    onChange={handleDeadlineChange}
+                  />
+                </td>
+                <td className="tercera-columna">  
+                  <Button
+                    className="AddButton"
+                    variant="contained"
+                    disabled={props.isInserting}
+                    onClick={!props.isInserting ? handleSubmit : null}
+                    size="small"
+                  >
+                    {props.isInserting ? 'Adding…' : 'Add'}
+                  </Button>
+                </td>
+            </tr>
+        </table>
     </div>
   );
 }

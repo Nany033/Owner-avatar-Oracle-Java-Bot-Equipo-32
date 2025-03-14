@@ -41,6 +41,7 @@ function App() {
       fetch(API_LIST+"/"+deleteId, {
         method: 'DELETE',
       })
+      
       .then(response => {
         // console.log("response=");
         // console.log(response);
@@ -61,13 +62,14 @@ function App() {
         }
       );
     }
-    function toggleDone(event, id, description, done) {
+    function toggleDone(event, id, description, done, deadline) {
       event.preventDefault();
-      modifyItem(id, description, done).then(
+      modifyItem(id, description, done, deadline).then(
         (result) => { reloadOneIteam(id); },
         (error) => { setError(error); }
       );
     }
+    
     function reloadOneIteam(id){
       fetch(API_LIST+"/"+id)
         .then(response => {
@@ -91,9 +93,13 @@ function App() {
             setError(error);
           });
     }
-    function modifyItem(id, description, done) {
-      // console.log("deleteItem("+deleteId+")")
-      var data = {"description": description, "done": done};
+    function modifyItem(id, description, done, deadline) {
+      var data = {
+        "description": description, 
+        "done": done,
+        "deadline": deadline  // Incluimos la deadline en la actualización
+      };
+      
       return fetch(API_LIST+"/"+id, {
         method: 'PUT',
         headers: {
@@ -102,10 +108,7 @@ function App() {
         body: JSON.stringify(data)
       })
       .then(response => {
-        // console.log("response=");
-        // console.log(response);
         if (response.ok) {
-          // console.log("deleteItem FETCH call is ok");
           return response;
         } else {
           throw new Error('Something went wrong ...');
@@ -146,97 +149,170 @@ function App() {
        // this useEffect will run once
        // similar to componentDidMount()
     );
-    function addItem(text){
-      console.log("addItem("+text+")")
+    function addItem(text, deadlineStr) {
+      console.log("addItem(" + text + ", " + deadlineStr + ")");
       setInserting(true);
-      var data = {};
-      console.log(data);
-      data.description = text;
+      
+      // Preparamos los datos básicos para la creación de la tarea
+      var data = {
+        description: text
+      };
+      
+      // Primero creamos el ítem
       fetch(API_LIST, {
         method: 'POST',
-        // We convert the React state to JSON and send it as the POST body
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data),
-      }).then((response) => {
-        // This API doens't return a JSON document
-        console.log(response);
-        console.log();
-        console.log(response.headers.location);
-        // return response.json();
+      })
+      .then((response) => {
         if (response.ok) {
           return response;
         } else {
-          throw new Error('Something went wrong ...');
+          throw new Error('Error creating task');
         }
-      }).then(
-        (result) => {
-          var id = result.headers.get('location');
-          var newItem = {"id": id, "description": text}
-          setItems([newItem, ...items]);
-          setInserting(false);
-        },
-        (error) => {
-          setInserting(false);
-          setError(error);
+      })
+      .then((result) => {
+        const id = result.headers.get('location');
+        
+        // Si hay fecha límite, hacemos una segunda llamada para configurarla
+        if (deadlineStr && deadlineStr.trim() !== '') {
+          return fetch(`${API_LIST}/${id}/deadline`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'text/plain' // El backend espera un string simple
+            },
+            body: deadlineStr
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Error setting deadline');
+            }
+          })
+          .then(updatedItem => {
+            // Una vez configurada la fecha límite, recargamos la lista completa
+            return fetch(API_LIST);
+          })
+          .then(response => response.json())
+          .then(allItems => {
+            setItems(allItems);
+            setInserting(false);
+          });
+        } else {
+          // Si no hay fecha límite, simplemente recargamos la lista
+          return fetch(API_LIST)
+            .then(response => response.json())
+            .then(allItems => {
+              setItems(allItems);
+              setInserting(false);
+            });
         }
-      );
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        setInserting(false);
+        setError(error);
+      });
     }
     return (
       <div className="App">
         <h1>MY TODO LIST</h1>
         <NewItem addItem={addItem} isInserting={isInserting}/>
+        
         { error &&
           <p>Error: {error.message}</p>
         }
-        { isLoading &&
-          <CircularProgress />
-        }
-        { !isLoading &&
-        <div id="maincontent">
-        <table id="itemlistNotDone" className="itemlist">
-          <TableBody>
-          {items.map(item => (
-            !item.done && (
-            <tr key={item.id}>
-              <td className="description">{item.description}</td>
-              { /*<td>{JSON.stringify(item, null, 2) }</td>*/ }
-              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
-              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.duedate}</Moment></td>
-              <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
+        
+        { isLoading ? (
+          <div id="maincontent">
+            <h2 id="activelist" className="section-header">
+              Items
+            </h2>
+            <CircularProgress />
+          </div>
+        ) : (
+          <div id="maincontent">
+            <h2 id="activelist" className="section-header">
+              Items
+            </h2>
+            
+            {/* TAREAS PENDIENTES - Solo mostrar las que NO están completadas */}
+            <table id="itemlistNotDone" className="itemlist">
+              <thead>
+                <tr>
+                  <th className="task-header">Task</th>
+                  <th className="deadline-header">Deadline</th>
+                  <th className="action-header"></th>
+                </tr>
+              </thead>
+              <TableBody>
+              {items.filter(item => !item.done).map(item => (
+                <tr key={item.id}>
+                  <td className="description">{item.description}</td>
+                  <td className="deadline">
+                    {item.deadline && (
+                      <Moment format="MMM Do YYYY">{item.deadline}</Moment>
+                    )}
+                  </td>
+                  <td className="action-cell">
+                  <Button variant="contained" className="DoneButton"
+                    onClick={(event) => toggleDone(event, item.id, item.description, true, item.deadline)}
+                    size="small">
                     Done
-                  </Button></td>
-            </tr>
-          )))}
-          </TableBody>
-        </table>
-        <h2 id="donelist">
-          Done items
-        </h2>
-        <table id="itemlistDone" className="itemlist">
-          <TableBody>
-          {items.map(item => (
-            item.done && (
-
-            <tr key={item.id}>
-              <td className="description">{item.description}</td>
-              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
-              <td className="date"><Moment format="MMM Do YYYY">{item.dueDate}</Moment></td>
-              <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
+                  </Button>
+                  </td>
+                </tr>
+              ))}
+              </TableBody>
+            </table>
+            
+            <h2 id="donelist" className="section-header">
+              Done items
+            </h2>
+            
+            {/* TAREAS COMPLETADAS - Solo mostrar las que están completadas */}
+            <table id="itemlistDone" className="itemlist">
+              <thead>
+                <tr>
+                  <th className="task-header">Task</th>
+                  <th className="deadline-header">Deadline</th>
+                  <th className="action-header" colSpan="2"></th>
+                </tr>
+              </thead>
+              <TableBody>
+              {items.filter(item => item.done).map(item => (
+                <tr key={item.id}>
+                  <td className="description">{item.description}</td>
+                  <td className="deadline">
+                    {item.deadline && (
+                      <Moment format="MMM Do YYYY">{item.deadline}</Moment>
+                    )}
+                  </td>
+                  <td className="action-cell">
+                  <Button variant="contained" className="DoneButton"
+                    onClick={(event) => toggleDone(event, item.id, item.description, false, item.deadline)}
+                    size="small">
                     Undo
-                  </Button></td>
-              <td><Button startIcon={<DeleteIcon />} variant="contained" className="DeleteButton" onClick={() => deleteItem(item.id)} size="small">
-                    Delete
-                  </Button></td>
-            </tr>
-          )))}
-          </TableBody>
-        </table>
-        </div>
-        }
-
+                  </Button>
+                  </td>
+                  <td className="action-cell">
+                    <Button startIcon={<DeleteIcon />} variant="contained"
+                      className="DeleteButton" onClick={() => deleteItem(item.id)}
+                      size="small">
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+              </TableBody>
+            </table>
+          </div>
+        )}
       </div>
     );
-}
-export default App;
+ }
+    
+        export default App;
