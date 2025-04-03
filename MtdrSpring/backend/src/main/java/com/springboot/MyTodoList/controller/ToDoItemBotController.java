@@ -494,7 +494,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             return;
         }
 
-        Integer itemId = Integer.parseInt(itemIdStr);
+        int itemId = Integer.valueOf(itemIdStr);
 
         // Validate hours input
         int estimatedHours;
@@ -515,72 +515,97 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             execute(messageToTelegram);
             return; // Stay in same state
         }
-
-        // Set estimated hours or split task based on service logic
         SendMessage messageToTelegram = new SendMessage();
         messageToTelegram.setChatId(chatId);
-
+        // Set estimated hours or split task based on service logic
         if (estimatedHoursService.checkEstimatedHours(estimatedHours)) {
-            // Update the existing task with estimated hours
+            // Case 1: Valid hours - update existing task
             estimatedHoursService.setEstimatedHours(itemId, estimatedHours);
             messageToTelegram
                     .setText("Tarea creada con duración de " + estimatedHours + " horas con éxito. ID: " + itemId);
+            execute(messageToTelegram);
+            cleanupState(chatId);
         } else {
-            // Get the existing task to split it
-            ToDoItem existingItem = getToDoItemById(itemId);
+            // Case 2: Needs splitting
+            ResponseEntity<ToDoItem> response = getToDoItemById(itemId);
+            ToDoItem existingItem = response.getBody();
             if (existingItem == null) {
                 sendErrorMessage(chatId, "Error al recuperar la tarea para dividirla. Inténtalo de nuevo.");
+                cleanupState(chatId);
                 return;
             }
 
-            // Split the task
-            // Split the task
+            // Set the estimated hours on the original task before splitting
+            existingItem.setEstimated_hours(estimatedHours);
+            existingItem = toDoItemService.updateToDoItem(itemId, existingItem);
+
             List<ToDoItem> splitTasks = estimatedHoursService.splitTask(existingItem);
-            for (ToDoItem task : splitTasks) {
-                try {
-                    addToDoItem(task);
-                } catch (Exception e) {
-                    logger.error("Error adding split task: " + e.getMessage(), e);
-                    sendErrorMessage(chatId, "Error al crear una subtarea. Por favor, inténtalo de nuevo.");
-                    // Clean up state and data
-                    userStates.remove(chatId);
-                    tempData.remove(String.valueOf(chatId));
-                    tempData.remove(String.valueOf(chatId) + "_itemId");
-                    tempData.remove(String.valueOf(chatId) + "_deadline");
-                    return;
+            logger.info("Split into {} subtasks", splitTasks.size());
+
+            if (splitTasks.isEmpty()) {
+                sendErrorMessage(chatId, "Error: No se pudieron crear subtareas");
+                cleanupState(chatId);
+                return;
+            }
+
+            List<Integer> addedSubtaskIds = new ArrayList<>();
+            try {
+                // Add all subtasks
+                for (ToDoItem task : splitTasks) {
+                    ResponseEntity<?> responseEntity = addToDoItem(task);
+                    ToDoItem savedTask = (ToDoItem) responseEntity.getBody();
+                    if (savedTask != null) {
+                        addedSubtaskIds.add(savedTask.getID());
+                    }
                 }
+
+                // Only delete original if ALL subtasks succeeded
+                deleteToDoItem(existingItem.getID());
+
+            } catch (Exception e) {
+                // Rollback any created subtasks
+                for (Integer id : addedSubtaskIds) {
+                    deleteToDoItem(id);
+                }
+                logger.error("Error adding split tasks: " + e.getMessage());
+                sendErrorMessage(chatId, "Error al crear subtareas. Se ha revertido la operación.");
+                cleanupState(chatId);
+                return;
             }
 
-            if (splitTasks.size() > 1) {
-                messageToTelegram
-                        .setText("⚠️ Tarea dividida en " + splitTasks.size() + " partes debido a las horas estimadas.");
+            // Build success message
+            int successCount = addedSubtaskIds.size();
+            if (successCount > 1) {
+                messageToTelegram.setText("⚠️ Tarea dividida en " + successCount + " partes.");
             } else {
-                messageToTelegram.setText("Tarea creada con duración dividida con éxito.");
+                messageToTelegram.setText("Tarea dividida con éxito.");
             }
+
+            execute(messageToTelegram);
+            cleanupState(chatId);
         }
-
-        execute(messageToTelegram);
-
-        // Cleanup conversation state
-        logger.info("Cleaning user state: " + userStates.get(chatId));
-        logger.info("Cleaning temp data for chatId: " + chatId);
-        userStates.remove(chatId);
-        tempData.remove(String.valueOf(chatId));
-        tempData.remove(String.valueOf(chatId) + "_itemId");
-        tempData.remove(String.valueOf(chatId) + "_deadline");
-        logger.info("Successfully cleaned conversation state");
     }
 
     // Helper method to get an existing task by ID
     private ToDoItem getToDoItemById(Integer itemId) {
         try {
-            // Implement this method to retrieve a task by ID from your repository
-            // Example: return toDoItemRepository.findById(itemId).orElse(null);
-            return null; // Replace with actual implementation
+            return toDoItemService.getItemById(itemId).getBody();
         } catch (Exception e) {
             logger.error("Error retrieving ToDoItem with ID: " + itemId, e);
             return null;
         }
+    }
+
+    private void cleanupState(long chatId) {
+        // Clean user state
+        userStates.remove(chatId);
+
+        // Clean all temp data entries for this chat
+        tempData.remove(String.valueOf(chatId)); // Main entry
+        tempData.remove(String.valueOf(chatId) + "_itemId");
+        tempData.remove(String.valueOf(chatId) + "_deadline");
+
+        logger.info("Cleaned state for chatId: " + chatId);
     }
 
     private void handleUnknownCommand(long chatId) {
