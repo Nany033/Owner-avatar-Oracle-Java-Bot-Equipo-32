@@ -41,9 +41,6 @@ public class ToDoItem {
     // @Column(name = "CREATOR_ID")
     // private int creator_id;
     
-    // @Column(name = "TASK_DATE")
-    // private OffsetDateTime task_date;
-    
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
     
@@ -116,7 +113,7 @@ public class ToDoItem {
     public void setSprint_id(Integer sprint_id) {
         this.sprint_id = sprint_id;
     }
-    
+
     public Integer getSprint_id() {
         return sprint_id;
     }
@@ -133,13 +130,6 @@ public class ToDoItem {
     public OffsetDateTime getTask_date() {
         return task_date;
     }
-
-    public void setTask_date(OffsetDateTime task_date) {
-        this.task_date = task_date;
-    }
-
-
-
     public Double getReal_time() {
         return real_time;
     }
@@ -161,7 +151,6 @@ public class ToDoItem {
                 ", sprint_id=" + sprint_id +
                 // Future columns commented
                 // ", creator_id=" + creator_id +
-                // ", task_date=" + task_date +
                 // ", real_time=" + real_time +
                 '}';
     }
