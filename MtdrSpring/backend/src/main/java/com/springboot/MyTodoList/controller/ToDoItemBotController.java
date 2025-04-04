@@ -46,8 +46,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private ToDoItemService toDoItemService;
     private DeadlineService deadlineService;
     private EstimatedHoursService estimatedHoursService;
-    private AssignItemToSprintService assignItemToSprintService;
     private RealTimeService realTimeService;
+    private AssignItemToSprintService assignItemToSprintService;
+
     private String botName;
 
     // Mapa para seguir el estado de conversación de cada usuario
@@ -65,7 +66,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
     public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService,
             DeadlineService deadlineService, EstimatedHoursService estimatedHoursService,
-            AssignItemToSprintService assignItemToSprintService, RealTimeService realTimeService) {
+            RealTimeService realTimeService, AssignItemToSprintService assignItemToSprintService) {
         super(botToken);
         logger.info("Bot Token: " + botToken);
         logger.info("Bot name: " + botName);

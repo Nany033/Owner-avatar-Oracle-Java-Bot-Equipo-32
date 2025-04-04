@@ -121,6 +121,14 @@ public class ToDoItem {
         this.real_time = real_time;
     }
 
+    public Integer getSprint_id() {
+        return sprint_id;
+    }
+
+    public void setSprint_id(Integer sprint_id) {
+        this.sprint_id = sprint_id;
+    }
+
     // Methods for future columns are commented out
     /*
     public int getCreator_id() {
@@ -137,16 +145,6 @@ public class ToDoItem {
 
     public void setTask_date(OffsetDateTime task_date) {
         this.task_date = task_date;
-    }
-
-
-
-    public Double getReal_time() {
-        return real_time;
-    }
-
-    public void setReal_time(Double real_time) {
-        this.real_time = real_time;
     }
     */
 
