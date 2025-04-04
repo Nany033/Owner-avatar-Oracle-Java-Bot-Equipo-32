@@ -41,7 +41,6 @@ public class EstimatedHoursServiceImpl implements EstimatedHoursService {
     @Override
     public List<ToDoItem> splitTask(ToDoItem task) {
         List<ToDoItem> tasks = new ArrayList<>();
-        // Fixed method name for getter
         int remainingHours = task.getEstimated_hours();
         int part = 1;
 
@@ -53,9 +52,8 @@ public class EstimatedHoursServiceImpl implements EstimatedHoursService {
             subTask.setDeadline(task.getDeadline());
 
             int hoursForThisTask = Math.min(remainingHours, MAX_HOURS);
-            // Fixed method name for setter
             subTask.setEstimated_hours(hoursForThisTask);
-            tasks.add(toDoItemRepository.save(subTask));
+            tasks.add(subTask); // Don't save to DB here, just add to list
 
             remainingHours -= hoursForThisTask;
             part++;

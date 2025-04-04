@@ -44,8 +44,8 @@ public class ToDoItem {
     // @Column(name = "TASK_DATE")
     // private OffsetDateTime task_date;
     
-    // @Column(name = "SPRINT_ID")
-    // private Integer sprint_id;
+    @Column(name = "SPRINT_ID")
+    private Integer sprint_id;
     
     // @Column(name = "REAL_TIME")
     // private Double real_time;
@@ -53,13 +53,15 @@ public class ToDoItem {
     public ToDoItem() {
     }
 
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, int sprint_id) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
         this.done = done;
         this.deadline = deadline;
         this.estimated_hours = estimated_hours;
+        this.sprint_id = sprint_id;
+
     }
 
     public int getID() {
@@ -111,6 +113,13 @@ public class ToDoItem {
         this.estimated_hours = estimated_hours;
     }
 
+    public void setSprint_id(Integer sprint_id) {
+        this.sprint_id = sprint_id;
+    }
+    
+    public Integer getSprint_id() {
+        return sprint_id;
+    }
     // Methods for future columns are commented out
     /*
     public int getCreator_id() {
@@ -129,13 +138,7 @@ public class ToDoItem {
         this.task_date = task_date;
     }
 
-    public Integer getSprint_id() {
-        return sprint_id;
-    }
 
-    public void setSprint_id(Integer sprint_id) {
-        this.sprint_id = sprint_id;
-    }
 
     public Double getReal_time() {
         return real_time;
@@ -155,10 +158,10 @@ public class ToDoItem {
                 ", deadline=" + deadline +
                 ", done=" + done +
                 ", estimated_hours=" + estimated_hours +
+                ", sprint_id=" + sprint_id +
                 // Future columns commented
                 // ", creator_id=" + creator_id +
                 // ", task_date=" + task_date +
-                // ", sprint_id=" + sprint_id +
                 // ", real_time=" + real_time +
                 '}';
     }
