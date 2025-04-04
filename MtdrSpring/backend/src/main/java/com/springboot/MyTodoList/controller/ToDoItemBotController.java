@@ -1,13 +1,12 @@
 package com.springboot.MyTodoList.controller;
 
-// import static org.telegram.telegrambots.bots.DefaultAbsSender.log;
-
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +29,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.Sprints;
 import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.EstimatedHoursService;
+import com.springboot.MyTodoList.service.AssignItemToSprintService;
 import com.springboot.MyTodoList.service.RealTimeService;
 import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
@@ -45,6 +46,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private ToDoItemService toDoItemService;
     private DeadlineService deadlineService;
     private EstimatedHoursService estimatedHoursService;
+    private AssignItemToSprintService assignItemToSprintService;
     private RealTimeService realTimeService;
     private String botName;
 
@@ -58,10 +60,12 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private static final String STATE_WAITING_DESCRIPTION = "WAITING_DESCRIPTION";
     private static final String STATE_WAITING_DEADLINE = "WAITING_DEADLINE";
     private static final String STATE_WAITING_ESTIMATED_HOURS = "WAITING_ESTIMATED_HOURS";
+    private static final String STATE_WAITING_SPRINT = "WAITING_SPRINT";
     private static final String STATE_WAITING_REAL_TIME = "WAITING_REAL_TIME";
 
     public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService,
-            DeadlineService deadlineService, EstimatedHoursService estimatedHoursService, RealTimeService realTimeService) {
+            DeadlineService deadlineService, EstimatedHoursService estimatedHoursService,
+            AssignItemToSprintService assignItemToSprintService, RealTimeService realTimeService) {
         super(botToken);
         logger.info("Bot Token: " + botToken);
         logger.info("Bot name: " + botName);
@@ -69,6 +73,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         this.botName = botName;
         this.deadlineService = deadlineService;
         this.estimatedHoursService = estimatedHoursService;
+        this.assignItemToSprintService = assignItemToSprintService;
         this.realTimeService = realTimeService;
     }
 
@@ -207,35 +212,65 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         BotHelper.sendMessageToTelegram(chatId, BotMessages.BYE.getMessage(), this);
     }
 
+    
     private void handleTodoListCommand(long chatId) {
         userStates.remove(chatId);
         tempData.remove(chatId);
-
+        
         List<ToDoItem> allItems = getAllToDoItems();
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
 
-        // Main screen button at the top
-        keyboard.add(createKeyboardRow(BotLabels.SHOW_MAIN_SCREEN.getLabel()));
+        KeyboardRow mainScreenRowTop = new KeyboardRow();
+        mainScreenRowTop.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
+        keyboard.add(mainScreenRowTop);
 
-        // Option to add a new item
-        keyboard.add(createKeyboardRow(BotLabels.ADD_NEW_ITEM.getLabel()));
+        KeyboardRow firstRow = new KeyboardRow();
+        firstRow.add(BotLabels.ADD_NEW_ITEM.getLabel());
+        keyboard.add(firstRow);
 
-        // Title row
-        keyboard.add(createKeyboardRow(BotLabels.MY_TODO_LIST.getLabel()));
+        KeyboardRow myTodoListTitleRow = new KeyboardRow();
+        myTodoListTitleRow.add(BotLabels.MY_TODO_LIST.getLabel());
+        keyboard.add(myTodoListTitleRow);
 
-        // Grouping items (Active & Done)
-        Map<Boolean, List<ToDoItem>> groupedItems = allItems.stream()
-                .collect(Collectors.groupingBy(ToDoItem::isDone));
+        List<ToDoItem> activeItems = allItems.stream().filter(item -> !item.isDone())
+                .collect(Collectors.toList());
 
-        // Process active items
-        groupedItems.getOrDefault(false, List.of()).forEach(item -> keyboard.add(createItemRow(item, false)));
+        for (ToDoItem item : activeItems) {
+            KeyboardRow currentRow = new KeyboardRow();
+            
+            String itemText = item.getDescription();
+            if (item.getDeadline() != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                itemText += " (Fecha límite: " + item.getDeadline().format(formatter) + ")";
+            }
+            
+            currentRow.add(itemText);
+            currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
+            keyboard.add(currentRow);
+        }
 
-        // Process done items
-        groupedItems.getOrDefault(true, List.of()).forEach(item -> keyboard.add(createItemRow(item, true)));
+        List<ToDoItem> doneItems = allItems.stream().filter(ToDoItem::isDone)
+                .collect(Collectors.toList());
 
-        // Main screen button at the bottom
-        keyboard.add(createKeyboardRow(BotLabels.SHOW_MAIN_SCREEN.getLabel()));
+        for (ToDoItem item : doneItems) {
+            KeyboardRow currentRow = new KeyboardRow();
+            
+            String itemText = item.getDescription();
+            if (item.getDeadline() != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                itemText += " (Fecha: " + item.getDeadline().format(formatter) + ")";
+            }
+            
+            currentRow.add(itemText);
+            currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
+            currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
+            keyboard.add(currentRow);
+        }
+
+        KeyboardRow mainScreenRowBottom = new KeyboardRow();
+        mainScreenRowBottom.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
+        keyboard.add(mainScreenRowBottom);
 
         keyboardMarkup.setKeyboard(keyboard);
 
@@ -247,45 +282,10 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         try {
             execute(messageToTelegram);
         } catch (TelegramApiException e) {
-            logger.error("Failed to send to-do list message: {}", e.getLocalizedMessage(), e);
+            logger.error(e.getLocalizedMessage(), e);
         }
     }
 
-    /**
-     * Creates a row with a single button.
-     */
-    private KeyboardRow createKeyboardRow(String label) {
-        KeyboardRow row = new KeyboardRow();
-        row.add(label);
-        return row;
-    }
-
-    /**
-     * Creates a row for a ToDoItem, differentiating between active and done items.
-     */
-    private KeyboardRow createItemRow(ToDoItem item, boolean isDone) {
-        KeyboardRow row = new KeyboardRow();
-        row.add(formatItemText(item));
-
-        if (isDone) {
-            row.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
-            row.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
-        } else {
-            row.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
-        }
-
-        return row;
-    }
-
-    /**
-     * Formats a to-do item's text with an optional deadline.
-     */
-    private String formatItemText(ToDoItem item) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return item.getDeadline() != null
-                ? item.getDescription() + " (Fecha límite: " + item.getDeadline().format(formatter) + ")"
-                : item.getDescription();
-    }
 
     private void handleAddItemCommand(long chatId) {
         userStates.put(chatId, STATE_WAITING_DESCRIPTION);
@@ -400,6 +400,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                     break;
                 case STATE_WAITING_ESTIMATED_HOURS:
                     handleEstimatedHoursInput(messageText, chatId);
+                    break;
+                case STATE_WAITING_SPRINT:
+                    handleSprintInput(messageText, chatId);
                     break;
                 case STATE_WAITING_REAL_TIME:
                     handleRealTimeInput(messageText, chatId);
@@ -534,25 +537,42 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             execute(messageToTelegram);
             return; // Stay in same state
         }
-        SendMessage messageToTelegram = new SendMessage();
-        messageToTelegram.setChatId(chatId);
+
         // Set estimated hours or split task based on service logic
         if (estimatedHoursService.checkEstimatedHours(estimatedHours)) {
             // Case 1: Valid hours - update existing task
             estimatedHoursService.setEstimatedHours(itemId, estimatedHours);
-            messageToTelegram
-                    .setText("Tarea creada con duración de " + estimatedHours + " horas con éxito. ID: " + itemId);
-            execute(messageToTelegram);
+            
+            // Get the task and try to assign it to a sprint
+            ToDoItem task = toDoItemService.getItemById(itemId).getBody();
+            if (task != null) {
+                Sprints appropriateSprint = assignItemToSprintService.findAppropriateSprint(task);
+                if (appropriateSprint != null) {
+                    ToDoItem assignedTask = assignItemToSprintService.assignItemToSprint(itemId, appropriateSprint.getSprint_id());
+                    if (assignedTask != null) {
+                        SendMessage messageToTelegram = new SendMessage();
+                        messageToTelegram.setChatId(chatId);
+                        messageToTelegram.setText("Tarea creada con duración de " + estimatedHours + " horas y asignada automáticamente al sprint " + appropriateSprint.getSprint_id() + ".");
+                        execute(messageToTelegram);
+                    }
+                } else {
+                    SendMessage messageToTelegram = new SendMessage();
+                    messageToTelegram.setChatId(chatId);
+                    messageToTelegram.setText("Tarea creada con duración de " + estimatedHours + " horas. No se encontró un sprint adecuado para la fecha límite.");
+                    execute(messageToTelegram);
+                }
+            }
             cleanupState(chatId);
         } else {
             // Case 2: Needs splitting
-            ResponseEntity<ToDoItem> response = getToDoItemById(itemId);
-            ToDoItem existingItem = response.getBody();
+            ToDoItem existingItem = getToDoItemById(itemId).getBody();
             if (existingItem == null) {
                 sendErrorMessage(chatId, "Error al recuperar la tarea para dividirla. Inténtalo de nuevo.");
                 cleanupState(chatId);
                 return;
             }
+
+            logger.info("Splitting task with ID: {} and hours: {}", itemId, estimatedHours);
 
             // Set the estimated hours on the original task before splitting
             existingItem.setEstimated_hours(estimatedHours);
@@ -571,38 +591,148 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             try {
                 // Add all subtasks
                 for (ToDoItem task : splitTasks) {
+                    logger.info("Adding subtask with description: {}", task.getDescription());
                     ResponseEntity<?> responseEntity = addToDoItem(task);
                     ToDoItem savedTask = (ToDoItem) responseEntity.getBody();
                     if (savedTask != null) {
+                        logger.info("Successfully added subtask with ID: {}", savedTask.getID());
                         addedSubtaskIds.add(savedTask.getID());
+                    } else {
+                        logger.error("Failed to add subtask: response body was null");
                     }
                 }
 
+                logger.info("Total subtasks added: {}", addedSubtaskIds.size());
+
                 // Only delete original if ALL subtasks succeeded
-                deleteToDoItem(existingItem.getID());
+                if (!addedSubtaskIds.isEmpty()) {
+                    deleteToDoItem(existingItem.getID());
+                    logger.info("Deleted original task with ID: {}", existingItem.getID());
+                }
 
             } catch (Exception e) {
                 // Rollback any created subtasks
                 for (Integer id : addedSubtaskIds) {
                     deleteToDoItem(id);
                 }
-                logger.error("Error adding split tasks: " + e.getMessage());
+                logger.error("Error adding split tasks: " + e.getMessage(), e);
                 sendErrorMessage(chatId, "Error al crear subtareas. Se ha revertido la operación.");
                 cleanupState(chatId);
                 return;
             }
 
-            // Build success message
-            int successCount = addedSubtaskIds.size();
-            if (successCount > 1) {
-                messageToTelegram.setText("⚠️ Tarea dividida en " + successCount + " partes.");
-            } else {
-                messageToTelegram.setText("Tarea dividida con éxito.");
+            // Try to assign each subtask to a sprint
+            int assignedCount = 0;
+            for (Integer taskId : addedSubtaskIds) {
+                ToDoItem task = getToDoItemById(taskId);
+                if (task == null) {
+                    logger.error("Failed to retrieve subtask with ID: {}", taskId);
+                    continue; // Skip this task
+                }
+                Sprints appropriateSprint = assignItemToSprintService.findAppropriateSprint(task);
+                if (appropriateSprint != null) {
+                    ToDoItem assignedTask = assignItemToSprintService.assignItemToSprint(taskId, appropriateSprint.getSprint_id());
+                    if (assignedTask != null) {
+                        assignedCount++;
+                        logger.info("Assigned subtask {} to sprint {}", taskId, appropriateSprint.getSprint_id());
+                    }
+                }
             }
 
+            // Build success message
+            int successCount = addedSubtaskIds.size();
+            logger.info("Final counts - Total subtasks: {}, Assigned to sprints: {}", successCount, assignedCount);
+            
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            if (successCount == 0) {
+                messageToTelegram.setText("Error: No se pudieron crear subtareas. Por favor, inténtalo de nuevo.");
+            } else if (assignedCount == successCount) {
+                messageToTelegram.setText("Tarea dividida en " + successCount + " partes y todas fueron asignadas automáticamente a sprints.");
+            } else if (assignedCount > 0) {
+                messageToTelegram.setText("Tarea dividida en " + successCount + " partes. " + assignedCount + " subtareas fueron asignadas automáticamente a sprints.");
+            } else {
+                messageToTelegram.setText("Tarea dividida en " + successCount + " partes. No se encontraron sprints adecuados para las fechas límite.");
+            }
             execute(messageToTelegram);
             cleanupState(chatId);
         }
+    }
+
+    private void handleSprintInput(String sprintText, long chatId) throws TelegramApiException {
+        logger.info("In state sprint assignment for chatId: " + chatId);
+        
+        // Get the task ID(s) from temporary storage
+        String itemIdStr = tempData.get(String.valueOf(chatId) + "_itemId");
+        String splitTaskIdsStr = tempData.get(String.valueOf(chatId) + "_splitTaskIds");
+        
+        if (itemIdStr == null && splitTaskIdsStr == null) {
+            sendErrorMessage(chatId, "Error al recuperar la tarea. Inténtalo de nuevo.");
+            cleanupState(chatId);
+            return;
+        }
+
+        // Handle "NINGUNO" case
+        if (sprintText.equalsIgnoreCase("NINGUNO")) {
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("Tarea(s) creada(s) sin asignación a sprint.");
+            execute(messageToTelegram);
+            cleanupState(chatId);
+            return;
+        }
+
+        // Parse sprint ID
+        int sprintId;
+        try {
+            sprintId = Integer.parseInt(sprintText);
+        } catch (NumberFormatException e) {
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("Formato inválido. Introduce un número de sprint válido o 'NINGUNO':");
+            execute(messageToTelegram);
+            return;
+        }
+
+        // Handle single task or split tasks
+        if (splitTaskIdsStr != null) {
+            // Handle split tasks
+            List<Integer> taskIds = Arrays.stream(splitTaskIdsStr.split(","))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+            
+            boolean allAssigned = true;
+            for (Integer taskId : taskIds) {
+                ToDoItem assignedItem = assignItemToSprintService.assignItemToSprint(taskId, sprintId);
+                if (assignedItem == null) {
+                    allAssigned = false;
+                    break;
+                }
+            }
+            
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            if (allAssigned) {
+                messageToTelegram.setText("Todas las tareas han sido asignadas al sprint " + sprintId + ".");
+            } else {
+                messageToTelegram.setText("Error al asignar algunas tareas al sprint. Verifica que el sprint exista y que las fechas sean compatibles.");
+            }
+            execute(messageToTelegram);
+        } else {
+            // Handle single task
+            ToDoItem assignedItem = assignItemToSprintService.assignItemToSprint(Integer.parseInt(itemIdStr), sprintId);
+            
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            if (assignedItem != null) {
+                messageToTelegram.setText("Tarea asignada al sprint " + sprintId + ".");
+            } else {
+                messageToTelegram.setText("Error al asignar la tarea al sprint. Verifica que el sprint exista y que las fechas sean compatibles.");
+            }
+            execute(messageToTelegram);
+        }
+        
+        cleanupState(chatId);
     }
 
     private void handleRealTimeInput(String hoursText, long chatId) throws TelegramApiException {
@@ -731,14 +861,12 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
 
-    public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
+    public ResponseEntity<ToDoItem> addToDoItem(ToDoItem todoItem) throws Exception {
         ToDoItem td = toDoItemService.addToDoItem(todoItem);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("location", "" + td.getID());
         responseHeaders.set("Access-Control-Expose-Headers", "location");
-        // URI location = URI.create(""+td.getID())
-
-        return ResponseEntity.ok().headers(responseHeaders).build();
+        return ResponseEntity.ok().headers(responseHeaders).body(td);
     }
 
     public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable int id) {
