@@ -44,8 +44,8 @@ public class ToDoItem {
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
     
-    // @Column(name = "REAL_TIME")
-    // private Double real_time;
+    @Column(name = "REAL_TIME")
+    private Integer real_time;
 
     public ToDoItem() {
     }
@@ -110,13 +110,22 @@ public class ToDoItem {
         this.estimated_hours = estimated_hours;
     }
 
-    public void setSprint_id(Integer sprint_id) {
-        this.sprint_id = sprint_id;
+    public Integer getReal_time() {
+        return real_time;
+    }
+
+    public void setReal_time(Integer real_time) {
+        this.real_time = real_time;
     }
 
     public Integer getSprint_id() {
         return sprint_id;
     }
+
+    public void setSprint_id(Integer sprint_id) {
+        this.sprint_id = sprint_id;
+    }
+
     // Methods for future columns are commented out
     /*
     public int getCreator_id() {
@@ -130,12 +139,9 @@ public class ToDoItem {
     public OffsetDateTime getTask_date() {
         return task_date;
     }
-    public Double getReal_time() {
-        return real_time;
-    }
 
-    public void setReal_time(Double real_time) {
-        this.real_time = real_time;
+    public void setTask_date(OffsetDateTime task_date) {
+        this.task_date = task_date;
     }
     */
 
@@ -148,10 +154,11 @@ public class ToDoItem {
                 ", deadline=" + deadline +
                 ", done=" + done +
                 ", estimated_hours=" + estimated_hours +
+                ", real_time=" + real_time +
                 ", sprint_id=" + sprint_id +
                 // Future columns commented
                 // ", creator_id=" + creator_id +
-                // ", real_time=" + real_time +
+                // ", task_date=" + task_date +
                 '}';
     }
 }

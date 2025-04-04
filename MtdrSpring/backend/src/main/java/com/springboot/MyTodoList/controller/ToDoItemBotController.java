@@ -34,6 +34,7 @@ import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.EstimatedHoursService;
 import com.springboot.MyTodoList.service.AssignItemToSprintService;
+import com.springboot.MyTodoList.service.RealTimeService;
 import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
 import com.springboot.MyTodoList.util.BotLabels;
@@ -45,7 +46,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private ToDoItemService toDoItemService;
     private DeadlineService deadlineService;
     private EstimatedHoursService estimatedHoursService;
+    private RealTimeService realTimeService;
     private AssignItemToSprintService assignItemToSprintService;
+
     private String botName;
 
     // Mapa para seguir el estado de conversación de cada usuario
@@ -59,10 +62,11 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private static final String STATE_WAITING_DEADLINE = "WAITING_DEADLINE";
     private static final String STATE_WAITING_ESTIMATED_HOURS = "WAITING_ESTIMATED_HOURS";
     private static final String STATE_WAITING_SPRINT = "WAITING_SPRINT";
+    private static final String STATE_WAITING_REAL_TIME = "WAITING_REAL_TIME";
 
     public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService,
             DeadlineService deadlineService, EstimatedHoursService estimatedHoursService,
-            AssignItemToSprintService assignItemToSprintService) {
+            RealTimeService realTimeService, AssignItemToSprintService assignItemToSprintService) {
         super(botToken);
         logger.info("Bot Token: " + botToken);
         logger.info("Bot name: " + botName);
@@ -71,6 +75,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         this.deadlineService = deadlineService;
         this.estimatedHoursService = estimatedHoursService;
         this.assignItemToSprintService = assignItemToSprintService;
+        this.realTimeService = realTimeService;
     }
 
     @Override
@@ -155,12 +160,24 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         Integer id = Integer.valueOf(done);
 
         try {
-            ToDoItem item = getToDoItemById(id).getBody();
+            ToDoItem item = getToDoItemById(id);
             item.setDone(true);
             updateToDoItem(item, id);
-            BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), this);
+            
+            // Store the item ID for the next step
+            tempData.put(String.valueOf(chatId) + "_itemId", String.valueOf(id));
+            
+            // Move to next state
+            userStates.put(chatId, STATE_WAITING_REAL_TIME);
+            
+            // Ask for real time
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("¿Cuántas horas reales tomó completar esta tarea?");
+            execute(messageToTelegram);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
+            sendErrorMessage(chatId, "Ocurrió un error al marcar la tarea como completada.");
         }
     }
 
@@ -169,7 +186,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         Integer id = Integer.valueOf(undo);
 
         try {
-            ToDoItem item = getToDoItemById(id).getBody();
+            ToDoItem item = getToDoItemById(id);
             item.setDone(false);
             updateToDoItem(item, id);
             BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_UNDONE.getMessage(), this);
@@ -387,6 +404,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                     break;
                 case STATE_WAITING_SPRINT:
                     handleSprintInput(messageText, chatId);
+                    break;
+                case STATE_WAITING_REAL_TIME:
+                    handleRealTimeInput(messageText, chatId);
                     break;
                 default:
                     logger.warn("Estado desconocido: " + state + " para chatId: " + chatId);
@@ -714,6 +734,60 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
         
         cleanupState(chatId);
+    }
+
+    private void handleRealTimeInput(String hoursText, long chatId) throws TelegramApiException {
+        logger.info("In state waiting real time for chatId: " + chatId);
+        logger.info("Temp data (hours): " + hoursText);
+
+        // Get the task ID from temporary storage
+        String itemIdStr = tempData.get(String.valueOf(chatId) + "_itemId");
+        if (itemIdStr == null) {
+            sendErrorMessage(chatId, "Error al recuperar la tarea. Inténtalo de nuevo.");
+            userStates.remove(chatId);
+            tempData.remove(String.valueOf(chatId));
+            return;
+        }
+
+        int itemId = Integer.valueOf(itemIdStr);
+
+        // Validate hours input
+        int realTime;
+        try {
+            realTime = Integer.parseInt(hoursText);
+            if (!realTimeService.isValidRealTime(realTime)) {
+                logger.info("Chat ID: " + chatId + " - Invalid real time: " + realTime);
+                SendMessage messageToTelegram = new SendMessage();
+                messageToTelegram.setChatId(chatId);
+                messageToTelegram.setText("Por favor, introduce un número válido de horas reales (entre 1 y 100):");
+                execute(messageToTelegram);
+                return; // Stay in same state
+            }
+        } catch (NumberFormatException e) {
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("Formato inválido. Introduce un número entre 1 y 100:");
+            execute(messageToTelegram);
+            return; // Stay in same state
+        }
+
+        try {
+            // Update real time using the service
+            realTimeService.setRealTime(itemId, realTime);
+
+            // Send success message
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("¡Tarea completada! Se registraron " + realTime + " horas reales.");
+            execute(messageToTelegram);
+
+            // Clean up state
+            cleanupState(chatId);
+        } catch (Exception e) {
+            logger.error("Error updating real time: " + e.getMessage(), e);
+            sendErrorMessage(chatId, "Ocurrió un error al actualizar el tiempo real. Inténtalo de nuevo.");
+            cleanupState(chatId);
+        }
     }
 
     // Helper method to get an existing task by ID

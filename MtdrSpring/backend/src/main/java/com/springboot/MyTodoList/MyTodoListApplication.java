@@ -15,6 +15,8 @@ import com.springboot.MyTodoList.controller.ToDoItemBotController;
 import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.EstimatedHoursService;
+import com.springboot.MyTodoList.service.RealTimeService;
+
 import com.springboot.MyTodoList.service.AssignItemToSprintService;
 import com.springboot.MyTodoList.util.BotMessages;
 
@@ -33,6 +35,9 @@ public class MyTodoListApplication implements CommandLineRunner {
 	private EstimatedHoursService estimatedHoursService;
 
 	@Autowired
+	private RealTimeService realTimeService;
+
+	@Autowired
 	private AssignItemToSprintService assignItemToSprintService;
 
 	@Value("${telegram.bot.token}")
@@ -49,7 +54,7 @@ public class MyTodoListApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		try {
 			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-			telegramBotsApi.registerBot(new ToDoItemBotController(telegramBotToken, botName, toDoItemService, deadlineService, estimatedHoursService, assignItemToSprintService));
+			telegramBotsApi.registerBot(new ToDoItemBotController(telegramBotToken, botName, toDoItemService, deadlineService, estimatedHoursService, realTimeService, assignItemToSprintService));
 			logger.info(BotMessages.BOT_REGISTERED_STARTED.getMessage());
 
 		} catch (TelegramApiException e) {
