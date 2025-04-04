@@ -245,7 +245,7 @@ function App() {
                 <tr>
                   <th className="task-header">Task</th>
                   <th className="deadline-header">Deadline</th>
-                  <th className="action-header"></th>
+                  <th className="action-header"></th> 
                 </tr>
               </thead>
               <TableBody>
