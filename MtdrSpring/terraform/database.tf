@@ -21,8 +21,6 @@ resource "oci_database_autonomous_database" "autonomous_database_atp" {
   #Required
   admin_password           = random_password.database_admin_password.result
   compartment_id           = var.ociCompartmentOcid
-  cpu_core_count           = 1
-  data_storage_size_in_tbs = 1
   db_name                  = var.mtdrDbName
   is_free_tier             = true
   #Optional #db_workload = "${var.autonomous_database_db_workload}"
