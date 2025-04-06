@@ -29,7 +29,7 @@ while ! state_done RUN_TYPE; do
     state_set_done PROVISIONING
     state_set_done K8S_PROVISIONING
     state_set RUN_NAME "mtdrworkshop$(state_get RESERVATION_ID)"
-    state_set MTDR_DB_NAME "MTDRDB$(state_get RESERVATION_ID)"
+    state_set MTDR_DB_NAME "MTDRDB1$(state_get RESERVATION_ID)"
     #state_set_done OKE_LIMIT_CHECK
     #state_set_done ATP_LIMIT_CHECK
   else
