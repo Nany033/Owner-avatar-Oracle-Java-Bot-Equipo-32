@@ -28,6 +28,7 @@ resource "oci_database_autonomous_database" "autonomous_database_atp" {
   #Optional #db_workload = "${var.autonomous_database_db_workload}"
   db_workload                                    = var.autonomous_database_db_workload
   display_name ="MTDRDB1"
+  license_model            = "LICENSE_INCLUDED"
 }
 data "oci_database_autonomous_databases" "autonomous_databases_atp" {
   #Required
