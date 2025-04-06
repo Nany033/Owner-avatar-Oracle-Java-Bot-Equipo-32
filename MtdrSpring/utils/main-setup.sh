@@ -29,7 +29,7 @@ while ! state_done RUN_TYPE; do
     state_set_done PROVISIONING
     state_set_done K8S_PROVISIONING
     state_set RUN_NAME "mtdrworkshop$(state_get RESERVATION_ID)"
-    state_set MTDR_DB_NAME "MTDRDB1$(state_get RESERVATION_ID)"
+    state_set MTDR_DB_NAME "telegrambot$(state_get RESERVATION_ID)"
     #state_set_done OKE_LIMIT_CHECK
     #state_set_done ATP_LIMIT_CHECK
   else
@@ -286,7 +286,7 @@ fi
 
 # Get MTDR_DB OCID
 while ! state_done MTDR_DB_OCID; do
-  MTDR_DB_OCID=`oci db autonomous-database list --compartment-id "$(cat state/COMPARTMENT_OCID)" --query 'join('"' '"',data[?"display-name"=='"'MTDRDB1'"'].id)' --raw-output`
+  MTDR_DB_OCID=`oci db autonomous-database list --compartment-id "$(cat state/COMPARTMENT_OCID)" --query 'join('"' '"',data[?"display-name"=='"'telegrambot'"'].id)' --raw-output`
   if [[ "$MTDR_DB_OCID" =~ ocid1.autonomousdatabase* ]]; then
     state_set MTDR_DB_OCID "$MTDR_DB_OCID"
   else

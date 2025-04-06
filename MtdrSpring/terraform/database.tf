@@ -25,14 +25,14 @@ resource "oci_database_autonomous_database" "autonomous_database_atp" {
   is_free_tier             = true
   #Optional #db_workload = "${var.autonomous_database_db_workload}"
   db_workload                                    = var.autonomous_database_db_workload
-  display_name ="MTDRDB1"
+  display_name ="telegrambot"
   license_model            = "LICENSE_INCLUDED"
 }
 data "oci_database_autonomous_databases" "autonomous_databases_atp" {
   #Required
   compartment_id = var.ociCompartmentOcid
   #Optional
-  display_name =  "MTDRDB1"
+  display_name =  "telegrambot"
   db_workload  = var.autonomous_database_db_workload
 }
 //======= Name space details ------------------------------------------------------
