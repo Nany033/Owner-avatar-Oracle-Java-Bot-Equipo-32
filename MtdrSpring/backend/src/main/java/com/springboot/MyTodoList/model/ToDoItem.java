@@ -41,9 +41,6 @@ public class ToDoItem {
     // @Column(name = "CREATOR_ID")
     // private int creator_id;
     
-    // @Column(name = "TASK_DATE")
-    // private OffsetDateTime task_date;
-    
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
     

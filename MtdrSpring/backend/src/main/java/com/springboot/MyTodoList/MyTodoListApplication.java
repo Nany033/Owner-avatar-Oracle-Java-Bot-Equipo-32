@@ -16,6 +16,7 @@ import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.EstimatedHoursService;
 import com.springboot.MyTodoList.service.RealTimeService;
+import com.springboot.MyTodoList.service.UserService;
 
 import com.springboot.MyTodoList.service.AssignItemToSprintService;
 import com.springboot.MyTodoList.util.BotMessages;
@@ -23,42 +24,45 @@ import com.springboot.MyTodoList.util.BotMessages;
 @SpringBootApplication
 public class MyTodoListApplication implements CommandLineRunner {
 
-	private static final Logger logger = LoggerFactory.getLogger(MyTodoListApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyTodoListApplication.class);
 
-	@Autowired
-	private ToDoItemService toDoItemService;
+    @Autowired
+    private ToDoItemService toDoItemService;
 
-	@Autowired
-	private DeadlineService deadlineService;
+    @Autowired
+    private DeadlineService deadlineService;
 
-	@Autowired
-	private EstimatedHoursService estimatedHoursService;
+    @Autowired
+    private EstimatedHoursService estimatedHoursService;
 
-	@Autowired
-	private RealTimeService realTimeService;
+    @Autowired
+    private RealTimeService realTimeService;
 
-	@Autowired
-	private AssignItemToSprintService assignItemToSprintService;
+    @Autowired
+    private AssignItemToSprintService assignItemToSprintService;
+    
+    @Autowired
+    private UserService userService;  // Add this line
 
-	@Value("${telegram.bot.token}")
-	private String telegramBotToken;
+    @Value("${telegram.bot.token}")
+    private String telegramBotToken;
 
-	@Value("${telegram.bot.name}")
-	private String botName;
+    @Value("${telegram.bot.name}")
+    private String botName;
 
-	public static void main(String[] args) {
-		SpringApplication.run(MyTodoListApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MyTodoListApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		try {
-			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-			telegramBotsApi.registerBot(new ToDoItemBotController(telegramBotToken, botName, toDoItemService, deadlineService, estimatedHoursService, realTimeService, assignItemToSprintService));
-			logger.info(BotMessages.BOT_REGISTERED_STARTED.getMessage());
+    @Override
+    public void run(String... args) throws Exception {
+        try {
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+            telegramBotsApi.registerBot(new ToDoItemBotController(telegramBotToken, botName, toDoItemService, deadlineService, estimatedHoursService, realTimeService, assignItemToSprintService, userService));
+            logger.info(BotMessages.BOT_REGISTERED_STARTED.getMessage());
 
-		} catch (TelegramApiException e) {
-			logger.error("An error occurred while registering the bot: ", e);
-		}
-	}
+        } catch (TelegramApiException e) {
+            logger.error("An error occurred while registering the bot: ", e);
+        }
+    }
 }

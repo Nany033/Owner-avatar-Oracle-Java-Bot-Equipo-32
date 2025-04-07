@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -30,11 +31,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.model.Sprints;
+import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.EstimatedHoursService;
 import com.springboot.MyTodoList.service.AssignItemToSprintService;
 import com.springboot.MyTodoList.service.RealTimeService;
+import com.springboot.MyTodoList.service.UserService;
 import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
 import com.springboot.MyTodoList.util.BotLabels;
@@ -48,6 +51,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private EstimatedHoursService estimatedHoursService;
     private RealTimeService realTimeService;
     private AssignItemToSprintService assignItemToSprintService;
+    private UserService userService;
 
     private String botName;
 
@@ -57,7 +61,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     // Mapa para almacenar temporalmente datos durante una conversación
     private Map<String, String> tempData = new HashMap<>();
 
-    // Constantes para los estados de conversación
+    private static final String STATE_WAITING_EMPLOYEE_ID = "WAITING_EMPLOYEE_ID";
     private static final String STATE_WAITING_DESCRIPTION = "WAITING_DESCRIPTION";
     private static final String STATE_WAITING_DEADLINE = "WAITING_DEADLINE";
     private static final String STATE_WAITING_ESTIMATED_HOURS = "WAITING_ESTIMATED_HOURS";
@@ -66,7 +70,8 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
     public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService,
             DeadlineService deadlineService, EstimatedHoursService estimatedHoursService,
-            RealTimeService realTimeService, AssignItemToSprintService assignItemToSprintService) {
+            RealTimeService realTimeService, AssignItemToSprintService assignItemToSprintService,
+            UserService userService) {
         super(botToken);
         logger.info("Bot Token: " + botToken);
         logger.info("Bot name: " + botName);
@@ -76,53 +81,176 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         this.estimatedHoursService = estimatedHoursService;
         this.assignItemToSprintService = assignItemToSprintService;
         this.realTimeService = realTimeService;
+        this.userService = userService;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageTextFromTelegram = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-            logger.info("Chat ID: {}", chatId);
+            logger.info("Chat ID: {}, Mensaje: {}", chatId, messageTextFromTelegram);
 
             if (messageTextFromTelegram.equals(BotCommands.START_COMMAND.getCommand())
                     || messageTextFromTelegram.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) {
                 handleStartCommand(chatId);
-            } else if (messageTextFromTelegram.indexOf(BotLabels.DONE.getLabel()) != -1) {
-                handleDoneCommand(messageTextFromTelegram, chatId);
-            } else if (messageTextFromTelegram.indexOf(BotLabels.UNDO.getLabel()) != -1) {
-                handleUndoCommand(messageTextFromTelegram, chatId);
-            } else if (messageTextFromTelegram.indexOf(BotLabels.DELETE.getLabel()) != -1) {
-                handleDeleteCommand(messageTextFromTelegram, chatId);
-            } else if (messageTextFromTelegram.equals(BotCommands.HIDE_COMMAND.getCommand())
+                return; 
+            }
+            
+            // VERIFICAR SI ESTAMOS ESPERANDO UN ID DE EMPLEADO
+            if (userStates.containsKey(chatId) && STATE_WAITING_EMPLOYEE_ID.equals(userStates.get(chatId))) {
+                if (messageTextFromTelegram.startsWith("/")) {
+                    SendMessage message = new SendMessage();
+                    message.setChatId(chatId);
+                    message.setText("Por favor, introduce tu número de empleado o usa /start para reiniciar.");
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException e) {
+                        logger.error("Error al enviar mensaje: {}", e.getMessage());
+                    }
+                } else {
+                    // Procesar como ID de empleado
+                    handleEmployeeIdInput(messageTextFromTelegram, chatId);
+                }
+            } 
+            // Comando para ocultar teclado
+            else if (messageTextFromTelegram.equals(BotCommands.HIDE_COMMAND.getCommand())
                     || messageTextFromTelegram.equals(BotLabels.HIDE_MAIN_SCREEN.getLabel())) {
                 handleHideCommand(chatId);
-            } else if (messageTextFromTelegram.equals(BotCommands.TODO_LIST.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.LIST_ALL_ITEMS.getLabel())
-                    || messageTextFromTelegram.equals(BotLabels.MY_TODO_LIST.getLabel())) {
-                handleTodoListCommand(chatId);
-            } else if (messageTextFromTelegram.equals(BotCommands.ADD_ITEM.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.ADD_NEW_ITEM.getLabel())) {
-                handleAddItemCommand(chatId);
-            } else if (messageTextFromTelegram.equals(BotCommands.UPCOMING_DEADLINES.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.UPCOMING_DEADLINES.getLabel())) {
-                handleUpcomingDeadlinesCommand(chatId);
-            } else if (messageTextFromTelegram.equals(BotCommands.OVERDUE_TASKS.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.OVERDUE_TASKS.getLabel())) {
-                handleOverdueTasksCommand(chatId);
-            } else if (userStates.containsKey(chatId)) {
-                handleConversationState(messageTextFromTelegram, chatId);
-            } else {
-                handleUnknownCommand(chatId);
+            } 
+            // Para todos los demás comandos, verificar si el usuario está validado
+            else {
+                Optional<User> user = userService.findByChatId(chatId);
+                if (user.isPresent()) {
+                    // Usuario validado, procesar comandos normales
+                    processValidUserCommands(messageTextFromTelegram, chatId);
+                } else {
+                    // No validado, mostrar mensaje de acceso denegado
+                    SendMessage message = new SendMessage();
+                    message.setChatId(chatId);
+                    message.setText(BotMessages.ACCESS_DENIED.getMessage());
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException e) {
+                        logger.error("Error al enviar mensaje: {}", e.getMessage());
+                    }
+                }
             }
         }
     }
 
-    private void handleStartCommand(long chatId) {
-        userStates.remove(chatId);
-        tempData.remove(chatId);
+    
+    private void processValidUserCommands(String messageText, long chatId) {
+        if (messageText.indexOf(BotLabels.DONE.getLabel()) != -1) {
+            handleDoneCommand(messageText, chatId);
+        } else if (messageText.indexOf(BotLabels.UNDO.getLabel()) != -1) {
+            handleUndoCommand(messageText, chatId);
+        } else if (messageText.indexOf(BotLabels.DELETE.getLabel()) != -1) {
+            handleDeleteCommand(messageText, chatId);
+        } else if (messageText.equals(BotCommands.TODO_LIST.getCommand())
+                || messageText.equals(BotLabels.LIST_ALL_ITEMS.getLabel())
+                || messageText.equals(BotLabels.MY_TODO_LIST.getLabel())) {
+            handleTodoListCommand(chatId);
+        } else if (messageText.equals(BotCommands.ADD_ITEM.getCommand())
+                || messageText.equals(BotLabels.ADD_NEW_ITEM.getLabel())) {
+            handleAddItemCommand(chatId);
+        } else if (messageText.equals(BotCommands.UPCOMING_DEADLINES.getCommand())
+                || messageText.equals(BotLabels.UPCOMING_DEADLINES.getLabel())) {
+            handleUpcomingDeadlinesCommand(chatId);
+        } else if (messageText.equals(BotCommands.OVERDUE_TASKS.getCommand())
+                || messageText.equals(BotLabels.OVERDUE_TASKS.getLabel())) {
+            handleOverdueTasksCommand(chatId);
+        } else if (userStates.containsKey(chatId)) {
+            handleConversationState(messageText, chatId);
+        } else {
+            handleUnknownCommand(chatId);
+        }
+    }
 
+    // En handleStartCommand
+    private void handleStartCommand(long chatId) {
+        // Limpiar estado previo
+        userStates.remove(chatId);
+        tempData.remove(String.valueOf(chatId));
+
+        logger.info("Iniciando proceso de start para chatId: {}", chatId);
+
+        // Verificar si el usuario ya está validado
+        Optional<User> existingUser = userService.findByChatId(chatId);
+        if (existingUser.isPresent()) {
+            SendMessage welcomeBackMessage = new SendMessage();
+            welcomeBackMessage.setChatId(chatId);
+            welcomeBackMessage.setText(BotMessages.WELCOME_BACK.getMessage() + existingUser.get().getUserId());
+            try {
+                execute(welcomeBackMessage);
+                showMainMenu(chatId);
+            } catch (TelegramApiException e) {
+                logger.error("Error al enviar mensaje de bienvenida de regreso: " + e.getMessage(), e);
+            }
+        } else {
+            // Usuario no validado, solicitar número de empleado
+            userStates.put(chatId, STATE_WAITING_EMPLOYEE_ID);
+            SendMessage askForEmployeeId = new SendMessage();
+            askForEmployeeId.setChatId(chatId);
+            askForEmployeeId.setText("¡Bienvenido/a a MyTodoList Bot! " + BotMessages.ASK_EMPLOYEE_ID.getMessage());
+            
+            // Eliminar el teclado para esta solicitud
+            ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove(true);
+            askForEmployeeId.setReplyMarkup(keyboardRemove);
+            
+            try {
+                execute(askForEmployeeId);
+                logger.info("Solicitud de ID de empleado enviada a chatId: {}", chatId);
+            } catch (TelegramApiException e) {
+                logger.error("Error al solicitar número de empleado: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void handleEmployeeIdInput(String employeeId, long chatId) {
+        logger.info("Procesando número de empleado: {} para chatId: {}", employeeId, chatId);
+        
+        // Validar el número de empleado
+        if (userService.validateUser(employeeId)) {
+            // Número de empleado válido
+            User user = userService.associateChatId(employeeId, chatId);
+            if (user != null) {
+                logger.info("Usuario validado y asociado correctamente: {}", employeeId);
+                
+                // Enviar mensaje de bienvenida
+                SendMessage welcomeMessage = new SendMessage();
+                welcomeMessage.setChatId(chatId);
+                welcomeMessage.setText(BotMessages.WELCOME_EMPLOYEE.getMessage());
+                try {
+                    execute(welcomeMessage);
+                    
+                    // Mostrar el menú principal
+                    showMainMenu(chatId);
+                } catch (TelegramApiException e) {
+                    logger.error("Error al enviar mensaje de bienvenida: " + e.getMessage(), e);
+                }
+            } else {
+                logger.error("Error al asociar chatId con usuario: {}", employeeId);
+                sendErrorMessage(chatId, "Ocurrió un error al procesar tu solicitud. Por favor, intenta nuevamente.");
+            }
+        } else {
+            // Número de empleado inválido
+            logger.info("Número de empleado inválido: {}", employeeId);
+            SendMessage invalidMessage = new SendMessage();
+            invalidMessage.setChatId(chatId);
+            invalidMessage.setText(BotMessages.INVALID_EMPLOYEE_ID.getMessage());
+            try {
+                execute(invalidMessage);
+                // Limpiar estado después de respuesta inválida
+                userStates.remove(chatId);
+                tempData.remove(String.valueOf(chatId));
+            } catch (TelegramApiException e) {
+                logger.error("Error al enviar mensaje de empleado inválido: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void showMainMenu(long chatId) {
         SendMessage messageToTelegram = new SendMessage();
         messageToTelegram.setChatId(chatId);
         messageToTelegram.setText(BotMessages.HELLO_MYTODO_BOT.getMessage());
@@ -843,10 +971,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
 
-    @Override
-    public String getBotUsername() {
-        return botName;
-    }
+    // Removed duplicate method definition
 
     public List<ToDoItem> getAllToDoItems() {
         return toDoItemService.findAll();
@@ -917,6 +1042,11 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             logger.error("Failed to send error message: " + e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public String getBotUsername() {
+        return botName;
     }
 
 }
