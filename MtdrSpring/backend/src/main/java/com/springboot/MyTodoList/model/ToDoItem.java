@@ -47,6 +47,9 @@ public class ToDoItem {
     @Column(name = "REAL_TIME")
     private Integer real_time;
 
+    @Column(name = "COMPLETION_DATE")
+    private OffsetDateTime completion_date;
+
     public ToDoItem() {
     }
 
@@ -126,6 +129,14 @@ public class ToDoItem {
         this.sprint_id = sprint_id;
     }
 
+    public OffsetDateTime getCompletion_date() {
+        return completion_date;
+    }
+
+    public void setCompletion_date(OffsetDateTime completion_date) {
+        this.completion_date = completion_date;
+    }
+
     // Methods for future columns are commented out
     /*
     public int getCreator_id() {
@@ -134,14 +145,6 @@ public class ToDoItem {
 
     public void setCreator_id(int creator_id) {
         this.creator_id = creator_id;
-    }
-
-    public OffsetDateTime getTask_date() {
-        return task_date;
-    }
-
-    public void setTask_date(OffsetDateTime task_date) {
-        this.task_date = task_date;
     }
     */
 
@@ -156,9 +159,9 @@ public class ToDoItem {
                 ", estimated_hours=" + estimated_hours +
                 ", real_time=" + real_time +
                 ", sprint_id=" + sprint_id +
+                ", completion_date=" + completion_date +
                 // Future columns commented
                 // ", creator_id=" + creator_id +
-                // ", task_date=" + task_date +
                 '}';
     }
 }
