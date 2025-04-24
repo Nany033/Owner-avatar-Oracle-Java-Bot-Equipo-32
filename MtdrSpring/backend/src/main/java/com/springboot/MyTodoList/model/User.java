@@ -34,6 +34,7 @@ public class User {
         this.userId = userId;
     }
     
+    
     // Constructor completo
     public User(String userId, String name, String rol, Integer equipoId, Long chatId) {
         this.userId = userId;

@@ -1,5 +1,8 @@
 package com.springboot.MyTodoList.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +14,6 @@ import com.springboot.MyTodoList.repository.UsersRepository;
 import com.springboot.MyTodoList.service.ChatService;
 import com.springboot.MyTodoList.service.UserService;
 
-import java.util.Optional;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -20,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UsersRepository usersRepository;
-    
+
     @Autowired
     private ChatService chatService;
 
@@ -34,11 +35,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User associateChatId(String userId, Long chatId) {
         logger.info("Asociando chatId {} con userId {}", chatId, userId);
-        
+
         // Primero, registrar el chat
         Chat chat = chatService.registerChat(chatId);
         logger.info("Chat registrado: {}", chat);
-        
+
         // Luego, asociar el chat con el usuario
         Optional<User> userOpt = usersRepository.findById(userId);
         if (userOpt.isPresent()) {
@@ -68,12 +69,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByChatId(Long chatId) {
         logger.info("Buscando usuario por chatId: {}", chatId);
-        
+
         // Asegurarnos de actualizar la última actividad del chat
         if (chatService.existsChat(chatId)) {
             chatService.updateLastActivity(chatId);
         }
-        
+
         Optional<User> user = usersRepository.findByChatId(chatId);
         if (user.isPresent()) {
             logger.info("Usuario encontrado por chatId {}: {}", chatId, user.get());
@@ -86,13 +87,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         logger.info("Guardando usuario: {}", user);
-        
+
         // Si el usuario tiene un chatId, asegurarnos de que existe
         if (user.getChatId() != null && !chatService.existsChat(user.getChatId())) {
             logger.info("Creando registro de chat para el chatId: {}", user.getChatId());
             chatService.registerChat(user.getChatId());
         }
-        
+
         return usersRepository.save(user);
     }
 
@@ -101,4 +102,11 @@ public class UserServiceImpl implements UserService {
         logger.info("Eliminando usuario con ID: {}", userId);
         usersRepository.deleteById(userId);
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        logger.info("Obteniendo todos los usuarios");
+        return usersRepository.findAll();
+    }
+
 }
