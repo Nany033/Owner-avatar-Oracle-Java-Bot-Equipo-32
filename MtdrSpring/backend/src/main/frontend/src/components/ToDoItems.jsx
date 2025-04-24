@@ -19,6 +19,7 @@ export default function ToDoItems() {
       })
       .then(data => {
         setItems(data);
+        console.log(data);
         setLoading(false);
       })
       .catch(err => {
@@ -44,8 +45,8 @@ export default function ToDoItems() {
 
   const getUserName = (userId) => {
     const user = users.find(u => u.userId == userId);
-    console.log(userId, user);
-    console.log(users);
+    // console.log(userId, user);
+    // console.log(users);
     return user ? user.name : 'Sin asignar';
   };
 
@@ -100,6 +101,7 @@ export default function ToDoItems() {
             <th>Task</th>
             <th>Sprint</th>
             <th>Deadline</th>
+            <th>Completion Date</th>
           </tr>
         </thead>
         <tbody>
@@ -112,7 +114,9 @@ export default function ToDoItems() {
                   <Moment format="MMM Do YYYY">{item.deadline}</Moment>
                 )}
               </td>
-              {/* <td>{item.completion_date}</td> */}
+              <td> {item.completion_date && (
+                  <Moment format="MMM Do YYYY">{item.completion_date}</Moment>
+                )}</td>
             </tr>
           ))}
         </tbody>
