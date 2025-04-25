@@ -44,11 +44,11 @@ export default function ToDoItems() {
   }, []);
 
   const getUserName = (userId) => {
+    if (userId == null || !Array.isArray(users) || users.length === 0) return 'Sin asignar';
     const user = users.find(u => u.userId == userId);
-    // console.log(userId, user);
-    // console.log(users);
     return user ? user.name : 'Sin asignar';
   };
+
 
   if (loading) return <CircularProgress />;
   if (error) return <div>Error: {error}</div>;
@@ -115,8 +115,8 @@ export default function ToDoItems() {
                 )}
               </td>
               <td> {item.completion_date && (
-                  <Moment format="MMM Do YYYY">{item.completion_date}</Moment>
-                )}</td>
+                <Moment format="MMM Do YYYY">{item.completion_date}</Moment>
+              )}</td>
             </tr>
           ))}
         </tbody>

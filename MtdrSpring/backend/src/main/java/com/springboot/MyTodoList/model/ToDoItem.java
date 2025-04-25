@@ -38,7 +38,7 @@ public class ToDoItem {
     private int estimated_hours;
 
     @Column(name = "USER_ID")
-    private int user_id;
+    private Integer user_id;
     
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
@@ -52,7 +52,7 @@ public class ToDoItem {
     public ToDoItem() {
     }
 
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int user_id, int estimated_hours, int sprint_id) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, Integer user_id, int estimated_hours, Integer sprint_id) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
@@ -113,11 +113,11 @@ public class ToDoItem {
         this.estimated_hours = estimated_hours;
     }
 
-    public int getUser_id() {
+    public Integer getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(Integer user_id) {
         this.user_id = user_id;
     }
 
@@ -145,16 +145,6 @@ public class ToDoItem {
         this.completion_date = completion_date;
     }
 
-    // Methods for future columns are commented out
-    /*
-    public int getCreator_id() {
-        return creator_id;
-    }
-
-    public void setCreator_id(int creator_id) {
-        this.creator_id = creator_id;
-    }
-    */
 
     @Override
     public String toString() {
