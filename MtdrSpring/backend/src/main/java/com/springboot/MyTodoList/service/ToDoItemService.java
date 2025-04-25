@@ -35,9 +35,16 @@ public interface ToDoItemService {
     
     /**
      * Actualiza un elemento existente de la lista de tareas.
-     * @param id El identificador del elemento a actualizar
-     * @param td El objeto con los nuevos datos
+     * @param user_id El identificador del elemento a actualizar
      * @return El elemento actualizado, o null si no se encuentra
      */
-    ToDoItem updateToDoItem(int id, ToDoItem td);
+   List<ToDoItem> getTaskByUserId(int user_id);
+    
+    /**
+     * Actualiza un elemento existente de la lista de tareas.
+     * @param user_id El identificador del elemento a actualizar
+     * @return El elemento actualizado, o null si no se encuentra
+     */
+
+   Boolean findByUserId(int userId, int id);
 }

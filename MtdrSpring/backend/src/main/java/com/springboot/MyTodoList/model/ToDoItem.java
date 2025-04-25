@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.model;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Map;
 
 /*
     Representation of the TODOITEM table that exists already
@@ -16,33 +18,33 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ID;
-    
+
     @Column(name = "DESCRIPTION")
     private String description;
-    
+
     @Column(name = "CREATION_TS")
     private OffsetDateTime creation_ts;
-    
+
     @Column(name = "DONE")
     private boolean done;
-    
+
     @Column(name = "DEADLINE")
     private OffsetDateTime deadline;
-    
+
     // Fixed naming to be consistent
     @Column(name = "ESTIMATED_HOURS")
     private int estimated_hours;
 
     @Column(name = "USER_ID")
     private Integer user_id;
-    
+
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
-    
+
     @Column(name = "REAL_TIME")
     private Integer real_time;
 
@@ -52,7 +54,8 @@ public class ToDoItem {
     public ToDoItem() {
     }
 
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, Integer user_id, int estimated_hours, Integer sprint_id) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline,
+            Integer user_id, int estimated_hours, Integer sprint_id) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
@@ -145,14 +148,18 @@ public class ToDoItem {
         this.completion_date = completion_date;
     }
 
-    public static void printCompletionStats(List<ToDoItem> items) {
+    public static Map<String, Object> getCompletionStats(List<ToDoItem> items) {
         long totalCompleted = items.stream()
                 .filter(item -> item.getCompletion_date() != null)
                 .count();
 
+        Map<String, Object> result = new HashMap<>();
+
         if (totalCompleted == 0) {
-            System.out.println("No tasks have been completed yet.");
-            return;
+            result.put("message", "No tasks have been completed yet.");
+            result.put("onTimePercentage", 0.0);
+            result.put("latePercentage", 0.0);
+            return result;
         }
 
         long onTime = items.stream()
@@ -165,10 +172,15 @@ public class ToDoItem {
         double onTimePercentage = (onTime * 100.0) / totalCompleted;
         double latePercentage = (late * 100.0) / totalCompleted;
 
-        System.out.printf("Completed on time: %.2f%%\n", onTimePercentage);
-        System.out.printf("Completed late: %.2f%%\n", latePercentage);
+        result.put("completedOnTime", onTimePercentage);
+        result.put("completedLate", latePercentage);
+        result.put("totalCompleted", totalCompleted);
+        result.put("totalTasks", items.size());
+        result.put("completionRate", (totalCompleted * 100.0) / items.size());
+        result.put("message", "Statistics calculated successfully.");
+        result.put("onTimePercentage", onTimePercentage);
+        return result;
     }
-
 
     @Override
     public String toString() {

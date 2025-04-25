@@ -11,15 +11,6 @@ export default function KPIsDashboard({ options }) {
             <p>Welcome to the KPIs Dashboard. Here you can view key performance indicators.</p>
             <Filter options={options} onSelect={setSelectedUserId} />
             <div>
-                <table className='kpi-table'>
-                    <tbody>
-                        <tr>
-                            <td><KPIcard userId={selectedUserId} /></td>
-                            <td><KPIcard userId={selectedUserId} /></td>
-                            <td><KPIcard userId={selectedUserId} /></td>
-                        </tr>
-                    </tbody>
-                </table>
                 <KPIcard userId={selectedUserId} />
             </div>
         </div>
