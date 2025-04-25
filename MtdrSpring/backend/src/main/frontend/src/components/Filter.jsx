@@ -10,7 +10,7 @@ const Filter = ({ options, onSelect }) => {
     };
 
     return (
-        <div>
+        <div className='Filter'>
             <label htmlFor="filter-dropdown">Filter Options:</label>
             <select
                 id="filter-dropdown"
