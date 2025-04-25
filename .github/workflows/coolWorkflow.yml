@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '11'
-          distribution: 'openJDK'
+          distribution: 'temurin'
           cache: maven
       - name: Maven verify step
         run: mvn --batch-mode --update-snapshots verify
