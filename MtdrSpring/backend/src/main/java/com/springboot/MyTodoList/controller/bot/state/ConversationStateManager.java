@@ -14,6 +14,7 @@ public class ConversationStateManager {
     public static final String STATE_WAITING_ESTIMATED_HOURS = "WAITING_ESTIMATED_HOURS";
     public static final String STATE_WAITING_SPRINT = "WAITING_SPRINT";
     public static final String STATE_WAITING_REAL_TIME = "WAITING_REAL_TIME";
+    public static final String STATE_WAITING_DEVELOPER_ID = "WAITING_DEVELOPER_ID";  // Nuevo estado para asignación
     
     // Mapa para seguir el estado de conversación de cada usuario
     private final Map<Long, String> userStates = new HashMap<>();
@@ -66,6 +67,7 @@ public class ConversationStateManager {
         private Integer realTime;
         private Integer sprintId;
         private Integer itemId;
+        private String userId;  
         
         
         public String getDescription() {
@@ -114,6 +116,14 @@ public class ConversationStateManager {
         
         public void setItemId(Integer itemId) {
             this.itemId = itemId;
+        }
+        
+        public String getUserId() {
+            return userId;
+        }
+        
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
         
         public boolean isComplete() {

@@ -30,7 +30,8 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                                 EstimatedHoursService estimatedHoursService,
                                 RealTimeService realTimeService,
                                 AssignItemToSprintService assignItemToSprintService,
-                                UserService userService) {
+                                UserService userService,
+                                TaskAssignmentService taskAssignmentService) {
         super(botToken);
         this.botName = botName;
         this.stateManager = new ConversationStateManager();
@@ -43,10 +44,12 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                                                   estimatedHoursService, assignItemToSprintService, stateManager));
         commandHandlers.add(new TaskCompletionHandler(toDoItemService, realTimeService, stateManager));
         commandHandlers.add(new TaskListHandler(toDoItemService, deadlineService, stateManager));
+        commandHandlers.add(new TaskAssignmentHandler(taskAssignmentService, userService, stateManager)); // Nuevo handler
         
         this.conversationHandler = new ConversationHandler(toDoItemService, deadlineService,
                                                          estimatedHoursService, assignItemToSprintService,
-                                                         realTimeService, stateManager);
+                                                         realTimeService, taskAssignmentService, 
+                                                         userService, stateManager);
         
         this.authenticationHandler = new AuthenticationHandler(userService, stateManager);
         
@@ -73,43 +76,43 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     }
     
     private SendMessage processMessage(Update update, String messageText, long chatId) {
-        
+        // Verificar si estamos en un estado de conversación
         String currentState = stateManager.getState(chatId);
         
-        
+        // Manejar el estado de autenticación
         if (currentState != null && currentState.equals(ConversationStateManager.STATE_WAITING_EMPLOYEE_ID)) {
             return authenticationHandler.handleEmployeeIdInput(messageText, chatId);
         }
         
-        
+        // Verificar si el usuario está autenticado para otros comandos
         if (!authenticationHandler.isUserAuthenticated(chatId)) {
-            
+            // Solo permitir el comando /start para usuarios no autenticados
             for (CommandHandler handler : commandHandlers) {
                 if (handler.canHandle(messageText) && handler instanceof StartCommandHandler) {
-                    return handler.handle(update, chatId);
+                    return handler.handle(null, chatId);
                 }
             }
             return authenticationHandler.createAccessDeniedMessage(chatId);
         }
         
-        
+        // Si hay un estado de conversación activo, manejarlo
         if (currentState != null) {
             return conversationHandler.handleConversation(messageText, chatId);
         }
         
-        
+        // Verificar si es un comando de acción (Done, Undo, Delete)
         if (messageText.contains(BotLabels.DASH.getLabel())) {
             return handleActionCommand(messageText, chatId);
         }
         
-        
+        // Buscar handler para el comando
         for (CommandHandler handler : commandHandlers) {
             if (handler.canHandle(messageText)) {
                 return handler.handle(update, chatId);
             }
         }
         
-        
+        // Comando no reconocido
         return createUnknownCommandMessage(chatId);
     }
     
@@ -156,6 +159,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         helpMessage.append("/additem - Añadir una nueva tarea\n");
         helpMessage.append("/upcoming - Ver tareas con fechas límite próximas\n");
         helpMessage.append("/overdue - Ver tareas con fechas límite vencidas\n");
+        helpMessage.append("/assignitem - Asignar una tarea (solo managers)\n");
         helpMessage.append("/hide - Ocultar el teclado\n");
         
         SendMessage message = new SendMessage();

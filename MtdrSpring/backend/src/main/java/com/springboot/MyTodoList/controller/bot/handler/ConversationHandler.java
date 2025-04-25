@@ -2,9 +2,11 @@ package com.springboot.MyTodoList.controller.bot.handler;
 
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.model.Sprints;
+import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.service.*;
 import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager;
 import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager.TaskData;
+import com.springboot.MyTodoList.util.BotMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class ConversationHandler {
@@ -24,6 +27,8 @@ public class ConversationHandler {
     private final EstimatedHoursService estimatedHoursService;
     private final AssignItemToSprintService assignItemToSprintService;
     private final RealTimeService realTimeService;
+    private final TaskAssignmentService taskAssignmentService;
+    private final UserService userService;
     private final ConversationStateManager stateManager;
     
     public ConversationHandler(ToDoItemService toDoItemService,
@@ -31,12 +36,16 @@ public class ConversationHandler {
                              EstimatedHoursService estimatedHoursService,
                              AssignItemToSprintService assignItemToSprintService,
                              RealTimeService realTimeService,
+                             TaskAssignmentService taskAssignmentService,
+                             UserService userService,
                              ConversationStateManager stateManager) {
         this.toDoItemService = toDoItemService;
         this.deadlineService = deadlineService;
         this.estimatedHoursService = estimatedHoursService;
         this.assignItemToSprintService = assignItemToSprintService;
         this.realTimeService = realTimeService;
+        this.taskAssignmentService = taskAssignmentService;
+        this.userService = userService;
         this.stateManager = stateManager;
     }
     
@@ -53,6 +62,8 @@ public class ConversationHandler {
                 return handleEstimatedHoursInput(messageText, chatId, taskData);
             case ConversationStateManager.STATE_WAITING_REAL_TIME:
                 return handleRealTimeInput(messageText, chatId, taskData);
+            case ConversationStateManager.STATE_WAITING_DEVELOPER_ID:
+                return handleDeveloperIdInput(messageText, chatId, taskData);
             default:
                 return createErrorMessage(chatId, "Estado de conversación no reconocido.");
         }
@@ -101,8 +112,27 @@ public class ConversationHandler {
             
             taskData.setEstimatedHours(estimatedHours);
             
-            // Ahora tenemos todos los datos, creamos la tarea
-            return createTask(chatId, taskData);
+            // Verificar si el usuario es manager y está asignando una tarea
+            Optional<User> userOpt = userService.findByChatId(chatId);
+            if (userOpt.isPresent() && taskAssignmentService.isManager(userOpt.get().getUserId())) {
+                // Crear la tarea y pasar al estado de asignación
+                ToDoItem task = createTaskAndReturn(chatId, taskData);
+                if (task != null) {
+                    taskData.setItemId(task.getID());
+                    stateManager.setState(chatId, ConversationStateManager.STATE_WAITING_DEVELOPER_ID);
+                    
+                    SendMessage message = new SendMessage();
+                    message.setChatId(chatId);
+                    message.setText(BotMessages.TYPE_DEVELOPER_ID_TO_ASSIGN.getMessage());
+                    return message;
+                } else {
+                    stateManager.clearState(chatId);
+                    return createErrorMessage(chatId, "Error al crear la tarea.");
+                }
+            } else {
+                // Usuario normal, crear la tarea y finalizar
+                return createTask(chatId, taskData);
+            }
             
         } catch (NumberFormatException e) {
             SendMessage message = new SendMessage();
@@ -112,7 +142,71 @@ public class ConversationHandler {
         }
     }
     
+    private SendMessage handleDeveloperIdInput(String developerId, long chatId, TaskData taskData) {
+        // Verificar que el desarrollador existe
+        if (!userService.validateUser(developerId)) {
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
+            message.setText(BotMessages.INVALID_DEVELOPER_ID.getMessage());
+            return message;
+        }
+        
+        // Verificar que es un desarrollador
+        Optional<User> developerOpt = userService.getUserById(developerId);
+        if (!developerOpt.isPresent() || !"developer".equalsIgnoreCase(developerOpt.get().getRol())) {
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
+            message.setText(BotMessages.INVALID_DEVELOPER_ID.getMessage());
+            return message;
+        }
+        
+        // Asignar la tarea
+        if (taskData.getItemId() != null) {
+            ToDoItem assignedTask = taskAssignmentService.assignTaskToUser(taskData.getItemId(), developerId);
+            if (assignedTask != null) {
+                stateManager.clearState(chatId);
+                return createSuccessMessage(chatId, BotMessages.TASK_ASSIGNED_SUCCESS.getMessage() + developerId);
+            }
+        }
+        
+        stateManager.clearState(chatId);
+        return createErrorMessage(chatId, "Error al asignar la tarea.");
+    }
+    
+    private ToDoItem createTaskAndReturn(long chatId, TaskData taskData) {
+        try {
+            // Create the base task
+            ToDoItem newItem = new ToDoItem();
+            newItem.setDescription(taskData.getDescription());
+            newItem.setCreation_ts(OffsetDateTime.now());
+            newItem.setDone(false);
+            
+            // Save the task to get an ID
+            ToDoItem savedItem = toDoItemService.addToDoItem(newItem);
+            int itemId = savedItem.getID();
+            
+            // Set the deadline if exists
+            if (!"NINGUNA".equals(taskData.getDeadline())) {
+                savedItem = deadlineService.setDeadlineFromString(itemId, taskData.getDeadline());
+            }
+            
+            // Set the estimated hours
+            if (estimatedHoursService.checkEstimatedHours(taskData.getEstimatedHours())) {
+                savedItem = estimatedHoursService.setEstimatedHours(itemId, taskData.getEstimatedHours());
+                return savedItem;
+            } else {
+                // Task needs division
+                toDoItemService.deleteToDoItem(itemId);
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("Error creating task: " + e.getMessage(), e);
+            return null;
+        }
+    }
+    
     private SendMessage createTask(long chatId, TaskData taskData) {
+        // Código existente de createTask...
         try {
             // Create the base task
             ToDoItem newItem = new ToDoItem();

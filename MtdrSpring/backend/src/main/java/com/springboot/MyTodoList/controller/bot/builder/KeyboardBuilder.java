@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class KeyboardBuilder {
     
-    public static ReplyKeyboardMarkup buildMainMenu() {
+    public static ReplyKeyboardMarkup buildMainMenu(boolean isManager) {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
 
@@ -25,6 +25,13 @@ public class KeyboardBuilder {
         row.add(BotLabels.UPCOMING_DEADLINES.getLabel());
         row.add(BotLabels.OVERDUE_TASKS.getLabel());
         keyboard.add(row);
+        
+        // Añadir opción de asignar tarea solo para managers
+        if (isManager) {
+            row = new KeyboardRow();
+            row.add(BotLabels.ASSIGN_ITEM.getLabel());
+            keyboard.add(row);
+        }
 
         row = new KeyboardRow();
         row.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
@@ -49,18 +56,22 @@ public class KeyboardBuilder {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
 
+        // Agregar botón para volver al menú principal
         KeyboardRow mainScreenRowTop = new KeyboardRow();
         mainScreenRowTop.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
         keyboard.add(mainScreenRowTop);
 
+        // Agregar botón para añadir nueva tarea
         KeyboardRow firstRow = new KeyboardRow();
         firstRow.add(BotLabels.ADD_NEW_ITEM.getLabel());
         keyboard.add(firstRow);
 
+        // Título de la lista
         KeyboardRow myTodoListTitleRow = new KeyboardRow();
         myTodoListTitleRow.add(BotLabels.MY_TODO_LIST.getLabel());
         keyboard.add(myTodoListTitleRow);
 
+        // Agregar tareas activas
         List<ToDoItem> activeItems = items.stream()
                 .filter(item -> !item.isDone())
                 .collect(Collectors.toList());
@@ -79,6 +90,7 @@ public class KeyboardBuilder {
             keyboard.add(currentRow);
         }
 
+        // Agregar tareas completadas
         List<ToDoItem> doneItems = items.stream()
                 .filter(ToDoItem::isDone)
                 .collect(Collectors.toList());
@@ -98,6 +110,7 @@ public class KeyboardBuilder {
             keyboard.add(currentRow);
         }
 
+        // Botón para volver al menú principal al final
         KeyboardRow mainScreenRowBottom = new KeyboardRow();
         mainScreenRowBottom.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
         keyboard.add(mainScreenRowBottom);

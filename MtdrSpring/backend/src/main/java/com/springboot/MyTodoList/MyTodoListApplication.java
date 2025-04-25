@@ -10,57 +10,70 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-
 import com.springboot.MyTodoList.controller.ToDoItemBotController;
 import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.EstimatedHoursService;
 import com.springboot.MyTodoList.service.RealTimeService;
 import com.springboot.MyTodoList.service.UserService;
-
 import com.springboot.MyTodoList.service.AssignItemToSprintService;
+import com.springboot.MyTodoList.service.TaskAssignmentService;
 import com.springboot.MyTodoList.util.BotMessages;
 
 @SpringBootApplication
 public class MyTodoListApplication implements CommandLineRunner {
-
     private static final Logger logger = LoggerFactory.getLogger(MyTodoListApplication.class);
-
+    
     @Autowired
     private ToDoItemService toDoItemService;
-
+    
     @Autowired
     private DeadlineService deadlineService;
-
+    
     @Autowired
     private EstimatedHoursService estimatedHoursService;
-
+    
     @Autowired
     private RealTimeService realTimeService;
-
+    
     @Autowired
     private AssignItemToSprintService assignItemToSprintService;
     
     @Autowired
-    private UserService userService;  // Add this line
-
+    private UserService userService;
+    
+    @Autowired
+    private TaskAssignmentService taskAssignmentService; 
+    
     @Value("${telegram.bot.token}")
     private String telegramBotToken;
-
+    
     @Value("${telegram.bot.name}")
     private String botName;
-
+    
     public static void main(String[] args) {
         SpringApplication.run(MyTodoListApplication.class, args);
     }
-
+    
     @Override
     public void run(String... args) throws Exception {
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            telegramBotsApi.registerBot(new ToDoItemBotController(telegramBotToken, botName, toDoItemService, deadlineService, estimatedHoursService, realTimeService, assignItemToSprintService, userService));
+            
+            
+            telegramBotsApi.registerBot(new ToDoItemBotController(
+                telegramBotToken, 
+                botName, 
+                toDoItemService, 
+                deadlineService, 
+                estimatedHoursService, 
+                realTimeService, 
+                assignItemToSprintService, 
+                userService,
+                taskAssignmentService 
+            ));
+            
             logger.info(BotMessages.BOT_REGISTERED_STARTED.getMessage());
-
         } catch (TelegramApiException e) {
             logger.error("An error occurred while registering the bot: ", e);
         }

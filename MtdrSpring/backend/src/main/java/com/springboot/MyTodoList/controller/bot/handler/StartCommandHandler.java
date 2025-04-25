@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.controller.bot.handler;
 
+import com.springboot.MyTodoList.controller.bot.builder.KeyboardBuilder;
 import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.service.UserService;
 import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager;
@@ -44,6 +45,11 @@ public class StartCommandHandler implements CommandHandler {
             SendMessage welcomeBackMessage = new SendMessage();
             welcomeBackMessage.setChatId(chatId);
             welcomeBackMessage.setText(BotMessages.WELCOME_BACK.getMessage() + existingUser.get().getUserId());
+            
+            // Crear el menú principal con opciones según el rol
+            boolean isManager = "manager".equalsIgnoreCase(existingUser.get().getRol());
+            welcomeBackMessage.setReplyMarkup(KeyboardBuilder.buildMainMenu(isManager));
+            
             return welcomeBackMessage;
         } else {
             // Usuario no validado, solicitar número de empleado

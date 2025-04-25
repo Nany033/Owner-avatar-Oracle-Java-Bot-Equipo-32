@@ -9,10 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/*
-    Representation of the TODOITEM table that exists already
-    in the autonomous database.
- */
+
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
@@ -37,28 +34,31 @@ public class ToDoItem {
     @Column(name = "ESTIMATED_HOURS")
     private int estimated_hours;
 
-    // Fields to be developed later
-    // @Column(name = "CREATOR_ID")
-    // private int creator_id;
+    @Column(name = "USER_ID")
+    private String user_id;
     
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
     
     @Column(name = "REAL_TIME")
     private Integer real_time;
+    
+    @Column(name = "COMPLETION_DATE")
+    private OffsetDateTime completion_date;
 
     public ToDoItem() {
     }
 
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, int sprint_id) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, String user_id, int sprint_id, OffsetDateTime completion_date) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
         this.done = done;
         this.deadline = deadline;
         this.estimated_hours = estimated_hours;
+        this.user_id = user_id;
         this.sprint_id = sprint_id;
-
+        this.completion_date = completion_date;
     }
 
     public int getID() {
@@ -101,7 +101,6 @@ public class ToDoItem {
         this.deadline = deadline;
     }
 
-    // Fixed method names to match the field name (lowercase 'h')
     public int getEstimated_hours() {
         return estimated_hours;
     }
@@ -126,24 +125,21 @@ public class ToDoItem {
         this.sprint_id = sprint_id;
     }
 
-    // Methods for future columns are commented out
-    /*
-    public int getCreator_id() {
-        return creator_id;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setCreator_id(int creator_id) {
-        this.creator_id = creator_id;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
-    public OffsetDateTime getTask_date() {
-        return task_date;
+    public OffsetDateTime getCompletion_date() {
+        return completion_date;
     }
 
-    public void setTask_date(OffsetDateTime task_date) {
-        this.task_date = task_date;
+    public void setCompletion_date(OffsetDateTime completion_date) {
+        this.completion_date = completion_date;
     }
-    */
 
     @Override
     public String toString() {
@@ -156,9 +152,8 @@ public class ToDoItem {
                 ", estimated_hours=" + estimated_hours +
                 ", real_time=" + real_time +
                 ", sprint_id=" + sprint_id +
-                // Future columns commented
-                // ", creator_id=" + creator_id +
-                // ", task_date=" + task_date +
+                ", user_id='" + user_id + '\'' +
+                ", completion_date=" + completion_date +
                 '}';
     }
 }
