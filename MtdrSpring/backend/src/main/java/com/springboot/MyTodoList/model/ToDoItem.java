@@ -37,9 +37,8 @@ public class ToDoItem {
     @Column(name = "ESTIMATED_HOURS")
     private int estimated_hours;
 
-    // Fields to be developed later
-    // @Column(name = "CREATOR_ID")
-    // private int creator_id;
+    @Column(name = "USER_ID")
+    private Integer user_id;
     
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
@@ -47,16 +46,20 @@ public class ToDoItem {
     @Column(name = "REAL_TIME")
     private Integer real_time;
 
+    @Column(name = "COMPLETION_DATE")
+    private OffsetDateTime completion_date;
+
     public ToDoItem() {
     }
 
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, int sprint_id) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, Integer user_id, int estimated_hours, Integer sprint_id) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
         this.done = done;
         this.deadline = deadline;
         this.estimated_hours = estimated_hours;
+        this.user_id = user_id;
         this.sprint_id = sprint_id;
 
     }
@@ -110,6 +113,14 @@ public class ToDoItem {
         this.estimated_hours = estimated_hours;
     }
 
+    public Integer getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
+    }
+
     public Integer getReal_time() {
         return real_time;
     }
@@ -126,24 +137,14 @@ public class ToDoItem {
         this.sprint_id = sprint_id;
     }
 
-    // Methods for future columns are commented out
-    /*
-    public int getCreator_id() {
-        return creator_id;
+    public OffsetDateTime getCompletion_date() {
+        return completion_date;
     }
 
-    public void setCreator_id(int creator_id) {
-        this.creator_id = creator_id;
+    public void setCompletion_date(OffsetDateTime completion_date) {
+        this.completion_date = completion_date;
     }
 
-    public OffsetDateTime getTask_date() {
-        return task_date;
-    }
-
-    public void setTask_date(OffsetDateTime task_date) {
-        this.task_date = task_date;
-    }
-    */
 
     @Override
     public String toString() {
@@ -154,11 +155,12 @@ public class ToDoItem {
                 ", deadline=" + deadline +
                 ", done=" + done +
                 ", estimated_hours=" + estimated_hours +
+                ", user_id=" + user_id +
                 ", real_time=" + real_time +
                 ", sprint_id=" + sprint_id +
+                ", completion_date=" + completion_date +
                 // Future columns commented
                 // ", creator_id=" + creator_id +
-                // ", task_date=" + task_date +
                 '}';
     }
 }
