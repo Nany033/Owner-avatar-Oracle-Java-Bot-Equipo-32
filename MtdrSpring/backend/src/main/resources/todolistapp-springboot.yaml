@@ -51,13 +51,13 @@ spec:
             - name: db_user
               value: "TODOUSER"
             - name: db_url
-              value: "jdbc:oracle:thin:@%TODO_PDB_NAME%_tp?TNS_ADMIN=/mtdrworkshop/creds"
+              value: "jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/mtdrworkshop/creds"
             - name: todo.table.name
               value: "todoitem"
             - name: driver_class_name
               value: "oracle.jdbc.OracleDriver"
             - name: OCI_REGION
-              value: "%OCI_REGION%"
+              value: "us-phoenix-1"
             - name: dbpassword
               valueFrom:
                 secretKeyRef:
