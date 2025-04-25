@@ -1,0 +1,543 @@
+2025-04-03 22:20:24.557  INFO 27596 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 17.0.11 on LAPTOP-85HHGJCQ with PID 27596 (C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend\target\classes started by jorge in C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend)
+2025-04-03 22:20:24.573  INFO 27596 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-03 22:20:25.721  INFO 27596 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-03 22:20:25.831  INFO 27596 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 93 ms. Found 1 JPA repository interfaces.
+2025-04-03 22:20:26.897  INFO 27596 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-03 22:20:26.918  INFO 27596 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-03 22:20:26.919  INFO 27596 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-03 22:20:27.125  INFO 27596 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-03 22:20:27.127  INFO 27596 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2458 ms
+2025-04-03 22:20:27.609  INFO 27596 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-03 22:20:27.610  INFO 27596 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/Users/jorge/OneDrive/Desktop/Owner-avatar-Oracle-Java-Bot-Equipo-32/Wallet_telegrambot/Wallet_telegrambot
+2025-04-03 22:20:27.611  INFO 27596 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-03 22:20:27.787  INFO 27596 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-03 22:20:27.869  INFO 27596 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-03 22:20:28.128  INFO 27596 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-03 22:20:30.804  INFO 27596 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-03 22:20:32.021  INFO 27596 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-03 22:20:32.037  INFO 27596 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 22:20:32.721  WARN 27596 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-03 22:20:32.978  INFO 27596 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-03 22:20:33.366  INFO 27596 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-03 22:20:33.595  INFO 27596 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-03 22:20:33.611  INFO 27596 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 9.927 seconds (JVM running for 10.697)
+2025-04-03 22:20:33.779  INFO 27596 --- [main] c.s.M.controller.ToDoItemBotController   : Bot Token: 7670377589:AAEG7xLhS1NfsRlZr5rsLC6pPzwYzEzXuMc
+2025-04-03 22:20:33.780  INFO 27596 --- [main] c.s.M.controller.ToDoItemBotController   : Bot name: test3ng_java_bot
+2025-04-03 22:20:36.191  INFO 27596 --- [main] c.s.MyTodoList.MyTodoListApplication     : Bot registered and started succesfully!
+2025-04-03 22:20:41.594  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:20:45.462  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:20:47.689 ERROR 27596 --- [test3ng_java_bot Telegram Executor] o.t.t.u.DefaultBotSession                : text is marked non-null but is null
+
+java.lang.NullPointerException: text is marked non-null but is null
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.<init>(KeyboardButton.java:37) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow.add(KeyboardRow.java:28) ~[telegrambots-meta-6.5.0.jar:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.createItemRow(ToDoItemBotController.java:252) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.lambda$handleTodoListCommand$0(ToDoItemBotController.java:216) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.handleTodoListCommand(ToDoItemBotController.java:216) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.onUpdateReceived(ToDoItemBotController.java:94) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-03 22:23:55.919  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:24:26.716  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:24:35.770  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:24:48.912  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:24:50.924 ERROR 27596 --- [test3ng_java_bot Telegram Executor] o.t.t.u.DefaultBotSession                : text is marked non-null but is null
+
+java.lang.NullPointerException: text is marked non-null but is null
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.<init>(KeyboardButton.java:37) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow.add(KeyboardRow.java:28) ~[telegrambots-meta-6.5.0.jar:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.createItemRow(ToDoItemBotController.java:252) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.lambda$handleTodoListCommand$0(ToDoItemBotController.java:216) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.handleTodoListCommand(ToDoItemBotController.java:216) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.onUpdateReceived(ToDoItemBotController.java:94) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-03 22:25:54.666  INFO 27596 --- [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-03 22:25:54.668  INFO 27596 --- [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-03 22:25:54.671  INFO 27596 --- [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-04-03 22:30:53.502  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:31:09.769  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:31:11.731 ERROR 27596 --- [test3ng_java_bot Telegram Executor] o.t.t.u.DefaultBotSession                : text is marked non-null but is null
+
+java.lang.NullPointerException: text is marked non-null but is null
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.<init>(KeyboardButton.java:37) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow.add(KeyboardRow.java:28) ~[telegrambots-meta-6.5.0.jar:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.createItemRow(ToDoItemBotController.java:252) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.lambda$handleTodoListCommand$0(ToDoItemBotController.java:216) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.handleTodoListCommand(ToDoItemBotController.java:216) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.onUpdateReceived(ToDoItemBotController.java:94) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-03 22:31:52.770  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:32:03.584  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:32:05.630 ERROR 27596 --- [test3ng_java_bot Telegram Executor] o.t.t.u.DefaultBotSession                : text is marked non-null but is null
+
+java.lang.NullPointerException: text is marked non-null but is null
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.<init>(KeyboardButton.java:37) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow.add(KeyboardRow.java:28) ~[telegrambots-meta-6.5.0.jar:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.createItemRow(ToDoItemBotController.java:252) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.lambda$handleTodoListCommand$0(ToDoItemBotController.java:216) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.handleTodoListCommand(ToDoItemBotController.java:216) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.onUpdateReceived(ToDoItemBotController.java:94) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-03 22:32:07.743  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:32:11.317  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:32:15.812  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:32:17.208  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:32:19.636  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:35:33.462  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:35:52.022  INFO 27596 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:40:24.616  INFO 27596 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 22:52:52.083  INFO 23252 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 17.0.11 on LAPTOP-85HHGJCQ with PID 23252 (C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend\target\classes started by jorge in C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend)
+2025-04-03 22:52:52.089  INFO 23252 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-03 22:52:53.306  INFO 23252 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-03 22:52:53.415  INFO 23252 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 92 ms. Found 1 JPA repository interfaces.
+2025-04-03 22:52:54.476  INFO 23252 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-03 22:52:54.497  INFO 23252 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-03 22:52:54.498  INFO 23252 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-03 22:52:54.704  INFO 23252 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-03 22:52:54.705  INFO 23252 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2521 ms
+2025-04-03 22:52:55.157  INFO 23252 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-03 22:52:55.159  INFO 23252 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/Users/jorge/OneDrive/Desktop/Owner-avatar-Oracle-Java-Bot-Equipo-32/Wallet_telegrambot/Wallet_telegrambot
+2025-04-03 22:52:55.160  INFO 23252 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-03 22:52:55.338  INFO 23252 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-03 22:52:55.423  INFO 23252 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-03 22:52:55.695  INFO 23252 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-03 22:52:58.238  INFO 23252 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-03 22:52:59.411  INFO 23252 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-03 22:52:59.426  INFO 23252 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 22:53:00.080  WARN 23252 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-03 22:53:00.320  INFO 23252 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-03 22:53:00.678  INFO 23252 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-03 22:53:00.887  INFO 23252 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-03 22:53:00.904  INFO 23252 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 9.64 seconds (JVM running for 10.458)
+2025-04-03 22:53:01.103  INFO 23252 --- [main] c.s.M.controller.ToDoItemBotController   : Bot Token: 7739496439:AAFzDN5hEE8USs0njlwydxfEAGOMV4O6IPE
+2025-04-03 22:53:01.103  INFO 23252 --- [main] c.s.M.controller.ToDoItemBotController   : Bot name: test2ng_java_bot
+2025-04-03 22:53:01.811  INFO 23252 --- [main] c.s.MyTodoList.MyTodoListApplication     : Bot registered and started succesfully!
+2025-04-03 22:54:00.792  INFO 23252 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 22:56:38.583  INFO 17664 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 17.0.11 on LAPTOP-85HHGJCQ with PID 17664 (C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend\target\classes started by jorge in C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend)
+2025-04-03 22:56:38.589  INFO 17664 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-03 22:56:39.669  INFO 17664 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-03 22:56:39.772  INFO 17664 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 1 JPA repository interfaces.
+2025-04-03 22:56:40.766  INFO 17664 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-03 22:56:40.787  INFO 17664 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-03 22:56:40.788  INFO 17664 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-03 22:56:40.987  INFO 17664 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-03 22:56:40.988  INFO 17664 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2315 ms
+2025-04-03 22:56:41.430  INFO 17664 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-03 22:56:41.431  INFO 17664 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/Users/jorge/OneDrive/Desktop/Owner-avatar-Oracle-Java-Bot-Equipo-32/Wallet_telegrambot/Wallet_telegrambot
+2025-04-03 22:56:41.432  INFO 17664 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-03 22:56:41.619  INFO 17664 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-03 22:56:41.704  INFO 17664 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-03 22:56:41.962  INFO 17664 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-03 22:56:44.343  INFO 17664 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-03 22:56:45.564  INFO 17664 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-03 22:56:45.582  INFO 17664 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 22:56:46.265  WARN 17664 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-03 22:56:46.517  INFO 17664 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-03 22:56:46.924  INFO 17664 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-03 22:56:47.144  INFO 17664 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-03 22:56:47.160  INFO 17664 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 9.378 seconds (JVM running for 10.165)
+2025-04-03 22:56:47.334  INFO 17664 --- [main] c.s.M.controller.ToDoItemBotController   : Bot Token: 7670377589:AAEG7xLhS1NfsRlZr5rsLC6pPzwYzEzXuMc
+2025-04-03 22:56:47.335  INFO 17664 --- [main] c.s.M.controller.ToDoItemBotController   : Bot name: test3ng_java_bot
+2025-04-03 22:56:48.093  INFO 17664 --- [main] c.s.MyTodoList.MyTodoListApplication     : Bot registered and started succesfully!
+2025-04-03 22:56:48.800  INFO 17664 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:56:51.016 ERROR 17664 --- [test3ng_java_bot Telegram Executor] o.t.t.u.DefaultBotSession                : Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time; nested exception is org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+
+org.springframework.orm.jpa.JpaSystemException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time; nested exception is org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:331) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:233) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:551) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:242) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:152) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:174) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:215) ~[spring-aop-5.3.16.jar:5.3.16]
+	at jdk.proxy2/jdk.proxy2.$Proxy119.findAll(Unknown Source) ~[na:na]
+	at com.springboot.MyTodoList.service.impl.ToDoItemServiceImpl.findAll(ToDoItemServiceImpl.java:26) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.getAllToDoItems(ToDoItemBotController.java:721) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.handleTodoListCommand(ToDoItemBotController.java:214) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.onUpdateReceived(ToDoItemBotController.java:98) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.5.0.jar:na]
+Caused by: org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+	at org.hibernate.property.access.spi.SetterFieldImpl.set(SetterFieldImpl.java:58) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.tuple.entity.AbstractEntityTuplizer.setPropertyValues(AbstractEntityTuplizer.java:681) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.tuple.entity.PojoEntityTuplizer.setPropertyValues(PojoEntityTuplizer.java:144) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.persister.entity.AbstractEntityPersister.setPropertyValues(AbstractEntityPersister.java:5252) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntityFromEntityEntryLoadedState(TwoPhaseLoad.java:253) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntity(TwoPhaseLoad.java:156) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntity(TwoPhaseLoad.java:126) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.initializeEntitiesAndCollections(Loader.java:1201) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.processResultSet(Loader.java:1009) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doQuery(Loader.java:967) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doQueryAndInitializeNonLazyCollections(Loader.java:357) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doList(Loader.java:2868) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doList(Loader.java:2850) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.listIgnoreQueryCache(Loader.java:2682) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.list(Loader.java:2677) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.hql.QueryLoader.list(QueryLoader.java:540) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.list(QueryTranslatorImpl.java:400) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.query.spi.HQLQueryPlan.performList(HQLQueryPlan.java:219) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.internal.SessionImpl.list(SessionImpl.java:1454) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.doList(AbstractProducedQuery.java:1649) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.list(AbstractProducedQuery.java:1617) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.Query.getResultList(Query.java:165) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.criteria.internal.compile.CriteriaQueryTypeQueryAdapter.getResultList(CriteriaQueryTypeQueryAdapter.java:76) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.findAll(SimpleJpaRepository.java:407) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.findAll(SimpleJpaRepository.java:84) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:289) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:137) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:121) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:529) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:639) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:163) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:138) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:80) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-5.3.16.jar:5.3.16]
+	... 14 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Can not set int field com.springboot.MyTodoList.model.ToDoItem.real_time to null value
+	at java.base/jdk.internal.reflect.UnsafeFieldAccessorImpl.throwSetIllegalArgumentException(UnsafeFieldAccessorImpl.java:167) ~[na:na]
+	at java.base/jdk.internal.reflect.UnsafeFieldAccessorImpl.throwSetIllegalArgumentException(UnsafeFieldAccessorImpl.java:171) ~[na:na]
+	at java.base/jdk.internal.reflect.UnsafeIntegerFieldAccessorImpl.set(UnsafeIntegerFieldAccessorImpl.java:80) ~[na:na]
+	at java.base/java.lang.reflect.Field.set(Field.java:799) ~[na:na]
+	at org.hibernate.property.access.spi.SetterFieldImpl.set(SetterFieldImpl.java:52) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	... 59 common frames omitted
+
+2025-04-03 22:57:18.347  INFO 17664 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:57:21.212  INFO 17664 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 22:57:23.308 ERROR 17664 --- [test3ng_java_bot Telegram Executor] o.t.t.u.DefaultBotSession                : Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time; nested exception is org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+
+org.springframework.orm.jpa.JpaSystemException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time; nested exception is org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:331) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:233) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:551) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:242) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:152) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:174) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:215) ~[spring-aop-5.3.16.jar:5.3.16]
+	at jdk.proxy2/jdk.proxy2.$Proxy119.findAll(Unknown Source) ~[na:na]
+	at com.springboot.MyTodoList.service.impl.ToDoItemServiceImpl.findAll(ToDoItemServiceImpl.java:26) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.getAllToDoItems(ToDoItemBotController.java:721) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.handleTodoListCommand(ToDoItemBotController.java:214) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.onUpdateReceived(ToDoItemBotController.java:98) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.5.0.jar:na]
+Caused by: org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+	at org.hibernate.property.access.spi.SetterFieldImpl.set(SetterFieldImpl.java:58) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.tuple.entity.AbstractEntityTuplizer.setPropertyValues(AbstractEntityTuplizer.java:681) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.tuple.entity.PojoEntityTuplizer.setPropertyValues(PojoEntityTuplizer.java:144) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.persister.entity.AbstractEntityPersister.setPropertyValues(AbstractEntityPersister.java:5252) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntityFromEntityEntryLoadedState(TwoPhaseLoad.java:253) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntity(TwoPhaseLoad.java:156) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntity(TwoPhaseLoad.java:126) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.initializeEntitiesAndCollections(Loader.java:1201) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.processResultSet(Loader.java:1009) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doQuery(Loader.java:967) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doQueryAndInitializeNonLazyCollections(Loader.java:357) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doList(Loader.java:2868) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doList(Loader.java:2850) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.listIgnoreQueryCache(Loader.java:2682) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.list(Loader.java:2677) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.hql.QueryLoader.list(QueryLoader.java:540) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.list(QueryTranslatorImpl.java:400) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.query.spi.HQLQueryPlan.performList(HQLQueryPlan.java:219) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.internal.SessionImpl.list(SessionImpl.java:1454) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.doList(AbstractProducedQuery.java:1649) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.list(AbstractProducedQuery.java:1617) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.Query.getResultList(Query.java:165) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.criteria.internal.compile.CriteriaQueryTypeQueryAdapter.getResultList(CriteriaQueryTypeQueryAdapter.java:76) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.findAll(SimpleJpaRepository.java:407) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.findAll(SimpleJpaRepository.java:84) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:289) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:137) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:121) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:529) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:639) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:163) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:138) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:80) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-5.3.16.jar:5.3.16]
+	... 14 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Can not set int field com.springboot.MyTodoList.model.ToDoItem.real_time to null value
+	at java.base/jdk.internal.reflect.UnsafeFieldAccessorImpl.throwSetIllegalArgumentException(UnsafeFieldAccessorImpl.java:167) ~[na:na]
+	at java.base/jdk.internal.reflect.UnsafeFieldAccessorImpl.throwSetIllegalArgumentException(UnsafeFieldAccessorImpl.java:171) ~[na:na]
+	at java.base/jdk.internal.reflect.UnsafeIntegerFieldAccessorImpl.set(UnsafeIntegerFieldAccessorImpl.java:80) ~[na:na]
+	at java.base/java.lang.reflect.Field.set(Field.java:799) ~[na:na]
+	at org.hibernate.property.access.spi.SetterFieldImpl.set(SetterFieldImpl.java:52) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	... 59 common frames omitted
+
+2025-04-03 22:59:42.005  INFO 17664 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 23:01:12.661  INFO 13212 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 17.0.11 on LAPTOP-85HHGJCQ with PID 13212 (C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend\target\classes started by jorge in C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend)
+2025-04-03 23:01:12.666  INFO 13212 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-03 23:01:13.773  INFO 13212 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-03 23:01:13.876  INFO 13212 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 89 ms. Found 1 JPA repository interfaces.
+2025-04-03 23:01:14.881  INFO 13212 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-03 23:01:14.901  INFO 13212 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-03 23:01:14.903  INFO 13212 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-03 23:01:15.103  INFO 13212 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-03 23:01:15.105  INFO 13212 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2352 ms
+2025-04-03 23:01:15.548  INFO 13212 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-03 23:01:15.549  INFO 13212 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/Users/jorge/OneDrive/Desktop/Owner-avatar-Oracle-Java-Bot-Equipo-32/Wallet_telegrambot/Wallet_telegrambot
+2025-04-03 23:01:15.551  INFO 13212 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-03 23:01:15.733  INFO 13212 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-03 23:01:15.815  INFO 13212 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-03 23:01:16.076  INFO 13212 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-03 23:01:18.538  INFO 13212 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-03 23:01:19.744  INFO 13212 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-03 23:01:19.760  INFO 13212 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 23:01:20.410  WARN 13212 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-03 23:01:20.661  INFO 13212 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-03 23:01:21.235  INFO 13212 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-03 23:01:21.251  INFO 13212 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 9.433 seconds (JVM running for 10.169)
+2025-04-03 23:01:21.422  INFO 13212 --- [main] c.s.M.controller.ToDoItemBotController   : Bot Token: 7670377589:AAEG7xLhS1NfsRlZr5rsLC6pPzwYzEzXuMc
+2025-04-03 23:01:21.424  INFO 13212 --- [main] c.s.M.controller.ToDoItemBotController   : Bot name: test3ng_java_bot
+2025-04-03 23:01:22.137  INFO 13212 --- [main] c.s.MyTodoList.MyTodoListApplication     : Bot registered and started succesfully!
+2025-04-03 23:01:43.321  INFO 13212 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:01:46.075  INFO 13212 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:01:48.216 ERROR 13212 --- [test3ng_java_bot Telegram Executor] o.t.t.u.DefaultBotSession                : Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time; nested exception is org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+
+org.springframework.orm.jpa.JpaSystemException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time; nested exception is org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:331) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:233) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:551) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:242) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:152) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:174) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:215) ~[spring-aop-5.3.16.jar:5.3.16]
+	at jdk.proxy2/jdk.proxy2.$Proxy119.findAll(Unknown Source) ~[na:na]
+	at com.springboot.MyTodoList.service.impl.ToDoItemServiceImpl.findAll(ToDoItemServiceImpl.java:26) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.getAllToDoItems(ToDoItemBotController.java:721) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.handleTodoListCommand(ToDoItemBotController.java:214) ~[classes/:na]
+	at com.springboot.MyTodoList.controller.ToDoItemBotController.onUpdateReceived(ToDoItemBotController.java:98) ~[classes/:na]
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
+	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.5.0.jar:na]
+Caused by: org.hibernate.PropertyAccessException: Null value was assigned to a property [class com.springboot.MyTodoList.model.ToDoItem.real_time] of primitive type setter of com.springboot.MyTodoList.model.ToDoItem.real_time
+	at org.hibernate.property.access.spi.SetterFieldImpl.set(SetterFieldImpl.java:58) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.tuple.entity.AbstractEntityTuplizer.setPropertyValues(AbstractEntityTuplizer.java:681) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.tuple.entity.PojoEntityTuplizer.setPropertyValues(PojoEntityTuplizer.java:144) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.persister.entity.AbstractEntityPersister.setPropertyValues(AbstractEntityPersister.java:5252) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntityFromEntityEntryLoadedState(TwoPhaseLoad.java:253) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntity(TwoPhaseLoad.java:156) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.internal.TwoPhaseLoad.initializeEntity(TwoPhaseLoad.java:126) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.initializeEntitiesAndCollections(Loader.java:1201) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.processResultSet(Loader.java:1009) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doQuery(Loader.java:967) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doQueryAndInitializeNonLazyCollections(Loader.java:357) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doList(Loader.java:2868) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.doList(Loader.java:2850) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.listIgnoreQueryCache(Loader.java:2682) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.Loader.list(Loader.java:2677) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.loader.hql.QueryLoader.list(QueryLoader.java:540) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.list(QueryTranslatorImpl.java:400) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.query.spi.HQLQueryPlan.performList(HQLQueryPlan.java:219) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.internal.SessionImpl.list(SessionImpl.java:1454) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.doList(AbstractProducedQuery.java:1649) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.list(AbstractProducedQuery.java:1617) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.Query.getResultList(Query.java:165) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.query.criteria.internal.compile.CriteriaQueryTypeQueryAdapter.getResultList(CriteriaQueryTypeQueryAdapter.java:76) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.findAll(SimpleJpaRepository.java:407) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.findAll(SimpleJpaRepository.java:84) ~[spring-data-jpa-2.6.2.jar:2.6.2]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:289) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:137) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:121) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:529) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:639) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:163) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:138) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:80) ~[spring-data-commons-2.6.2.jar:2.6.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.16.jar:5.3.16]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.16.jar:5.3.16]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-5.3.16.jar:5.3.16]
+	... 14 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Can not set int field com.springboot.MyTodoList.model.ToDoItem.real_time to null value
+	at java.base/jdk.internal.reflect.UnsafeFieldAccessorImpl.throwSetIllegalArgumentException(UnsafeFieldAccessorImpl.java:167) ~[na:na]
+	at java.base/jdk.internal.reflect.UnsafeFieldAccessorImpl.throwSetIllegalArgumentException(UnsafeFieldAccessorImpl.java:171) ~[na:na]
+	at java.base/jdk.internal.reflect.UnsafeIntegerFieldAccessorImpl.set(UnsafeIntegerFieldAccessorImpl.java:80) ~[na:na]
+	at java.base/java.lang.reflect.Field.set(Field.java:799) ~[na:na]
+	at org.hibernate.property.access.spi.SetterFieldImpl.set(SetterFieldImpl.java:52) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	... 59 common frames omitted
+
+2025-04-03 23:04:16.123  INFO 13212 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 23:06:30.189  INFO 24700 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 17.0.11 on LAPTOP-85HHGJCQ with PID 24700 (C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend\target\classes started by jorge in C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend)
+2025-04-03 23:06:30.194  INFO 24700 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-03 23:06:31.269  INFO 24700 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-03 23:06:31.372  INFO 24700 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 88 ms. Found 1 JPA repository interfaces.
+2025-04-03 23:06:32.346  INFO 24700 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-03 23:06:32.368  INFO 24700 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-03 23:06:32.369  INFO 24700 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-03 23:06:32.563  INFO 24700 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-03 23:06:32.564  INFO 24700 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2283 ms
+2025-04-03 23:06:33.008  INFO 24700 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-03 23:06:33.009  INFO 24700 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/Users/jorge/OneDrive/Desktop/Owner-avatar-Oracle-Java-Bot-Equipo-32/Wallet_telegrambot/Wallet_telegrambot
+2025-04-03 23:06:33.011  INFO 24700 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-03 23:06:33.182  INFO 24700 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-03 23:06:33.264  INFO 24700 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-03 23:06:33.518  INFO 24700 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-03 23:06:36.362  INFO 24700 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-03 23:06:37.541  INFO 24700 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-03 23:06:37.556  INFO 24700 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 23:06:38.188  WARN 24700 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-03 23:06:38.426  INFO 24700 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-03 23:06:38.789  INFO 24700 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-03 23:06:38.992  INFO 24700 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-03 23:06:39.007  INFO 24700 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 9.62 seconds (JVM running for 10.368)
+2025-04-03 23:06:39.170  INFO 24700 --- [main] c.s.M.controller.ToDoItemBotController   : Bot Token: 7670377589:AAEG7xLhS1NfsRlZr5rsLC6pPzwYzEzXuMc
+2025-04-03 23:06:39.171  INFO 24700 --- [main] c.s.M.controller.ToDoItemBotController   : Bot name: test3ng_java_bot
+2025-04-03 23:06:39.879  INFO 24700 --- [main] c.s.MyTodoList.MyTodoListApplication     : Bot registered and started succesfully!
+2025-04-03 23:06:43.185  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:06:45.156  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:06:54.712  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:07:00.474  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:07:00.762  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Saved description for chatId: 8062181680 - Description: real time testing
+2025-04-03 23:07:09.523  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:07:09.525  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state waiting deadline for chatId: 8062181680
+2025-04-03 23:07:09.526  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Retrieving description from tempData: real time testing
+2025-04-03 23:07:09.530  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Creating newItem with values - Description: real time testing, Timestamp: 2025-04-03T23:07:09.527351300-06:00, Done: false
+2025-04-03 23:07:18.670  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:07:18.671  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state estimated hours for chatId: 8062181680
+2025-04-03 23:07:18.672  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Temp data (hours): 1
+2025-04-03 23:07:22.163  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Cleaned state for chatId: 8062181680
+2025-04-03 23:07:27.042  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:07:41.408  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:07:50.912  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:07:50.914  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state waiting real time for chatId: 8062181680
+2025-04-03 23:07:50.915  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Temp data (hours): 2
+2025-04-03 23:07:54.713  INFO 24700 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Cleaned state for chatId: 8062181680
+2025-04-03 23:08:34.965  INFO 24700 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 23:39:48.082  INFO 24488 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 17.0.11 on LAPTOP-85HHGJCQ with PID 24488 (C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend\target\classes started by jorge in C:\Users\jorge\OneDrive\Desktop\Owner-avatar-Oracle-Java-Bot-Equipo-32\MtdrSpring\backend)
+2025-04-03 23:39:48.091  INFO 24488 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-03 23:39:49.241  INFO 24488 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-03 23:39:49.358  INFO 24488 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 101 ms. Found 2 JPA repository interfaces.
+2025-04-03 23:39:50.409  INFO 24488 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-03 23:39:50.433  INFO 24488 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-03 23:39:50.435  INFO 24488 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-03 23:39:50.643  INFO 24488 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-03 23:39:50.644  INFO 24488 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2456 ms
+2025-04-03 23:39:51.137  INFO 24488 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-03 23:39:51.140  INFO 24488 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/Users/jorge/OneDrive/Desktop/Owner-avatar-Oracle-Java-Bot-Equipo-32/Wallet_telegrambot/Wallet_telegrambot
+2025-04-03 23:39:51.141  INFO 24488 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-03 23:39:51.329  INFO 24488 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-03 23:39:51.411  INFO 24488 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-03 23:39:51.669  INFO 24488 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-03 23:39:54.382  INFO 24488 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-03 23:39:55.731  INFO 24488 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-03 23:39:55.750  INFO 24488 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 23:39:56.506  WARN 24488 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-03 23:39:56.795  INFO 24488 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-03 23:39:57.216  INFO 24488 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-03 23:39:57.459  INFO 24488 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-03 23:39:57.476  INFO 24488 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 10.235 seconds (JVM running for 11.006)
+2025-04-03 23:39:57.666  INFO 24488 --- [main] c.s.M.controller.ToDoItemBotController   : Bot Token: 7670377589:AAEG7xLhS1NfsRlZr5rsLC6pPzwYzEzXuMc
+2025-04-03 23:39:57.667  INFO 24488 --- [main] c.s.M.controller.ToDoItemBotController   : Bot name: test3ng_java_bot
+2025-04-03 23:39:58.411  INFO 24488 --- [main] c.s.MyTodoList.MyTodoListApplication     : Bot registered and started succesfully!
+2025-04-03 23:40:03.891  INFO 24488 --- [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-03 23:40:03.892  INFO 24488 --- [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-03 23:40:03.896  INFO 24488 --- [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-04-03 23:40:13.100  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:40:15.444  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:40:22.495  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:40:22.791  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Saved description for chatId: 8062181680 - Description: merge testing
+2025-04-03 23:40:31.328  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:40:31.328  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state waiting deadline for chatId: 8062181680
+2025-04-03 23:40:31.329  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Retrieving description from tempData: merge testing
+2025-04-03 23:40:31.335  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Creating newItem with values - Description: merge testing, Timestamp: 2025-04-03T23:40:31.330829800-06:00, Done: false
+2025-04-03 23:40:39.290  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:40:39.291  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state estimated hours for chatId: 8062181680
+2025-04-03 23:40:39.292  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Temp data (hours): 12
+2025-04-03 23:40:40.961  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Splitting task with ID: 203 and hours: 12
+2025-04-03 23:40:44.285  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Split into 3 subtasks
+2025-04-03 23:40:44.286  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Adding subtask with description: merge testing (Part 1)
+2025-04-03 23:40:45.961  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Successfully added subtask with ID: 204
+2025-04-03 23:40:45.962  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Adding subtask with description: merge testing (Part 2)
+2025-04-03 23:40:47.620  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Successfully added subtask with ID: 205
+2025-04-03 23:40:47.621  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Adding subtask with description: merge testing (Part 3)
+2025-04-03 23:40:49.296  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Successfully added subtask with ID: 206
+2025-04-03 23:40:49.297  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Total subtasks added: 3
+2025-04-03 23:40:50.992  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Deleted original task with ID: 203
+2025-04-03 23:41:00.171  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Assigned subtask 204 to sprint 3
+2025-04-03 23:41:09.625  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Assigned subtask 205 to sprint 3
+2025-04-03 23:41:17.716  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Assigned subtask 206 to sprint 3
+2025-04-03 23:41:17.717  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Final counts - Total subtasks: 3, Assigned to sprints: 3
+2025-04-03 23:41:18.335  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Cleaned state for chatId: 8062181680
+2025-04-03 23:41:23.118  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:41:33.152  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:41:40.986  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:41:40.987  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state waiting real time for chatId: 8062181680
+2025-04-03 23:41:40.988  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Temp data (hours): 3
+2025-04-03 23:41:44.662  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Cleaned state for chatId: 8062181680
+2025-04-03 23:41:48.921  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:41:55.244  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:41:55.245  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state waiting real time for chatId: 8062181680
+2025-04-03 23:41:55.246  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Temp data (hours): 5
+2025-04-03 23:41:58.910  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Cleaned state for chatId: 8062181680
+2025-04-03 23:42:00.250  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:42:07.670  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680
+2025-04-03 23:42:07.671  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : In state waiting real time for chatId: 8062181680
+2025-04-03 23:42:07.671  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Temp data (hours): 6
+2025-04-03 23:42:11.314  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Cleaned state for chatId: 8062181680
+2025-04-03 23:42:15.527  INFO 24488 --- [test3ng_java_bot Telegram Executor] c.s.M.controller.ToDoItemBotController   : Chat ID: 8062181680

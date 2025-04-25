@@ -290,6 +290,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         try {
             ToDoItem item = getToDoItemById(id);
             item.setDone(true);
+            item.setCompletion_date(OffsetDateTime.now());
             updateToDoItem(item, id);
             
             // Store the item ID for the next step
@@ -316,6 +317,8 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         try {
             ToDoItem item = getToDoItemById(id);
             item.setDone(false);
+            item.setCompletion_date(null);
+            item.setReal_time(null);
             updateToDoItem(item, id);
             BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_UNDONE.getMessage(), this);
         } catch (Exception e) {

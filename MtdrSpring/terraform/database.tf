@@ -21,22 +21,18 @@ resource "oci_database_autonomous_database" "autonomous_database_atp" {
   #Required
   admin_password           = random_password.database_admin_password.result
   compartment_id           = var.ociCompartmentOcid
-  cpu_core_count           = "1"
-  data_storage_size_in_tbs = "1"
   db_name                  = var.mtdrDbName
-  # is_free_tier = true , if there exists sufficient service limit
   is_free_tier             = true
   #Optional #db_workload = "${var.autonomous_database_db_workload}"
   db_workload                                    = var.autonomous_database_db_workload
-  display_name ="MTDRDB"
-  is_auto_scaling_enabled                        = "false"
-  is_preview_version_with_service_terms_accepted = "false"
+  display_name ="telegrambot"
+  license_model            = "LICENSE_INCLUDED"
 }
 data "oci_database_autonomous_databases" "autonomous_databases_atp" {
   #Required
   compartment_id = var.ociCompartmentOcid
   #Optional
-  display_name =  "MTDRDB"
+  display_name =  "telegrambot"
   db_workload  = var.autonomous_database_db_workload
 }
 //======= Name space details ------------------------------------------------------
