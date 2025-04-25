@@ -62,7 +62,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             logger.info("Chat ID: {}, Mensaje: {}", chatId, messageText);
             
             try {
-                SendMessage response = processMessage(messageText, chatId);
+                SendMessage response = processMessage(update, messageText, chatId);
                 if (response != null) {
                     execute(response);
                 }
@@ -72,35 +72,43 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
     
-    private SendMessage processMessage(String messageText, long chatId) {
+    private SendMessage processMessage(Update update, String messageText, long chatId) {
+        
         String currentState = stateManager.getState(chatId);
+        
         
         if (currentState != null && currentState.equals(ConversationStateManager.STATE_WAITING_EMPLOYEE_ID)) {
             return authenticationHandler.handleEmployeeIdInput(messageText, chatId);
         }
         
+        
         if (!authenticationHandler.isUserAuthenticated(chatId)) {
+            
             for (CommandHandler handler : commandHandlers) {
                 if (handler.canHandle(messageText) && handler instanceof StartCommandHandler) {
-                    return handler.handle(null, chatId);
+                    return handler.handle(update, chatId);
                 }
             }
             return authenticationHandler.createAccessDeniedMessage(chatId);
         }
         
+        
         if (currentState != null) {
             return conversationHandler.handleConversation(messageText, chatId);
         }
+        
         
         if (messageText.contains(BotLabels.DASH.getLabel())) {
             return handleActionCommand(messageText, chatId);
         }
         
+        
         for (CommandHandler handler : commandHandlers) {
             if (handler.canHandle(messageText)) {
-                return handler.handle(null, chatId);
+                return handler.handle(update, chatId);
             }
         }
+        
         
         return createUnknownCommandMessage(chatId);
     }
