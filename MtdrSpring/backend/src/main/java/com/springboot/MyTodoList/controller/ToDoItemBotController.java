@@ -44,12 +44,13 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                                                   estimatedHoursService, assignItemToSprintService, stateManager));
         commandHandlers.add(new TaskCompletionHandler(toDoItemService, realTimeService, stateManager));
         commandHandlers.add(new TaskListHandler(toDoItemService, deadlineService, stateManager));
-        commandHandlers.add(new TaskAssignmentHandler(taskAssignmentService, userService, stateManager)); // Nuevo handler
+        commandHandlers.add(new TaskAssignmentHandler(taskAssignmentService, userService, stateManager));
+        commandHandlers.add(new DeveloperTasksHandler(taskAssignmentService, userService, stateManager)); // Nuevo handler
         
         this.conversationHandler = new ConversationHandler(toDoItemService, deadlineService,
                                                          estimatedHoursService, assignItemToSprintService,
                                                          realTimeService, taskAssignmentService, 
-                                                         userService, stateManager);
+                                                         userService, stateManager, commandHandlers); // Añadir commandHandlers
         
         this.authenticationHandler = new AuthenticationHandler(userService, stateManager);
         
@@ -65,7 +66,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             logger.info("Chat ID: {}, Mensaje: {}", chatId, messageText);
             
             try {
-                SendMessage response = processMessage(update, messageText, chatId);
+                SendMessage response = processMessage(messageText, chatId);
                 if (response != null) {
                     execute(response);
                 }
@@ -75,7 +76,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
     
-    private SendMessage processMessage(Update update, String messageText, long chatId) {
+    private SendMessage processMessage(String messageText, long chatId) {
         // Verificar si estamos en un estado de conversación
         String currentState = stateManager.getState(chatId);
         
@@ -108,7 +109,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         // Buscar handler para el comando
         for (CommandHandler handler : commandHandlers) {
             if (handler.canHandle(messageText)) {
-                return handler.handle(update, chatId);
+                return handler.handle(null, chatId);
             }
         }
         
@@ -160,6 +161,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         helpMessage.append("/upcoming - Ver tareas con fechas límite próximas\n");
         helpMessage.append("/overdue - Ver tareas con fechas límite vencidas\n");
         helpMessage.append("/assignitem - Asignar una tarea (solo managers)\n");
+        helpMessage.append("/viewdevtasks - Ver tareas de desarrolladores (solo managers)\n");
         helpMessage.append("/hide - Ocultar el teclado\n");
         
         SendMessage message = new SendMessage();

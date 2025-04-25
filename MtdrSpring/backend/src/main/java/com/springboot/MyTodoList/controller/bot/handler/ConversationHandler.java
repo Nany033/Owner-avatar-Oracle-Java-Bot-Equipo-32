@@ -30,6 +30,7 @@ public class ConversationHandler {
     private final TaskAssignmentService taskAssignmentService;
     private final UserService userService;
     private final ConversationStateManager stateManager;
+    private final List<CommandHandler> commandHandlers;  // Añadir esta línea
     
     public ConversationHandler(ToDoItemService toDoItemService,
                              DeadlineService deadlineService,
@@ -38,7 +39,8 @@ public class ConversationHandler {
                              RealTimeService realTimeService,
                              TaskAssignmentService taskAssignmentService,
                              UserService userService,
-                             ConversationStateManager stateManager) {
+                             ConversationStateManager stateManager,
+                             List<CommandHandler> commandHandlers) {
         this.toDoItemService = toDoItemService;
         this.deadlineService = deadlineService;
         this.estimatedHoursService = estimatedHoursService;
@@ -47,6 +49,7 @@ public class ConversationHandler {
         this.taskAssignmentService = taskAssignmentService;
         this.userService = userService;
         this.stateManager = stateManager;
+        this.commandHandlers = commandHandlers;
     }
     
     public SendMessage handleConversation(String messageText, long chatId) {
@@ -64,9 +67,21 @@ public class ConversationHandler {
                 return handleRealTimeInput(messageText, chatId, taskData);
             case ConversationStateManager.STATE_WAITING_DEVELOPER_ID:
                 return handleDeveloperIdInput(messageText, chatId, taskData);
+            case ConversationStateManager.STATE_WAITING_DEVELOPER_VIEW:
+                return handleDeveloperViewInput(messageText, chatId);
             default:
                 return createErrorMessage(chatId, "Estado de conversación no reconocido.");
         }
+    }
+    
+    private SendMessage handleDeveloperViewInput(String developerId, long chatId) {
+        // Delegar al handler específico
+        for (CommandHandler handler : commandHandlers) {
+            if (handler instanceof DeveloperTasksHandler) {
+                return ((DeveloperTasksHandler) handler).handleDeveloperSelection(developerId, chatId);
+            }
+        }
+        return createErrorMessage(chatId, "Error al procesar la solicitud.");
     }
     
     private SendMessage handleDescriptionInput(String description, long chatId, TaskData taskData) {

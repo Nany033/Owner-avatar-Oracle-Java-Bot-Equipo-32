@@ -36,7 +36,13 @@ public enum BotMessages {
     TYPE_DEVELOPER_ID_TO_ASSIGN("Por favor, introduce el ID del desarrollador al que deseas asignar esta tarea:"),
     INVALID_DEVELOPER_ID("No se encontró un desarrollador con ese ID. Intenta de nuevo:"),
     TASK_ASSIGNED_SUCCESS("Tarea asignada exitosamente al desarrollador con ID: "),
-    NOT_AUTHORIZED_ASSIGN_TASKS("No tienes autorización para asignar tareas. Solo los managers pueden hacerlo.");
+    NOT_AUTHORIZED_ASSIGN_TASKS("No tienes autorización para asignar tareas. Solo los managers pueden hacerlo."),
+    
+    // Developer Tasks Messages
+    SELECT_DEVELOPER_VIEW_TASKS("Por favor, introduce el ID del desarrollador para ver sus tareas:"),
+    NO_TASKS_FOR_DEVELOPER("El desarrollador no tiene tareas asignadas."),
+    DEVELOPER_TASKS_TITLE("Tareas asignadas al desarrollador "),
+    NOT_AUTHORIZED_VIEW_DEV_TASKS("No tienes autorización para ver tareas de desarrolladores. Solo los managers pueden hacerlo.");
 
     private String message;
 

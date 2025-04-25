@@ -26,10 +26,11 @@ public class KeyboardBuilder {
         row.add(BotLabels.OVERDUE_TASKS.getLabel());
         keyboard.add(row);
         
-        // Añadir opción de asignar tarea solo para managers
+        // Añadir opciones exclusivas para managers
         if (isManager) {
             row = new KeyboardRow();
             row.add(BotLabels.ASSIGN_ITEM.getLabel());
+            row.add(BotLabels.VIEW_DEV_TASKS.getLabel());  // Nuevo botón
             keyboard.add(row);
         }
 

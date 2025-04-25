@@ -7,8 +7,8 @@ public enum BotCommands {
     ADD_ITEM("/additem"),
     UPCOMING_DEADLINES("/upcoming"),
     OVERDUE_TASKS("/overdue"),
-    ASSIGN_ITEM("/assignitem");  
-
+    ASSIGN_ITEM("/assignitem"),
+    VIEW_DEV_TASKS("/viewdevtasks");  
     private String command;
 
     BotCommands(String enumCommand) {
