@@ -64,6 +64,7 @@ export default function ToDoItems() {
             <th>Sprint</th>
             <th>Status</th>
             <th>Assigned member</th>
+            <th>Estimated Hours</th>
             <th>Deadline</th>
           </tr>
         </thead>
@@ -71,20 +72,15 @@ export default function ToDoItems() {
           {items.filter(item => !item.done).map(item => (
             <tr key={item.id}>
               <td>{item.description}</td>
-              <td>
-                <span className="icon">
-                  {/* <span className="table-icon">{sprintTagIcon}</span> */}
-                  {item.sprint_id}
-                </span>
-              </td>
+              <td>{item.sprint_id} </td>
               <td>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <StatusCircle className="table-icon" status={item.done ? 'done' : 'pending'} />
                   <span className="icon">{item.done ? 'Done' : 'Pending'}</span>
                 </div>
               </td>
-              <td>{getUserName(item.user_id)}
-              </td>
+              <td>{getUserName(item.user_id)}</td>
+              <td>{item.estimated_hours}</td>
               <td>
                 {item.deadline && (
                   <Moment format="MMM Do YYYY">{item.deadline}</Moment>
@@ -101,8 +97,12 @@ export default function ToDoItems() {
           <tr>
             <th>Task</th>
             <th>Sprint</th>
+            <th>Status</th>
+            <th>Assigned member</th>
+            <th>Estimated Hours</th>
             <th>Deadline</th>
             <th>Completion Date</th>
+            <th>Real Time</th>
           </tr>
         </thead>
         <tbody>
@@ -111,6 +111,14 @@ export default function ToDoItems() {
               <td>{item.description}</td>
               <td>{item.sprint_id}</td>
               <td>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <StatusCircle className="table-icon" status={item.done ? 'done' : 'pending'} />
+                  <span className="icon">{item.done ? 'Done' : 'Pending'}</span>
+                </div>
+              </td>
+              <td>{getUserName(item.user_id)}</td>
+              <td>{item.estimated_hours}</td>
+              <td>
                 {item.deadline && (
                   <Moment format="MMM Do YYYY">{item.deadline}</Moment>
                 )}
@@ -118,6 +126,7 @@ export default function ToDoItems() {
               <td> {item.completion_date && (
                 <Moment format="MMM Do YYYY">{item.completion_date}</Moment>
               )}</td>
+              <td>{item.real_time}</td>
             </tr>
           ))}
         </tbody>
