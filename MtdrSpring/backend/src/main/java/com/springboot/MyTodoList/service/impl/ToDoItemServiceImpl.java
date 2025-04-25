@@ -20,13 +20,13 @@ public class ToDoItemServiceImpl implements ToDoItemService {
 
     @Autowired
     private ToDoItemRepository toDoItemRepository;
-    
+
     @Override
     public List<ToDoItem> findAll() {
         List<ToDoItem> todoItems = toDoItemRepository.findAll();
         return todoItems;
     }
-    
+
     @Override
     public ResponseEntity<ToDoItem> getItemById(int id) {
         Optional<ToDoItem> todoData = toDoItemRepository.findById(id);
@@ -36,7 +36,7 @@ public class ToDoItemServiceImpl implements ToDoItemService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
     @Override
     public ToDoItem addToDoItem(ToDoItem toDoItem) {
         return toDoItemRepository.save(toDoItem);
@@ -47,15 +47,15 @@ public class ToDoItemServiceImpl implements ToDoItemService {
         try {
             toDoItemRepository.deleteById(id);
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
-    
+
     @Override
     public ToDoItem updateToDoItem(int id, ToDoItem td) {
         Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
-        if(toDoItemData.isPresent()) {
+        if (toDoItemData.isPresent()) {
             ToDoItem toDoItem = toDoItemData.get();
             toDoItem.setID(id);
             toDoItem.setCreation_ts(td.getCreation_ts());
@@ -68,5 +68,20 @@ public class ToDoItemServiceImpl implements ToDoItemService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public List<ToDoItem> getTaskByUserId(int user_id) {
+        return toDoItemRepository.findByUser_id(user_id);
+    }
+
+    @Override
+    public Boolean findByUserId(int userId, int id) {
+        Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
+        if (toDoItemData.isPresent()) {
+            ToDoItem toDoItem = toDoItemData.get();
+            return toDoItem.getUser_id() != null && toDoItem.getUser_id() == userId;
+        }
+        return false;
     }
 }

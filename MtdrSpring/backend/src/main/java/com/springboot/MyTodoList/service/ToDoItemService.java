@@ -6,45 +6,52 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ToDoItemService {
-    /**
-     * Encuentra todos los elementos de la lista de tareas.
-     * @return Una lista de todos los elementos ToDoItem
-     */
-    List<ToDoItem> findAll();
-    
-    /**
-     * Busca un elemento de la lista de tareas por su identificador.
-     * @param id El identificador del elemento a buscar
-     * @return ResponseEntity con el elemento si se encuentra, o un estado NOT_FOUND
-     */
-    ResponseEntity<ToDoItem> getItemById(int id);
-    
-    /**
-     * Agrega un nuevo elemento a la lista de tareas.
-     * @param toDoItem El elemento a agregar
-     * @return El elemento guardado con su ID generado
-     */
-    ToDoItem addToDoItem(ToDoItem toDoItem);
-    
-    /**
-     * Elimina un elemento de la lista de tareas.
-     * @param id El identificador del elemento a eliminar
-     * @return true si se eliminó correctamente, false en caso contrario
-     */
-    boolean deleteToDoItem(int id);
-    
-    /**
-     * Actualiza un elemento existente de la lista de tareas.
-     * @param user_id El identificador del elemento a actualizar
-     * @return El elemento actualizado, o null si no se encuentra
-     */
-   List<ToDoItem> getTaskByUserId(int user_id);
-    
-    /**
-     * Actualiza un elemento existente de la lista de tareas.
-     * @param user_id El identificador del elemento a actualizar
-     * @return El elemento actualizado, o null si no se encuentra
-     */
+  /**
+   * Encuentra todos los elementos de la lista de tareas.
+   * 
+   * @return Una lista de todos los elementos ToDoItem
+   */
+  List<ToDoItem> findAll();
 
-   Boolean findByUserId(int userId, int id);
+  /**
+   * Busca un elemento de la lista de tareas por su identificador.
+   * 
+   * @param id El identificador del elemento a buscar
+   * @return ResponseEntity con el elemento si se encuentra, o un estado NOT_FOUND
+   */
+  ResponseEntity<ToDoItem> getItemById(int id);
+
+  /**
+   * Agrega un nuevo elemento a la lista de tareas.
+   * 
+   * @param toDoItem El elemento a agregar
+   * @return El elemento guardado con su ID generado
+   */
+  ToDoItem addToDoItem(ToDoItem toDoItem);
+
+  /**
+   * Elimina un elemento de la lista de tareas.
+   * 
+   * @param id El identificador del elemento a eliminar
+   * @return true si se eliminó correctamente, false en caso contrario
+   */
+  boolean deleteToDoItem(int id);
+
+  /**
+   * Actualiza un elemento existente de la lista de tareas.
+   * 
+   * @param user_id El identificador del elemento a actualizar
+   * @return El elemento actualizado, o null si no se encuentra
+   */
+  List<ToDoItem> getTaskByUserId(int user_id);
+
+  /**
+   * Actualiza un elemento existente de la lista de tareas.
+   * @param id El identificador del elemento a actualizar
+   * @param toDoItem El elemento con los nuevos datos
+   * @return El elemento actualizado, o null si no se encuentra
+   */
+  ToDoItem updateToDoItem(int id, ToDoItem toDoItem);
+
+  Boolean findByUserId(int userId, int id);
 }

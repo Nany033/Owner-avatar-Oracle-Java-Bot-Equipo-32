@@ -16,9 +16,9 @@ import java.util.List;
 @EnableTransactionManagement
 public interface ToDoItemRepository extends JpaRepository<ToDoItem, Integer> {
 
-
     @Query("SELECT t FROM ToDoItem t WHERE t.done = false AND t.deadline IS NOT NULL AND t.deadline < :now")
     List<ToDoItem> findOverdueItems(@Param("now") OffsetDateTime now);
 
-    
+    @Query("SELECT t FROM ToDoItem t WHERE t.user_id = :user_id")
+    List<ToDoItem> findByUser_id(@Param("user_id") int user_id);
 }
