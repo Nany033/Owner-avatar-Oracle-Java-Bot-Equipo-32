@@ -16,4 +16,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Maven verify step
-        run: mvn --batch-mode --update-snapshots verify
+        run: cd MtdrSpring/backend && mvn --batch-mode --update-snapshots verify
