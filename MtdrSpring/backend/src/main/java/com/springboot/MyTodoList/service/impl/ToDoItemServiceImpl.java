@@ -28,6 +28,18 @@ public class ToDoItemServiceImpl implements ToDoItemService {
     }
     
     @Override
+    public List<ToDoItem> findAllActiveItems() {
+        
+        return toDoItemRepository.findAllActiveItems();
+    }
+    
+    @Override
+    public List<ToDoItem> findAllCompletedItems() {
+        
+        return toDoItemRepository.findAllCompletedItems();
+    }
+    
+    @Override
     public ResponseEntity<ToDoItem> getItemById(int id) {
         Optional<ToDoItem> todoData = toDoItemRepository.findById(id);
         if (todoData.isPresent()) {
@@ -67,5 +79,10 @@ public class ToDoItemServiceImpl implements ToDoItemService {
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public List<ToDoItem> saveAll(List<ToDoItem> toDoItems) {
+        return toDoItemRepository.saveAll(toDoItems);
     }
 }

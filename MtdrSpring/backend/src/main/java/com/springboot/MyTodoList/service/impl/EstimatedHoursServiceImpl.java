@@ -26,7 +26,7 @@ public class EstimatedHoursServiceImpl implements EstimatedHoursService {
         Optional<ToDoItem> optionalTask = toDoItemRepository.findById(id);
         if (optionalTask.isPresent()) {
             ToDoItem task = optionalTask.get();
-            // Fixed method name to match the entity field name
+            
             task.setEstimated_hours(estimatedHours);
             return toDoItemRepository.save(task);
         }
@@ -53,8 +53,7 @@ public class EstimatedHoursServiceImpl implements EstimatedHoursService {
 
             int hoursForThisTask = Math.min(remainingHours, MAX_HOURS);
             subTask.setEstimated_hours(hoursForThisTask);
-            tasks.add(subTask); // Don't save to DB here, just add to list
-
+            tasks.add(subTask); 
             remainingHours -= hoursForThisTask;
             part++;
         }

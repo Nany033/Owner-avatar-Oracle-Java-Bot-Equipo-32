@@ -3,6 +3,7 @@ package com.springboot.MyTodoList.service;
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.model.Sprints;
 import java.util.List;
+import java.util.Map;
 
 public interface AssignItemToSprintService {
     /**
@@ -41,4 +42,11 @@ public interface AssignItemToSprintService {
      * @return A list of all active sprints.
      */
     List<Sprints> getAllSprints();
+    
+    /**
+     * Asigna múltiples tareas a sprints apropiados en una operación batch.
+     * @param todoItems Lista de tareas a asignar
+     * @return Mapa con resultados: tarea ID -> sprint ID asignado (o null si no se asignó)
+     */
+    Map<Integer, Integer> assignItemsToSprints(List<ToDoItem> todoItems);
 }
