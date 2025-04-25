@@ -1,0 +1,30 @@
+2025-04-03 19:04:29.413  INFO 4858 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 23.0.2 on Jesss-MacBook-Air.local with PID 4858 (/Users/jessodette/Documents/School/6thSemester/Javabot/Owner-avatar-Oracle-Java-Bot-Equipo-32/MtdrSpring/backend/target/classes started by jessodette in /Users/jessodette/Documents/School/6thSemester/Javabot/Owner-avatar-Oracle-Java-Bot-Equipo-32/MtdrSpring/backend)
+2025-04-03 19:04:29.421  INFO 4858 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-03 19:04:29.659  INFO 4858 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-03 19:04:29.683  INFO 4858 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 20 ms. Found 1 JPA repository interfaces.
+2025-04-03 19:04:29.887  INFO 4858 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-03 19:04:29.891  INFO 4858 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-03 19:04:29.891  INFO 4858 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-03 19:04:29.922  INFO 4858 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-03 19:04:29.922  INFO 4858 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 477 ms
+2025-04-03 19:04:30.036  INFO 4858 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-03 19:04:30.036  INFO 4858 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@telegrambot_medium?TNS_ADMIN=/Users/jessodette/Documents/School/6thSemester/Javabot/Owner-avatar-Oracle-Java-Bot-Equipo-32/Wallet_telegrambot
+2025-04-03 19:04:30.037  INFO 4858 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-03 19:04:30.074  INFO 4858 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-03 19:04:30.094  INFO 4858 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-03 19:04:30.147  INFO 4858 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-03 19:04:32.275  INFO 4858 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-03 19:04:32.988  INFO 4858 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-03 19:04:32.990  INFO 4858 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-03 19:04:33.110  WARN 4858 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-03 19:04:33.158  INFO 4858 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-03 19:04:33.230  INFO 4858 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-03 19:04:33.270  INFO 4858 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-03 19:04:33.273  INFO 4858 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 4.042 seconds (JVM running for 4.211)
+2025-04-03 19:04:33.311  INFO 4858 --- [main] c.s.M.controller.ToDoItemBotController   : Bot Token: 7503493084:AAE-iMYlpmPA2kgsdQzUdeWPJCWYhjQMZt4
+2025-04-03 19:04:33.311  INFO 4858 --- [main] c.s.M.controller.ToDoItemBotController   : Bot name: test1ng_java_bot
+2025-04-03 19:04:33.992  INFO 4858 --- [main] c.s.MyTodoList.MyTodoListApplication     : Bot registered and started succesfully!
+2025-04-03 19:04:48.058  INFO 4858 --- [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-03 19:04:48.060  INFO 4858 --- [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-03 19:04:48.063  INFO 4858 --- [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-04-03 19:05:01.119  INFO 4858 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'

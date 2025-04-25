@@ -1,41 +1,64 @@
 package com.springboot.MyTodoList.model;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /*
-    representation of the TODOITEM table that exists already
-    in the autonomous database
+    Representation of the TODOITEM table that exists already
+    in the autonomous database.
  */
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int ID;
+    private int ID;
     
     @Column(name = "DESCRIPTION")
-    String description;
+    private String description;
     
     @Column(name = "CREATION_TS")
-    OffsetDateTime creation_ts;
+    private OffsetDateTime creation_ts;
     
-    @Column(name = "done")
-    boolean done;
+    @Column(name = "DONE")
+    private boolean done;
     
-    // Nuevo campo para la fecha límite
     @Column(name = "DEADLINE")
-    OffsetDateTime deadline;
+    private OffsetDateTime deadline;
     
-    public ToDoItem(){
+    // Fixed naming to be consistent
+    @Column(name = "ESTIMATED_HOURS")
+    private int estimated_hours;
+
+    // Fields to be developed later
+    // @Column(name = "CREATOR_ID")
+    // private int creator_id;
+    
+    @Column(name = "SPRINT_ID")
+    private Integer sprint_id;
+    
+    @Column(name = "REAL_TIME")
+    private Integer real_time;
+
+    public ToDoItem() {
     }
-    
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline) {
+
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, int sprint_id) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
         this.done = done;
         this.deadline = deadline;
+        this.estimated_hours = estimated_hours;
+        this.sprint_id = sprint_id;
+
     }
 
     public int getID() {
@@ -69,7 +92,7 @@ public class ToDoItem {
     public void setDone(boolean done) {
         this.done = done;
     }
- 
+
     public OffsetDateTime getDeadline() {
         return deadline;
     }
@@ -77,6 +100,50 @@ public class ToDoItem {
     public void setDeadline(OffsetDateTime deadline) {
         this.deadline = deadline;
     }
+
+    // Fixed method names to match the field name (lowercase 'h')
+    public int getEstimated_hours() {
+        return estimated_hours;
+    }
+
+    public void setEstimated_hours(int estimated_hours) {
+        this.estimated_hours = estimated_hours;
+    }
+
+    public Integer getReal_time() {
+        return real_time;
+    }
+
+    public void setReal_time(Integer real_time) {
+        this.real_time = real_time;
+    }
+
+    public Integer getSprint_id() {
+        return sprint_id;
+    }
+
+    public void setSprint_id(Integer sprint_id) {
+        this.sprint_id = sprint_id;
+    }
+
+    // Methods for future columns are commented out
+    /*
+    public int getCreator_id() {
+        return creator_id;
+    }
+
+    public void setCreator_id(int creator_id) {
+        this.creator_id = creator_id;
+    }
+
+    public OffsetDateTime getTask_date() {
+        return task_date;
+    }
+
+    public void setTask_date(OffsetDateTime task_date) {
+        this.task_date = task_date;
+    }
+    */
 
     @Override
     public String toString() {
@@ -86,6 +153,12 @@ public class ToDoItem {
                 ", creation_ts=" + creation_ts +
                 ", deadline=" + deadline +
                 ", done=" + done +
+                ", estimated_hours=" + estimated_hours +
+                ", real_time=" + real_time +
+                ", sprint_id=" + sprint_id +
+                // Future columns commented
+                // ", creator_id=" + creator_id +
+                // ", task_date=" + task_date +
                 '}';
     }
 }

@@ -14,37 +14,55 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import com.springboot.MyTodoList.controller.ToDoItemBotController;
 import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.service.EstimatedHoursService;
+import com.springboot.MyTodoList.service.RealTimeService;
+import com.springboot.MyTodoList.service.UserService;
+
+import com.springboot.MyTodoList.service.AssignItemToSprintService;
 import com.springboot.MyTodoList.util.BotMessages;
 
 @SpringBootApplication
 public class MyTodoListApplication implements CommandLineRunner {
 
-	private static final Logger logger = LoggerFactory.getLogger(MyTodoListApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyTodoListApplication.class);
 
-	@Autowired
-	private ToDoItemService toDoItemService;
+    @Autowired
+    private ToDoItemService toDoItemService;
 
-	@Autowired
-	private DeadlineService deadlineService;
+    @Autowired
+    private DeadlineService deadlineService;
 
-	@Value("${telegram.bot.token}")
-	private String telegramBotToken;
+    @Autowired
+    private EstimatedHoursService estimatedHoursService;
 
-	@Value("${telegram.bot.name}")
-	private String botName;
+    @Autowired
+    private RealTimeService realTimeService;
 
-	public static void main(String[] args) {
-		SpringApplication.run(MyTodoListApplication.class, args);
-	}
+    @Autowired
+    private AssignItemToSprintService assignItemToSprintService;
+    
+    @Autowired
+    private UserService userService;  // Add this line
 
-	@Override
-	public void run(String... args) throws Exception {
-		try {
-			TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-			telegramBotsApi.registerBot(new ToDoItemBotController(telegramBotToken, botName, toDoItemService, deadlineService));
-			logger.info(BotMessages.BOT_REGISTERED_STARTED.getMessage());
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}
-	}
+    @Value("${telegram.bot.token}")
+    private String telegramBotToken;
+
+    @Value("${telegram.bot.name}")
+    private String botName;
+
+    public static void main(String[] args) {
+        SpringApplication.run(MyTodoListApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        try {
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+            telegramBotsApi.registerBot(new ToDoItemBotController(telegramBotToken, botName, toDoItemService, deadlineService, estimatedHoursService, realTimeService, assignItemToSprintService, userService));
+            logger.info(BotMessages.BOT_REGISTERED_STARTED.getMessage());
+
+        } catch (TelegramApiException e) {
+            logger.error("An error occurred while registering the bot: ", e);
+        }
+    }
 }

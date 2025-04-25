@@ -5,8 +5,8 @@ public enum BotCommands {
     HIDE_COMMAND("/hide"), 
     TODO_LIST("/todolist"),
     ADD_ITEM("/additem"),
-    UPCOMING_DEADLINES("/upcoming"),  
-    OVERDUE_TASKS("/overdue");       
+    UPCOMING_DEADLINES("/upcoming"),
+    OVERDUE_TASKS("/overdue"); 
 
     private String command;
 

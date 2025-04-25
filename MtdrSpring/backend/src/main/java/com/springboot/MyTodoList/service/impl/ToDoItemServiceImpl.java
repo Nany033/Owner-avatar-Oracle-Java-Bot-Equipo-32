@@ -62,6 +62,7 @@ public class ToDoItemServiceImpl implements ToDoItemService {
             toDoItem.setDescription(td.getDescription());
             toDoItem.setDone(td.isDone());
             toDoItem.setDeadline(td.getDeadline());
+            toDoItem.setEstimated_hours(td.getEstimated_hours());
             return toDoItemRepository.save(toDoItem);
         } else {
             return null;

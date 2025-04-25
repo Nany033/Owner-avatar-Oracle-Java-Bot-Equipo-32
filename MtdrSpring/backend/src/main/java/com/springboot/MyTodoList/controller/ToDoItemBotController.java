@@ -6,9 +6,11 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -28,8 +30,14 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.Sprints;
+import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.service.DeadlineService;
 import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.service.EstimatedHoursService;
+import com.springboot.MyTodoList.service.AssignItemToSprintService;
+import com.springboot.MyTodoList.service.RealTimeService;
+import com.springboot.MyTodoList.service.UserService;
 import com.springboot.MyTodoList.util.BotCommands;
 import com.springboot.MyTodoList.util.BotHelper;
 import com.springboot.MyTodoList.util.BotLabels;
@@ -40,81 +48,209 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
     private ToDoItemService toDoItemService;
     private DeadlineService deadlineService;
+    private EstimatedHoursService estimatedHoursService;
+    private RealTimeService realTimeService;
+    private AssignItemToSprintService assignItemToSprintService;
+    private UserService userService;
+
     private String botName;
-    
+
     // Mapa para seguir el estado de conversación de cada usuario
     private Map<Long, String> userStates = new HashMap<>();
-    
+
     // Mapa para almacenar temporalmente datos durante una conversación
-    private Map<Long, String> tempData = new HashMap<>();
-    
-    // Constantes para los estados de conversación
+    private Map<String, String> tempData = new HashMap<>();
+
+    private static final String STATE_WAITING_EMPLOYEE_ID = "WAITING_EMPLOYEE_ID";
     private static final String STATE_WAITING_DESCRIPTION = "WAITING_DESCRIPTION";
     private static final String STATE_WAITING_DEADLINE = "WAITING_DEADLINE";
+    private static final String STATE_WAITING_ESTIMATED_HOURS = "WAITING_ESTIMATED_HOURS";
+    private static final String STATE_WAITING_SPRINT = "WAITING_SPRINT";
+    private static final String STATE_WAITING_REAL_TIME = "WAITING_REAL_TIME";
 
-    public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService, DeadlineService deadlineService) {
+    public ToDoItemBotController(String botToken, String botName, ToDoItemService toDoItemService,
+            DeadlineService deadlineService, EstimatedHoursService estimatedHoursService,
+            RealTimeService realTimeService, AssignItemToSprintService assignItemToSprintService,
+            UserService userService) {
         super(botToken);
         logger.info("Bot Token: " + botToken);
         logger.info("Bot name: " + botName);
         this.toDoItemService = toDoItemService;
         this.botName = botName;
         this.deadlineService = deadlineService;
+        this.estimatedHoursService = estimatedHoursService;
+        this.assignItemToSprintService = assignItemToSprintService;
+        this.realTimeService = realTimeService;
+        this.userService = userService;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageTextFromTelegram = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
+            logger.info("Chat ID: {}, Mensaje: {}", chatId, messageTextFromTelegram);
 
             if (messageTextFromTelegram.equals(BotCommands.START_COMMAND.getCommand())
                     || messageTextFromTelegram.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) {
                 handleStartCommand(chatId);
+                return; 
+            }
+            
+            // VERIFICAR SI ESTAMOS ESPERANDO UN ID DE EMPLEADO
+            if (userStates.containsKey(chatId) && STATE_WAITING_EMPLOYEE_ID.equals(userStates.get(chatId))) {
+                if (messageTextFromTelegram.startsWith("/")) {
+                    SendMessage message = new SendMessage();
+                    message.setChatId(chatId);
+                    message.setText("Por favor, introduce tu número de empleado o usa /start para reiniciar.");
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException e) {
+                        logger.error("Error al enviar mensaje: {}", e.getMessage());
+                    }
+                } else {
+                    // Procesar como ID de empleado
+                    handleEmployeeIdInput(messageTextFromTelegram, chatId);
+                }
             } 
-            else if (messageTextFromTelegram.indexOf(BotLabels.DONE.getLabel()) != -1) {
-                handleDoneCommand(messageTextFromTelegram, chatId);
-            } 
-            else if (messageTextFromTelegram.indexOf(BotLabels.UNDO.getLabel()) != -1) {
-                handleUndoCommand(messageTextFromTelegram, chatId);
-            } 
-            else if (messageTextFromTelegram.indexOf(BotLabels.DELETE.getLabel()) != -1) {
-                handleDeleteCommand(messageTextFromTelegram, chatId);
-            } 
+            // Comando para ocultar teclado
             else if (messageTextFromTelegram.equals(BotCommands.HIDE_COMMAND.getCommand())
                     || messageTextFromTelegram.equals(BotLabels.HIDE_MAIN_SCREEN.getLabel())) {
                 handleHideCommand(chatId);
             } 
-            else if (messageTextFromTelegram.equals(BotCommands.TODO_LIST.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.LIST_ALL_ITEMS.getLabel())
-                    || messageTextFromTelegram.equals(BotLabels.MY_TODO_LIST.getLabel())) {
-                handleTodoListCommand(chatId);
-            } 
-            else if (messageTextFromTelegram.equals(BotCommands.ADD_ITEM.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.ADD_NEW_ITEM.getLabel())) {
-                handleAddItemCommand(chatId);
-            }
-            else if (messageTextFromTelegram.equals(BotCommands.UPCOMING_DEADLINES.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.UPCOMING_DEADLINES.getLabel())) {
-                handleUpcomingDeadlinesCommand(chatId);
-            }
-            else if (messageTextFromTelegram.equals(BotCommands.OVERDUE_TASKS.getCommand())
-                    || messageTextFromTelegram.equals(BotLabels.OVERDUE_TASKS.getLabel())) {
-                handleOverdueTasksCommand(chatId);
-            }
-            else if (userStates.containsKey(chatId)) {
-                handleConversationState(messageTextFromTelegram, chatId);
-            }
+            // Para todos los demás comandos, verificar si el usuario está validado
             else {
-                handleUnknownCommand(chatId);
+                Optional<User> user = userService.findByChatId(chatId);
+                if (user.isPresent()) {
+                    // Usuario validado, procesar comandos normales
+                    processValidUserCommands(messageTextFromTelegram, chatId);
+                } else {
+                    // No validado, mostrar mensaje de acceso denegado
+                    SendMessage message = new SendMessage();
+                    message.setChatId(chatId);
+                    message.setText(BotMessages.ACCESS_DENIED.getMessage());
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException e) {
+                        logger.error("Error al enviar mensaje: {}", e.getMessage());
+                    }
+                }
             }
         }
     }
 
-    private void handleStartCommand(long chatId) {
-        userStates.remove(chatId);
-        tempData.remove(chatId);
+    
+    private void processValidUserCommands(String messageText, long chatId) {
+        if (messageText.indexOf(BotLabels.DONE.getLabel()) != -1) {
+            handleDoneCommand(messageText, chatId);
+        } else if (messageText.indexOf(BotLabels.UNDO.getLabel()) != -1) {
+            handleUndoCommand(messageText, chatId);
+        } else if (messageText.indexOf(BotLabels.DELETE.getLabel()) != -1) {
+            handleDeleteCommand(messageText, chatId);
+        } else if (messageText.equals(BotCommands.TODO_LIST.getCommand())
+                || messageText.equals(BotLabels.LIST_ALL_ITEMS.getLabel())
+                || messageText.equals(BotLabels.MY_TODO_LIST.getLabel())) {
+            handleTodoListCommand(chatId);
+        } else if (messageText.equals(BotCommands.ADD_ITEM.getCommand())
+                || messageText.equals(BotLabels.ADD_NEW_ITEM.getLabel())) {
+            handleAddItemCommand(chatId);
+        } else if (messageText.equals(BotCommands.UPCOMING_DEADLINES.getCommand())
+                || messageText.equals(BotLabels.UPCOMING_DEADLINES.getLabel())) {
+            handleUpcomingDeadlinesCommand(chatId);
+        } else if (messageText.equals(BotCommands.OVERDUE_TASKS.getCommand())
+                || messageText.equals(BotLabels.OVERDUE_TASKS.getLabel())) {
+            handleOverdueTasksCommand(chatId);
+        } else if (userStates.containsKey(chatId)) {
+            handleConversationState(messageText, chatId);
+        } else {
+            handleUnknownCommand(chatId);
+        }
+    }
 
+    // En handleStartCommand
+    private void handleStartCommand(long chatId) {
+        // Limpiar estado previo
+        userStates.remove(chatId);
+        tempData.remove(String.valueOf(chatId));
+
+        logger.info("Iniciando proceso de start para chatId: {}", chatId);
+
+        // Verificar si el usuario ya está validado
+        Optional<User> existingUser = userService.findByChatId(chatId);
+        if (existingUser.isPresent()) {
+            SendMessage welcomeBackMessage = new SendMessage();
+            welcomeBackMessage.setChatId(chatId);
+            welcomeBackMessage.setText(BotMessages.WELCOME_BACK.getMessage() + existingUser.get().getUserId());
+            try {
+                execute(welcomeBackMessage);
+                showMainMenu(chatId);
+            } catch (TelegramApiException e) {
+                logger.error("Error al enviar mensaje de bienvenida de regreso: " + e.getMessage(), e);
+            }
+        } else {
+            // Usuario no validado, solicitar número de empleado
+            userStates.put(chatId, STATE_WAITING_EMPLOYEE_ID);
+            SendMessage askForEmployeeId = new SendMessage();
+            askForEmployeeId.setChatId(chatId);
+            askForEmployeeId.setText("¡Bienvenido/a a MyTodoList Bot! " + BotMessages.ASK_EMPLOYEE_ID.getMessage());
+            
+            // Eliminar el teclado para esta solicitud
+            ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove(true);
+            askForEmployeeId.setReplyMarkup(keyboardRemove);
+            
+            try {
+                execute(askForEmployeeId);
+                logger.info("Solicitud de ID de empleado enviada a chatId: {}", chatId);
+            } catch (TelegramApiException e) {
+                logger.error("Error al solicitar número de empleado: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void handleEmployeeIdInput(String employeeId, long chatId) {
+        logger.info("Procesando número de empleado: {} para chatId: {}", employeeId, chatId);
+        
+        // Validar el número de empleado
+        if (userService.validateUser(employeeId)) {
+            // Número de empleado válido
+            User user = userService.associateChatId(employeeId, chatId);
+            if (user != null) {
+                logger.info("Usuario validado y asociado correctamente: {}", employeeId);
+                
+                // Enviar mensaje de bienvenida
+                SendMessage welcomeMessage = new SendMessage();
+                welcomeMessage.setChatId(chatId);
+                welcomeMessage.setText(BotMessages.WELCOME_EMPLOYEE.getMessage());
+                try {
+                    execute(welcomeMessage);
+                    
+                    // Mostrar el menú principal
+                    showMainMenu(chatId);
+                } catch (TelegramApiException e) {
+                    logger.error("Error al enviar mensaje de bienvenida: " + e.getMessage(), e);
+                }
+            } else {
+                logger.error("Error al asociar chatId con usuario: {}", employeeId);
+                sendErrorMessage(chatId, "Ocurrió un error al procesar tu solicitud. Por favor, intenta nuevamente.");
+            }
+        } else {
+            // Número de empleado inválido
+            logger.info("Número de empleado inválido: {}", employeeId);
+            SendMessage invalidMessage = new SendMessage();
+            invalidMessage.setChatId(chatId);
+            invalidMessage.setText(BotMessages.INVALID_EMPLOYEE_ID.getMessage());
+            try {
+                execute(invalidMessage);
+                // Limpiar estado después de respuesta inválida
+                userStates.remove(chatId);
+                tempData.remove(String.valueOf(chatId));
+            } catch (TelegramApiException e) {
+                logger.error("Error al enviar mensaje de empleado inválido: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void showMainMenu(long chatId) {
         SendMessage messageToTelegram = new SendMessage();
         messageToTelegram.setChatId(chatId);
         messageToTelegram.setText(BotMessages.HELLO_MYTODO_BOT.getMessage());
@@ -152,12 +288,24 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         Integer id = Integer.valueOf(done);
 
         try {
-            ToDoItem item = getToDoItemById(id).getBody();
+            ToDoItem item = getToDoItemById(id);
             item.setDone(true);
             updateToDoItem(item, id);
-            BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), this);
+            
+            // Store the item ID for the next step
+            tempData.put(String.valueOf(chatId) + "_itemId", String.valueOf(id));
+            
+            // Move to next state
+            userStates.put(chatId, STATE_WAITING_REAL_TIME);
+            
+            // Ask for real time
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("¿Cuántas horas reales tomó completar esta tarea?");
+            execute(messageToTelegram);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
+            sendErrorMessage(chatId, "Ocurrió un error al marcar la tarea como completada.");
         }
     }
 
@@ -166,7 +314,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         Integer id = Integer.valueOf(undo);
 
         try {
-            ToDoItem item = getToDoItemById(id).getBody();
+            ToDoItem item = getToDoItemById(id);
             item.setDone(false);
             updateToDoItem(item, id);
             BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_UNDONE.getMessage(), this);
@@ -193,6 +341,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         BotHelper.sendMessageToTelegram(chatId, BotMessages.BYE.getMessage(), this);
     }
 
+    
     private void handleTodoListCommand(long chatId) {
         userStates.remove(chatId);
         tempData.remove(chatId);
@@ -266,9 +415,10 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
 
+
     private void handleAddItemCommand(long chatId) {
         userStates.put(chatId, STATE_WAITING_DESCRIPTION);
-        
+
         try {
             SendMessage messageToTelegram = new SendMessage();
             messageToTelegram.setChatId(chatId);
@@ -285,27 +435,27 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private void handleUpcomingDeadlinesCommand(long chatId) {
         // Recuperar tareas con fechas límite próximas (próximos 7 días)
         List<ToDoItem> upcomingItems = deadlineService.getUpcomingDeadlines(7);
-        
+
         SendMessage messageToTelegram = new SendMessage();
         messageToTelegram.setChatId(chatId);
-        
+
         if (upcomingItems.isEmpty()) {
             messageToTelegram.setText(BotMessages.NO_UPCOMING_DEADLINES.getMessage());
         } else {
             StringBuilder message = new StringBuilder(BotMessages.UPCOMING_DEADLINES_TITLE.getMessage() + "\n\n");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            
+
             for (ToDoItem item : upcomingItems) {
                 message.append("• ")
-                      .append(item.getDescription())
-                      .append(" (Fecha límite: ")
-                      .append(item.getDeadline().format(formatter))
-                      .append(")\n");
+                        .append(item.getDescription())
+                        .append(" (Fecha límite: ")
+                        .append(item.getDeadline().format(formatter))
+                        .append(")\n");
             }
-            
+
             messageToTelegram.setText(message.toString());
         }
-        
+
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
@@ -313,7 +463,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
         messageToTelegram.setReplyMarkup(keyboardMarkup);
-        
+
         try {
             execute(messageToTelegram);
         } catch (TelegramApiException e) {
@@ -323,27 +473,26 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
     private void handleOverdueTasksCommand(long chatId) {
         List<ToDoItem> overdueItems = deadlineService.getOverdueItems();
-        
+
         SendMessage messageToTelegram = new SendMessage();
         messageToTelegram.setChatId(chatId);
-        
+
         if (overdueItems.isEmpty()) {
             messageToTelegram.setText(BotMessages.NO_OVERDUE_TASKS.getMessage());
         } else {
             StringBuilder message = new StringBuilder(BotMessages.OVERDUE_TASKS_TITLE.getMessage() + "\n\n");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            
+
             for (ToDoItem item : overdueItems) {
                 message.append("• ")
-                      .append(item.getDescription())
-                      .append(" (Fecha límite: ")
-                      .append(item.getDeadline().format(formatter))
-                      .append(")\n");
+                        .append(item.getDescription())
+                        .append(" (Fecha límite: ")
+                        .append(item.getDeadline().format(formatter))
+                        .append(")\n");
             }
-            
+
             messageToTelegram.setText(message.toString());
         }
-        
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
@@ -352,7 +501,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
         messageToTelegram.setReplyMarkup(keyboardMarkup);
-        
+
         try {
             execute(messageToTelegram);
         } catch (TelegramApiException e) {
@@ -360,78 +509,435 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
 
+    // Handle conversation state based on user input
+    // This method will be called when the user is in a conversation state
+
     private void handleConversationState(String messageText, long chatId) {
-        String state = userStates.get(chatId);
-        
-        if (STATE_WAITING_DESCRIPTION.equals(state)) {
-            tempData.put(chatId, messageText);
-            userStates.put(chatId, STATE_WAITING_DEADLINE);
-            
-            try {
+        String state = userStates.get(chatId); // use api method to get chatId
+        if (state == null) {
+            sendErrorMessage(chatId, "Estado de conversación no válido. Inicia el proceso de nuevo.");
+            return;
+        }
+
+        try {
+            switch (state) {
+                case STATE_WAITING_DESCRIPTION:
+                    handleDescriptionInput(messageText, chatId);
+                    break;
+                case STATE_WAITING_DEADLINE:
+                    handleDeadlineInput(messageText, chatId);
+                    break;
+                case STATE_WAITING_ESTIMATED_HOURS:
+                    handleEstimatedHoursInput(messageText, chatId);
+                    break;
+                case STATE_WAITING_SPRINT:
+                    handleSprintInput(messageText, chatId);
+                    break;
+                case STATE_WAITING_REAL_TIME:
+                    handleRealTimeInput(messageText, chatId);
+                    break;
+                default:
+                    logger.warn("Estado desconocido: " + state + " para chatId: " + chatId);
+                    sendErrorMessage(chatId, "Estado de conversación no reconocido. Inicia el proceso de nuevo.");
+                    userStates.remove(chatId);
+                    tempData.remove(String.valueOf(chatId));
+            }
+        } catch (Exception e) {
+            logger.error("Error in handleConversationState: " + e.getLocalizedMessage(), e);
+            sendErrorMessage(chatId, "Ocurrió un error inesperado. Inténtalo de nuevo.");
+            // Clean up state on error
+            userStates.remove(chatId);
+            tempData.remove(String.valueOf(chatId));
+        }
+    }
+
+    private void handleDescriptionInput(String description, long chatId) throws TelegramApiException {
+        // Save the description temporarily
+        tempData.put(String.valueOf(chatId), description);
+
+        // Move to next state
+        userStates.put(chatId, STATE_WAITING_DEADLINE);
+
+        // Ask for deadline
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(
+                "Por favor, introduce la fecha límite para esta tarea (formato: YYYY-MM-DD), o escribe 'NINGUNA' si no hay fecha límite:");
+        execute(message);
+
+        logger.info("Saved description for chatId: " + chatId + " - Description: " + description);
+    }
+
+    private void handleDeadlineInput(String deadlineText, long chatId) throws TelegramApiException {
+        logger.info("In state waiting deadline for chatId: " + chatId);
+
+        // Get description from temporary storage
+        String description = tempData.get(String.valueOf(chatId));
+        logger.info("Retrieving description from tempData: " + description);
+
+        if (description == null) {
+            logger.warn("Description is null for chatId: " + chatId);
+            sendErrorMessage(chatId, "Error al recuperar la descripción de la tarea. Inténtalo de nuevo.");
+            userStates.remove(chatId);
+            tempData.remove(String.valueOf(chatId));
+            return;
+        }
+
+        // Create new task with description only
+        ToDoItem newItem = new ToDoItem();
+        newItem.setDescription(description);
+        newItem.setCreation_ts(OffsetDateTime.now());
+        newItem.setDone(false);
+
+        logger.info("Creating newItem with values - Description: " + newItem.getDescription() +
+                ", Timestamp: " + newItem.getCreation_ts() +
+                ", Done: " + newItem.isDone());
+
+        // Save task to get an ID
+        try {
+            ResponseEntity<?> entity = addToDoItem(newItem);
+            Integer newItemId = getNewItemIdFromResponse(entity);
+            // Store the item ID for the next step
+            tempData.put(String.valueOf(chatId) + "_itemId", String.valueOf(newItemId));
+
+            // Validate and set deadline if provided
+            if (!deadlineText.equalsIgnoreCase("NINGUNA")) {
+                if (deadlineService.isValidDeadlineFormat(deadlineText)) {
+                    deadlineService.setDeadlineFromString(newItemId, deadlineText);
+                    // Store deadline for potential use later
+                    tempData.put(String.valueOf(chatId) + "_deadline", deadlineText);
+                } else {
+                    SendMessage messageToTelegram = new SendMessage();
+                    messageToTelegram.setChatId(chatId);
+                    messageToTelegram.setText("Formato de fecha inválido. Usa YYYY-MM-DD o escribe 'NINGUNA':");
+                    execute(messageToTelegram);
+                    return; // Stay in same state
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error adding to-do item: " + e.getMessage(), e);
+            sendErrorMessage(chatId, "Hubo un error al crear la tarea. Por favor, inténtalo de nuevo.");
+            userStates.remove(chatId);
+            tempData.remove(String.valueOf(chatId));
+            return;
+        }
+
+        // Move to next state
+        userStates.put(chatId, STATE_WAITING_ESTIMATED_HOURS);
+
+        // Ask for estimated hours
+        SendMessage messageToTelegram = new SendMessage();
+        messageToTelegram.setChatId(chatId);
+        messageToTelegram.setText("¿Cuántas horas estimas que tomará esta tarea?:");
+        execute(messageToTelegram);
+    }
+
+    private void handleEstimatedHoursInput(String hoursText, long chatId) throws TelegramApiException {
+        logger.info("In state estimated hours for chatId: " + chatId);
+        logger.info("Temp data (hours): " + hoursText);
+
+        // Get the task ID from temporary storage
+        String itemIdStr = tempData.get(String.valueOf(chatId) + "_itemId");
+        if (itemIdStr == null) {
+            sendErrorMessage(chatId, "Error al recuperar la tarea. Inténtalo de nuevo.");
+            userStates.remove(chatId);
+            tempData.remove(String.valueOf(chatId));
+            return;
+        }
+
+        int itemId = Integer.valueOf(itemIdStr);
+
+        // Validate hours input
+        int estimatedHours;
+        try {
+            estimatedHours = Integer.parseInt(hoursText);
+            if (estimatedHours <= 0 || estimatedHours > 100) {
+                logger.info("Chat ID: " + chatId + " - Invalid estimated hours: " + estimatedHours);
                 SendMessage messageToTelegram = new SendMessage();
                 messageToTelegram.setChatId(chatId);
-                messageToTelegram.setText("Por favor, introduce la fecha límite para esta tarea (formato: YYYY-MM-DD), o escribe 'NINGUNA' si no hay fecha límite:");
-                
+                messageToTelegram.setText("Por favor, introduce un número válido de horas estimadas (entre 1 y 100):");
                 execute(messageToTelegram);
-            } catch (Exception e) {
-                logger.error(e.getLocalizedMessage(), e);
+                return; // Stay in same state
             }
+        } catch (NumberFormatException e) {
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("Formato inválido. Introduce un número entre 1 y 100:");
+            execute(messageToTelegram);
+            return; // Stay in same state
         }
-        else if (STATE_WAITING_DEADLINE.equals(state)) {
-            try {
-                String description = tempData.get(chatId);
-                ToDoItem newItem = new ToDoItem();
-                newItem.setDescription(description);
-                newItem.setCreation_ts(OffsetDateTime.now());
-                newItem.setDone(false);
-                
-                // Guardar primero el ítem sin deadline
-                ResponseEntity entity = addToDoItem(newItem);
-                
-                // Extraer el ID del nuevo ítem de la respuesta
-                String locationHeader = entity.getHeaders().getFirst("location");
-                int newItemId = Integer.parseInt(locationHeader);
-                
-                // Usar el nuevo servicio para establecer la fecha límite
-                if (!messageText.equalsIgnoreCase("NINGUNA")) {
-                    // Validar y establecer el deadline usando el servicio
-                    if (deadlineService.isValidDeadlineFormat(messageText)) {
-                        deadlineService.setDeadlineFromString(newItemId, messageText);
-                        
-                        // Preparar mensaje de confirmación
-                        ToDoItem updatedItem = getToDoItemById(newItemId).getBody();
-                        String confirmationText;
-                        if (updatedItem.getDeadline() != null) {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                            confirmationText = "Nueva tarea añadida con fecha límite: " + 
-                                updatedItem.getDeadline().format(formatter);
-                        } else {
-                            confirmationText = BotMessages.NEW_ITEM_ADDED.getMessage();
-                        }
-                        
-                        // Enviar confirmación
-                        userStates.remove(chatId);
-                        tempData.remove(chatId);
-                        BotHelper.sendMessageToTelegram(chatId, confirmationText, this);
-                    } else {
-                        // Formato de fecha inválido
-                        SendMessage errorMessage = new SendMessage();
-                        errorMessage.setChatId(chatId);
-                        errorMessage.setText("Formato de fecha inválido. Por favor, usa YYYY-MM-DD o escribe 'NINGUNA':");
-                        execute(errorMessage);
+
+        // Set estimated hours or split task based on service logic
+        if (estimatedHoursService.checkEstimatedHours(estimatedHours)) {
+            // Case 1: Valid hours - update existing task
+            estimatedHoursService.setEstimatedHours(itemId, estimatedHours);
+            
+            // Get the task and try to assign it to a sprint
+            ToDoItem task = toDoItemService.getItemById(itemId).getBody();
+            if (task != null) {
+                Sprints appropriateSprint = assignItemToSprintService.findAppropriateSprint(task);
+                if (appropriateSprint != null) {
+                    ToDoItem assignedTask = assignItemToSprintService.assignItemToSprint(itemId, appropriateSprint.getSprint_id());
+                    if (assignedTask != null) {
+                        SendMessage messageToTelegram = new SendMessage();
+                        messageToTelegram.setChatId(chatId);
+                        messageToTelegram.setText("Tarea creada con duración de " + estimatedHours + " horas y asignada automáticamente al sprint " + appropriateSprint.getSprint_id() + ".");
+                        execute(messageToTelegram);
                     }
                 } else {
-                    // Sin fecha límite
-                    userStates.remove(chatId);
-                    tempData.remove(chatId);
-                    BotHelper.sendMessageToTelegram(chatId, BotMessages.NEW_ITEM_ADDED.getMessage(), this);
+                    SendMessage messageToTelegram = new SendMessage();
+                    messageToTelegram.setChatId(chatId);
+                    messageToTelegram.setText("Tarea creada con duración de " + estimatedHours + " horas. No se encontró un sprint adecuado para la fecha límite.");
+                    execute(messageToTelegram);
                 }
-            } catch (Exception e) {
-                logger.error(e.getLocalizedMessage(), e);
-                userStates.remove(chatId);
-                tempData.remove(chatId);
             }
+            cleanupState(chatId);
+        } else {
+            // Case 2: Needs splitting
+            ToDoItem existingItem = getToDoItemById(itemId).getBody();
+            if (existingItem == null) {
+                sendErrorMessage(chatId, "Error al recuperar la tarea para dividirla. Inténtalo de nuevo.");
+                cleanupState(chatId);
+                return;
+            }
+
+            logger.info("Splitting task with ID: {} and hours: {}", itemId, estimatedHours);
+
+            // Set the estimated hours on the original task before splitting
+            existingItem.setEstimated_hours(estimatedHours);
+            existingItem = toDoItemService.updateToDoItem(itemId, existingItem);
+
+            List<ToDoItem> splitTasks = estimatedHoursService.splitTask(existingItem);
+            logger.info("Split into {} subtasks", splitTasks.size());
+
+            if (splitTasks.isEmpty()) {
+                sendErrorMessage(chatId, "Error: No se pudieron crear subtareas");
+                cleanupState(chatId);
+                return;
+            }
+
+            List<Integer> addedSubtaskIds = new ArrayList<>();
+            try {
+                // Add all subtasks
+                for (ToDoItem task : splitTasks) {
+                    logger.info("Adding subtask with description: {}", task.getDescription());
+                    ResponseEntity<?> responseEntity = addToDoItem(task);
+                    ToDoItem savedTask = (ToDoItem) responseEntity.getBody();
+                    if (savedTask != null) {
+                        logger.info("Successfully added subtask with ID: {}", savedTask.getID());
+                        addedSubtaskIds.add(savedTask.getID());
+                    } else {
+                        logger.error("Failed to add subtask: response body was null");
+                    }
+                }
+
+                logger.info("Total subtasks added: {}", addedSubtaskIds.size());
+
+                // Only delete original if ALL subtasks succeeded
+                if (!addedSubtaskIds.isEmpty()) {
+                    deleteToDoItem(existingItem.getID());
+                    logger.info("Deleted original task with ID: {}", existingItem.getID());
+                }
+
+            } catch (Exception e) {
+                // Rollback any created subtasks
+                for (Integer id : addedSubtaskIds) {
+                    deleteToDoItem(id);
+                }
+                logger.error("Error adding split tasks: " + e.getMessage(), e);
+                sendErrorMessage(chatId, "Error al crear subtareas. Se ha revertido la operación.");
+                cleanupState(chatId);
+                return;
+            }
+
+            // Try to assign each subtask to a sprint
+            int assignedCount = 0;
+            for (Integer taskId : addedSubtaskIds) {
+                ToDoItem task = getToDoItemById(taskId);
+                if (task == null) {
+                    logger.error("Failed to retrieve subtask with ID: {}", taskId);
+                    continue; // Skip this task
+                }
+                Sprints appropriateSprint = assignItemToSprintService.findAppropriateSprint(task);
+                if (appropriateSprint != null) {
+                    ToDoItem assignedTask = assignItemToSprintService.assignItemToSprint(taskId, appropriateSprint.getSprint_id());
+                    if (assignedTask != null) {
+                        assignedCount++;
+                        logger.info("Assigned subtask {} to sprint {}", taskId, appropriateSprint.getSprint_id());
+                    }
+                }
+            }
+
+            // Build success message
+            int successCount = addedSubtaskIds.size();
+            logger.info("Final counts - Total subtasks: {}, Assigned to sprints: {}", successCount, assignedCount);
+            
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            if (successCount == 0) {
+                messageToTelegram.setText("Error: No se pudieron crear subtareas. Por favor, inténtalo de nuevo.");
+            } else if (assignedCount == successCount) {
+                messageToTelegram.setText("Tarea dividida en " + successCount + " partes y todas fueron asignadas automáticamente a sprints.");
+            } else if (assignedCount > 0) {
+                messageToTelegram.setText("Tarea dividida en " + successCount + " partes. " + assignedCount + " subtareas fueron asignadas automáticamente a sprints.");
+            } else {
+                messageToTelegram.setText("Tarea dividida en " + successCount + " partes. No se encontraron sprints adecuados para las fechas límite.");
+            }
+            execute(messageToTelegram);
+            cleanupState(chatId);
         }
+    }
+
+    private void handleSprintInput(String sprintText, long chatId) throws TelegramApiException {
+        logger.info("In state sprint assignment for chatId: " + chatId);
+        
+        // Get the task ID(s) from temporary storage
+        String itemIdStr = tempData.get(String.valueOf(chatId) + "_itemId");
+        String splitTaskIdsStr = tempData.get(String.valueOf(chatId) + "_splitTaskIds");
+        
+        if (itemIdStr == null && splitTaskIdsStr == null) {
+            sendErrorMessage(chatId, "Error al recuperar la tarea. Inténtalo de nuevo.");
+            cleanupState(chatId);
+            return;
+        }
+
+        // Handle "NINGUNO" case
+        if (sprintText.equalsIgnoreCase("NINGUNO")) {
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("Tarea(s) creada(s) sin asignación a sprint.");
+            execute(messageToTelegram);
+            cleanupState(chatId);
+            return;
+        }
+
+        // Parse sprint ID
+        int sprintId;
+        try {
+            sprintId = Integer.parseInt(sprintText);
+        } catch (NumberFormatException e) {
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("Formato inválido. Introduce un número de sprint válido o 'NINGUNO':");
+            execute(messageToTelegram);
+            return;
+        }
+
+        // Handle single task or split tasks
+        if (splitTaskIdsStr != null) {
+            // Handle split tasks
+            List<Integer> taskIds = Arrays.stream(splitTaskIdsStr.split(","))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+            
+            boolean allAssigned = true;
+            for (Integer taskId : taskIds) {
+                ToDoItem assignedItem = assignItemToSprintService.assignItemToSprint(taskId, sprintId);
+                if (assignedItem == null) {
+                    allAssigned = false;
+                    break;
+                }
+            }
+            
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            if (allAssigned) {
+                messageToTelegram.setText("Todas las tareas han sido asignadas al sprint " + sprintId + ".");
+            } else {
+                messageToTelegram.setText("Error al asignar algunas tareas al sprint. Verifica que el sprint exista y que las fechas sean compatibles.");
+            }
+            execute(messageToTelegram);
+        } else {
+            // Handle single task
+            ToDoItem assignedItem = assignItemToSprintService.assignItemToSprint(Integer.parseInt(itemIdStr), sprintId);
+            
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            if (assignedItem != null) {
+                messageToTelegram.setText("Tarea asignada al sprint " + sprintId + ".");
+            } else {
+                messageToTelegram.setText("Error al asignar la tarea al sprint. Verifica que el sprint exista y que las fechas sean compatibles.");
+            }
+            execute(messageToTelegram);
+        }
+        
+        cleanupState(chatId);
+    }
+
+    private void handleRealTimeInput(String hoursText, long chatId) throws TelegramApiException {
+        logger.info("In state waiting real time for chatId: " + chatId);
+        logger.info("Temp data (hours): " + hoursText);
+
+        // Get the task ID from temporary storage
+        String itemIdStr = tempData.get(String.valueOf(chatId) + "_itemId");
+        if (itemIdStr == null) {
+            sendErrorMessage(chatId, "Error al recuperar la tarea. Inténtalo de nuevo.");
+            userStates.remove(chatId);
+            tempData.remove(String.valueOf(chatId));
+            return;
+        }
+
+        int itemId = Integer.valueOf(itemIdStr);
+
+        // Validate hours input
+        int realTime;
+        try {
+            realTime = Integer.parseInt(hoursText);
+            if (!realTimeService.isValidRealTime(realTime)) {
+                logger.info("Chat ID: " + chatId + " - Invalid real time: " + realTime);
+                SendMessage messageToTelegram = new SendMessage();
+                messageToTelegram.setChatId(chatId);
+                messageToTelegram.setText("Por favor, introduce un número válido de horas reales (entre 1 y 100):");
+                execute(messageToTelegram);
+                return; // Stay in same state
+            }
+        } catch (NumberFormatException e) {
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("Formato inválido. Introduce un número entre 1 y 100:");
+            execute(messageToTelegram);
+            return; // Stay in same state
+        }
+
+        try {
+            // Update real time using the service
+            realTimeService.setRealTime(itemId, realTime);
+
+            // Send success message
+            SendMessage messageToTelegram = new SendMessage();
+            messageToTelegram.setChatId(chatId);
+            messageToTelegram.setText("¡Tarea completada! Se registraron " + realTime + " horas reales.");
+            execute(messageToTelegram);
+
+            // Clean up state
+            cleanupState(chatId);
+        } catch (Exception e) {
+            logger.error("Error updating real time: " + e.getMessage(), e);
+            sendErrorMessage(chatId, "Ocurrió un error al actualizar el tiempo real. Inténtalo de nuevo.");
+            cleanupState(chatId);
+        }
+    }
+
+    // Helper method to get an existing task by ID
+    private ToDoItem getToDoItemById(Integer itemId) {
+        try {
+            return toDoItemService.getItemById(itemId).getBody();
+        } catch (Exception e) {
+            logger.error("Error retrieving ToDoItem with ID: " + itemId, e);
+            return null;
+        }
+    }
+
+    private void cleanupState(long chatId) {
+        // Clean user state
+        userStates.remove(chatId);
+
+        // Clean all temp data entries for this chat
+        tempData.remove(String.valueOf(chatId)); // Main entry
+        tempData.remove(String.valueOf(chatId) + "_itemId");
+        tempData.remove(String.valueOf(chatId) + "_deadline");
+
+        logger.info("Cleaned state for chatId: " + chatId);
     }
 
     private void handleUnknownCommand(long chatId) {
@@ -442,22 +948,22 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         helpMessage.append("/upcoming - Ver tareas con fechas límite próximas\n");
         helpMessage.append("/overdue - Ver tareas con fechas límite vencidas\n");
         helpMessage.append("/hide - Ocultar el teclado\n");
-        
+
         SendMessage messageToTelegram = new SendMessage();
         messageToTelegram.setChatId(chatId);
         messageToTelegram.setText(helpMessage.toString());
-        
+
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
-        
+
         KeyboardRow row = new KeyboardRow();
         row.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
         row.add(BotLabels.LIST_ALL_ITEMS.getLabel());
         keyboard.add(row);
-        
+
         keyboardMarkup.setKeyboard(keyboard);
         messageToTelegram.setReplyMarkup(keyboardMarkup);
-        
+
         try {
             execute(messageToTelegram);
         } catch (TelegramApiException e) {
@@ -465,12 +971,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
 
-    @Override
-    public String getBotUsername() {        
-        return botName;
-    }
+    // Removed duplicate method definition
 
-    public List<ToDoItem> getAllToDoItems() { 
+    public List<ToDoItem> getAllToDoItems() {
         return toDoItemService.findAll();
     }
 
@@ -484,14 +987,12 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         }
     }
 
-    public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
+    public ResponseEntity<ToDoItem> addToDoItem(ToDoItem todoItem) throws Exception {
         ToDoItem td = toDoItemService.addToDoItem(todoItem);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("location", "" + td.getID());
         responseHeaders.set("Access-Control-Expose-Headers", "location");
-        // URI location = URI.create(""+td.getID())
-
-        return ResponseEntity.ok().headers(responseHeaders).build();
+        return ResponseEntity.ok().headers(responseHeaders).body(td);
     }
 
     public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable int id) {
@@ -515,4 +1016,37 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             return new ResponseEntity<>(flag, HttpStatus.NOT_FOUND);
         }
     }
+
+    private Integer getNewItemIdFromResponse(ResponseEntity<?> entity) {
+        String locationHeader = entity.getHeaders().getFirst("location");
+        if (locationHeader == null || locationHeader.isEmpty()) {
+            logger.error("Error: Missing location header in response.");
+            return null;
+        }
+
+        try {
+            return Integer.valueOf(locationHeader);
+        } catch (NumberFormatException e) {
+            logger.error("Error parsing location header to integer: " + locationHeader, e);
+            return null;
+        }
+    }
+
+    private void sendErrorMessage(long chatId, String errorMessage) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(errorMessage);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            logger.error("Failed to send error message: " + e.getLocalizedMessage(), e);
+        }
+    }
+
+    @Override
+    public String getBotUsername() {
+        return botName;
+    }
+
 }

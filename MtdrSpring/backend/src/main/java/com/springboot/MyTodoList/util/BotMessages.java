@@ -2,12 +2,12 @@ package com.springboot.MyTodoList.util;
 
 public enum BotMessages {
     
-    HELLO_MYTODO_BOT("Hello! I'm MyTodoList Bot!\nType a new todo item below and press the send button (blue arrow), or select an option below:"),
+    HELLO_MYTODO_BOT("Hello! I'm MyTodoList Bot!\n Select an option from menu"),
     BOT_REGISTERED_STARTED("Bot registered and started succesfully!"),
     ITEM_DONE("Item done! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
     ITEM_UNDONE("Item undone! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
     ITEM_DELETED("Item deleted! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-    TYPE_NEW_TODO_ITEM("Type a new todo item below and press the send button (blue arrow) on the rigth-hand side."),
+    TYPE_NEW_TODO_ITEM("Enter the name of the New Todo Item and press the send button."),
     NEW_ITEM_ADDED("New item added! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
     BYE("Bye! Select /start to resume!"),
     REQUEST_DEADLINE("Please enter a deadline for this task (format: YYYY-MM-DD), or type 'NONE' if there's no deadline:"),
@@ -16,7 +16,21 @@ public enum BotMessages {
     NO_OVERDUE_TASKS("Good job! You don't have any overdue tasks."),
     UPCOMING_DEADLINES_TITLE("Upcoming deadlines:"),
     OVERDUE_TASKS_TITLE("Overdue tasks:"),
-    COMMAND_NOT_RECOGNIZED("Command not recognized. Here are the available commands:");
+    COMMAND_NOT_RECOGNIZED("Command not recognized. Here are the available commands:"),
+
+    // Estimated Hours Messages
+    REQUEST_ESTIMATED_HOURS("Please enter the estimated hours required for this task:"),
+    INVALID_ESTIMATED_HOURS("Invalid input. Please enter a number for the estimated hours."),
+    EXCEEDED_ESTIMATED_HOURS("⚠ Warning: Task exceeds 4 hours and will be split."),
+    TASK_SPLIT_SUCCESS("Task exceeded the allowed hours and has been split into multiple smaller tasks."),
+    ESTIMATED_HOURS_SET("Estimated hours updated successfully!"),
+
+    // Employee validation messages
+    ASK_EMPLOYEE_ID("Por favor, introduce tu número de empleado para continuar:"),
+    INVALID_EMPLOYEE_ID("Lo siento, por el momento no puedes acceder a este servicio."),
+    WELCOME_EMPLOYEE("¡Bienvenido/a! Tu número de empleado ha sido validado correctamente."),
+    WELCOME_BACK("¡Bienvenido/a de nuevo! Has ingresado anteriormente con el número de empleado: "),
+    ACCESS_DENIED("Necesitas validar tu número de empleado para acceder a esta funcionalidad. Usa /start para comenzar.");
 
     private String message;
 
