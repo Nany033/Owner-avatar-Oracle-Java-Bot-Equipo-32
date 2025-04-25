@@ -15,5 +15,5 @@ jobs:
           java-version: '11'
           distribution: 'openJDK'
           cache: maven
-      - name: Verify maven
+      - name: Maven verify step
         run: mvn --batch-mode --update-snapshots verify
