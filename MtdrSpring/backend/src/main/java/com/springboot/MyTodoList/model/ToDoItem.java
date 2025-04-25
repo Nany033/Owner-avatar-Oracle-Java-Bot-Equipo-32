@@ -145,6 +145,30 @@ public class ToDoItem {
         this.completion_date = completion_date;
     }
 
+    public static void printCompletionStats(List<ToDoItem> items) {
+        long totalCompleted = items.stream()
+                .filter(item -> item.getCompletion_date() != null)
+                .count();
+
+        if (totalCompleted == 0) {
+            System.out.println("No tasks have been completed yet.");
+            return;
+        }
+
+        long onTime = items.stream()
+                .filter(item -> item.getCompletion_date() != null)
+                .filter(item -> !item.getCompletion_date().isAfter(item.getDeadline()))
+                .count();
+
+        long late = totalCompleted - onTime;
+
+        double onTimePercentage = (onTime * 100.0) / totalCompleted;
+        double latePercentage = (late * 100.0) / totalCompleted;
+
+        System.out.printf("Completed on time: %.2f%%\n", onTimePercentage);
+        System.out.printf("Completed late: %.2f%%\n", latePercentage);
+    }
+
 
     @Override
     public String toString() {
