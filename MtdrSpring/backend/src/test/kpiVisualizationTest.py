@@ -2,34 +2,37 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 # Initialize the Chrome WebDriver
 driver = webdriver.Chrome()  # Ensure ChromeDriver is installed and in PATH
 
 try:
-    # Step 1: Navigate to the dashboard or page containing the PieChart
-    driver.get("http://localhost:8081/dashboard")  # Replace with the actual URL of the dashboard page
+    # Step 1: Navigate to the KPI dashboard page
+    driver.get("http://localhost:8081/kpi-dashboard")  # Replace with the actual URL of the KPI dashboard page
 
-    # Step 2: Wait for the PieChart to load
-    pie_chart = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "recharts-pie"))  # Replace with the actual class name of the PieChart
+    # Step 2: Select a user from the dropdown
+    user_dropdown = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, "userDropdown"))  # Replace with the actual ID of the user dropdown
+    )
+    user_dropdown.click()
+
+    # Step 3: Select a specific user (e.g., User ID 1)
+    user_option = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//option[@value='1']"))  # Replace with the actual value for the user
+    )
+    user_option.click()
+
+    # Step 4: Wait for the KPI data to load
+    kpi_card = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "kpi-card"))  # Replace with the actual class name of the KPI card
     )
 
-    # Step 3: Hover over a segment of the PieChart
-    segment = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "recharts-sector"))  # Replace with the actual class name of a PieChart segment
-    )
-    webdriver.ActionChains(driver).move_to_element(segment).perform()
+    # Step 5: Verify the KPI data is displayed
+    assert "Completed on Time" in kpi_card.text, "KPI data is not displayed correctly!"
+    assert "Completed Late" in kpi_card.text, "KPI data is not displayed correctly!"
+    assert "Total tasks" in kpi_card.text, "KPI data is not displayed correctly!"
 
-    # Step 4: Verify the tooltip appears with the correct data
-    tooltip = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "recharts-tooltip-wrapper"))  # Replace with the actual class name of the tooltip
-    )
-    assert "PV" in tooltip.text, "Tooltip does not contain expected data!"
-    assert "Rate" in tooltip.text, "Tooltip does not contain expected percentage!"
-
-    print("Data Visualization Test Passed!")
+    print("KPI Visualization Test Passed!")
 
 finally:
     # Close the browser
