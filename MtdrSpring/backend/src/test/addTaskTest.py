@@ -5,11 +5,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # Initialize the Chrome WebDriver
-driver = webdriver.Chrome()  # Ensure ChromeDriver is installed and in PATH
+driver = webdriver.FireFox()  # Ensure ChromeDriver is installed and in PATH
 
 try:
     # Step 1: Navigate to the task creation page
-    driver.get("http://localhost:8081/todolist")  #Replace when deployed
+    driver.get("http://localhost:8080/todolist")  #Replace when deployed
 
     # Step 2: Locate the input fields for task description and deadline
     task_description_input = WebDriverWait(driver, 10).until(

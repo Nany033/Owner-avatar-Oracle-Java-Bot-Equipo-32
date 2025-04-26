@@ -4,11 +4,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # Initialize the Chrome WebDriver
-driver = webdriver.Chrome()  # Ensure ChromeDriver is installed and in PATH
+driver = webdriver.Firefox()  # Ensure ChromeDriver is installed and in PATH
 
 try:
     # Step 1: Navigate to the KPI dashboard page
-    driver.get("http://localhost:8081/kpi-dashboard")  # Replace with the actual URL of the KPI dashboard page
+    driver.get("http://localhost:8080/kpi-dashboard")  # Replace with the actual URL of the KPI dashboard page
 
     # Step 2: Select a user from the dropdown
     user_dropdown = WebDriverWait(driver, 10).until(

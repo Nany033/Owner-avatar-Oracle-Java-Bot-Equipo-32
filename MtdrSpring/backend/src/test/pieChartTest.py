@@ -5,11 +5,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # Initialize the Chrome WebDriver
-driver = webdriver.Chrome()  # Ensure ChromeDriver is installed and in PATH
+driver = webdriver.Firefox()  # Ensure ChromeDriver is installed and in PATH
 
 try:
     # Step 1: Navigate to the dashboard or page containing the PieChart
-    driver.get("http://localhost:8081/dashboard")  # Replace with the actual URL of the dashboard page
+    driver.get("http://localhost:8080/dashboard")  # Replace with the actual URL of the dashboard page
 
     # Step 2: Wait for the PieChart to load
     pie_chart = WebDriverWait(driver, 10).until(

@@ -4,11 +4,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # Initialize the Chrome WebDriver
-driver = webdriver.Chrome()  # Ensure ChromeDriver is installed and in PATH
+driver = webdriver.Firefox()  # Ensure ChromeDriver is installed and in PATH
 
 try:
     # Step 1: Navigate to the task list page
-    driver.get("http://localhost:8081/todolist")  # Replace with the actual URL of the task list page
+    driver.get("http://localhost:8080/todolist")  # Replace with the actual URL of the task list page
 
     # Step 2: Locate the task to mark as completed
     task_checkbox = WebDriverWait(driver, 10).until(
