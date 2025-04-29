@@ -1,5 +1,8 @@
 package com.springboot.MyTodoList.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +13,6 @@ import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.repository.UsersRepository;
 import com.springboot.MyTodoList.service.ChatService;
 import com.springboot.MyTodoList.service.UserService;
-
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -100,5 +101,12 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String userId) {
         logger.info("Eliminando usuario con ID: {}", userId);
         usersRepository.deleteById(userId);
+    }
+
+
+    @Override
+    public List<User> getAllUsers() {
+        logger.info("Obteniendo todos los usuarios");
+        return usersRepository.findAll();
     }
 }

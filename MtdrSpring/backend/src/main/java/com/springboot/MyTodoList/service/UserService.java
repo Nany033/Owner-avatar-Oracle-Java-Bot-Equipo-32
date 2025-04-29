@@ -1,7 +1,9 @@
 package com.springboot.MyTodoList.service;
 
-import com.springboot.MyTodoList.model.User;
+import java.util.List;
 import java.util.Optional;
+
+import com.springboot.MyTodoList.model.User;
 
 public interface UserService {
     /**
@@ -45,4 +47,6 @@ public interface UserService {
      * @param userId El ID del usuario a eliminar
      */
     void deleteUser(String userId);
+
+    List<User> getAllUsers();
 }
