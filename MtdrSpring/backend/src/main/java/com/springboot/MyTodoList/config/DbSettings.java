@@ -20,7 +20,6 @@ public class DbSettings {
     public void setUrl(String url) {
         this.url = url;
     }
-
     public String getUsername() {
         return username;
     }
@@ -45,3 +44,4 @@ public class DbSettings {
         this.driver_class_name = driver_class_name;
     }
 }
+

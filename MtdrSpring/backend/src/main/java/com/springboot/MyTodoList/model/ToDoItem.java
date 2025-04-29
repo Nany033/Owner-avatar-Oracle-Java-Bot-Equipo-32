@@ -57,6 +57,7 @@ public class ToDoItem {
         this.deadline = deadline;
         this.estimated_hours = estimated_hours;
         this.user_id = user_id;
+        this.user_id = user_id;
         this.sprint_id = sprint_id;
         this.completion_date = completion_date;
     }
@@ -109,6 +110,14 @@ public class ToDoItem {
         this.estimated_hours = estimated_hours;
     }
 
+    public Integer getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
+    }
+
     public Integer getReal_time() {
         return real_time;
     }
@@ -139,6 +148,8 @@ public class ToDoItem {
 
     public void setCompletion_date(OffsetDateTime completion_date) {
         this.completion_date = completion_date;
+    public void setCompletion_date(OffsetDateTime completion_date) {
+        this.completion_date = completion_date;
     }
 
     @Override
@@ -150,6 +161,7 @@ public class ToDoItem {
                 ", deadline=" + deadline +
                 ", done=" + done +
                 ", estimated_hours=" + estimated_hours +
+                ", user_id=" + user_id +
                 ", real_time=" + real_time +
                 ", sprint_id=" + sprint_id +
                 ", user_id='" + user_id + '\'' +
