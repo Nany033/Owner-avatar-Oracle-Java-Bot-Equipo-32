@@ -1,22 +1,28 @@
 package com.springboot.MyTodoList.controller.bot.handler;
 
-import com.springboot.MyTodoList.model.ToDoItem;
-import com.springboot.MyTodoList.model.Sprints;
-import com.springboot.MyTodoList.model.User;
-import com.springboot.MyTodoList.service.*;
-import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager;
-import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager.TaskData;
-import com.springboot.MyTodoList.util.BotMessages;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager;
+import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager.TaskData;
+import com.springboot.MyTodoList.model.Sprints;
+import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.User;
+import com.springboot.MyTodoList.service.AssignItemToSprintService;
+import com.springboot.MyTodoList.service.DeadlineService;
+import com.springboot.MyTodoList.service.EstimatedHoursService;
+import com.springboot.MyTodoList.service.RealTimeService;
+import com.springboot.MyTodoList.service.TaskAssignmentService;
+import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.service.UserService;
+import com.springboot.MyTodoList.util.BotMessages;
 
 @Component
 public class ConversationHandler {
@@ -195,6 +201,8 @@ public class ConversationHandler {
             newItem.setDescription(taskData.getDescription());
             newItem.setCreation_ts(OffsetDateTime.now());
             newItem.setDone(false);
+            newItem.setCompletion_date(null);
+            newItem.setReal_time(null);
             
             // Save the task to get an ID
             ToDoItem savedItem = toDoItemService.addToDoItem(newItem);
@@ -228,6 +236,9 @@ public class ConversationHandler {
             newItem.setDescription(taskData.getDescription());
             newItem.setCreation_ts(OffsetDateTime.now());
             newItem.setDone(false);
+            newItem.setCompletion_date(null);
+            newItem.setReal_time(null);
+            
             
             // Save the task to get an ID
             ToDoItem savedItem = toDoItemService.addToDoItem(newItem);

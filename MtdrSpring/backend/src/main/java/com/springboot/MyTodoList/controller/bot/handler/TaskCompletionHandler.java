@@ -1,15 +1,18 @@
 package com.springboot.MyTodoList.controller.bot.handler;
 
-import com.springboot.MyTodoList.model.ToDoItem;
-import com.springboot.MyTodoList.service.RealTimeService;
-import com.springboot.MyTodoList.service.ToDoItemService;
-import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager;
-import com.springboot.MyTodoList.util.BotMessages;
+import java.time.OffsetDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import com.springboot.MyTodoList.controller.bot.state.ConversationStateManager;
+import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.service.RealTimeService;
+import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.util.BotMessages;
 
 @Component
 public class TaskCompletionHandler implements CommandHandler {
@@ -45,7 +48,9 @@ public class TaskCompletionHandler implements CommandHandler {
             }
             
             item.setDone(true);
+            item.setCompletion_date(OffsetDateTime.now());
             toDoItemService.updateToDoItem(itemId, item);
+            
             
             // Guardar el ID de la tarea para el siguiente paso
             stateManager.setTempData(chatId, "itemId", String.valueOf(itemId));
