@@ -35,7 +35,7 @@ public class ToDoItem {
     private int estimated_hours;
 
     @Column(name = "USER_ID")
-    private String user_id;
+    private Integer user_id;
     
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
@@ -49,14 +49,13 @@ public class ToDoItem {
     public ToDoItem() {
     }
 
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, String user_id, int sprint_id, OffsetDateTime completion_date) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, Integer user_id, int sprint_id, OffsetDateTime completion_date) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
         this.done = done;
         this.deadline = deadline;
         this.estimated_hours = estimated_hours;
-        this.user_id = user_id;
         this.user_id = user_id;
         this.sprint_id = sprint_id;
         this.completion_date = completion_date;
@@ -134,24 +133,14 @@ public class ToDoItem {
         this.sprint_id = sprint_id;
     }
 
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
-
     public OffsetDateTime getCompletion_date() {
         return completion_date;
     }
 
     public void setCompletion_date(OffsetDateTime completion_date) {
         this.completion_date = completion_date;
-    public void setCompletion_date(OffsetDateTime completion_date) {
-        this.completion_date = completion_date;
     }
-
+    
     @Override
     public String toString() {
         return "ToDoItem{" +

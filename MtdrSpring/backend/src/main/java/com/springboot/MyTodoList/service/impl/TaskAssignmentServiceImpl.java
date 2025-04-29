@@ -45,7 +45,7 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
         
         // Asignar la tarea
         ToDoItem task = taskOpt.get();
-        task.setUser_id(userId);
+        task.setUser_id(Integer.valueOf(userId));
         return toDoItemRepository.save(task);
     }
     

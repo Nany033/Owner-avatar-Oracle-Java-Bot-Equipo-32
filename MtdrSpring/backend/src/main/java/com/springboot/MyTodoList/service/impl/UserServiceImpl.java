@@ -102,4 +102,10 @@ public class UserServiceImpl implements UserService {
         logger.info("Eliminando usuario con ID: {}", userId);
         usersRepository.deleteById(userId);
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        logger.info("Obteniendo todos los usuarios");
+        return usersRepository.findAll();
+    }
 }
