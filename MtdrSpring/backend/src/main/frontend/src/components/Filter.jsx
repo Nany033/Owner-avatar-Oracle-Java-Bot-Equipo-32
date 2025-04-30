@@ -6,7 +6,7 @@ const Filter = ({ options, onSelect }) => {
     const handleChange = (event) => {
         const value = event.target.value;
         setSelectedOption(value);
-        onSelect(value); // notifica al componente padre
+        onSelect(value); // Notify parent
     };
 
     return (
@@ -19,8 +19,8 @@ const Filter = ({ options, onSelect }) => {
             >
                 <option value="">Select an option</option>
                 {options.map(option => (
-                    <option key={option.id} value={option.value}>
-                        {option.label}
+                    <option key={option.userId} value={option.userId}>
+                        {option.name}
                     </option>
                 ))}
             </select>

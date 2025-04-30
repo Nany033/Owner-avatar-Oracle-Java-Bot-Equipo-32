@@ -9,36 +9,32 @@ import API from './API';
 
 function App() {
     const [userOptions, setUserOptions] = useState([]);
-     const [loading, setLoading] = useState(true);
- 
-     useEffect(() => {
-         fetch(API.USERS)
-             .then(res => res.json())
-             .then(data => {
-                 const formatted = data.map(user => ({
-                     id: user.id,
-                     label: user.name,
-                     value: user.id
-                 }));
-                 setUserOptions(formatted);
-                 // console.log(formatted);
-                 setLoading(false);
-             });
-     }, []);
- 
-     if (loading) return <p>Loading app...</p>;
-    return (
-        <Router>
-            <Navbar />
-                 <div className='page-container'>
-                 <Routes>
-                     <Route path="/" element={<ToDoList />} />
-                     <Route path="/dashboard" element={<KpisDashboard options={userOptions} />} />
-                 </Routes>
-             </div>
+    const [loading, setLoading] = useState(true);
 
-        </Router>
-    );
+    // Fetch user options from the API on component mount to populate the filter dropdown
+    // and pass them to the KPIs Dashboard page.
+    useEffect(() => {
+        fetch(API.USERS)
+            .then(res => res.json())
+            .then(data => {
+                setUserOptions(data); 
+                setLoading(false);
+            });
+}, []);
+
+if (loading) return <p>Loading app...</p>;
+return (
+    <Router>
+        <Navbar />
+        <div className='page-container'>
+            <Routes>
+                <Route path="/" element={<ToDoList />} />
+                <Route path="/dashboard" element={<KpisDashboard options={userOptions} />} />
+            </Routes>
+        </div>
+
+    </Router>
+);
 }
 
 export default App;

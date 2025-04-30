@@ -19,7 +19,7 @@ export default function ToDoItems() {
       })
       .then(data => {
         setItems(data);
-        console.log(data);
+        // console.log(data);
         setLoading(false);
       })
       .catch(err => {

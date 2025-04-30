@@ -1,16 +1,18 @@
 package com.springboot.MyTodoList.repository;
 
-import com.springboot.MyTodoList.model.ToDoItem;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.transaction.Transactional;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.springboot.MyTodoList.model.ToDoItem;
 
 @Repository
 @Transactional
@@ -33,5 +35,9 @@ public interface ToDoItemRepository extends JpaRepository<ToDoItem, Integer> {
     List<ToDoItem> findAllCompletedItems();
 
     @Query("SELECT t FROM ToDoItem t WHERE t.done = false AND t.deadline BETWEEN :startDate AND :endDate ORDER BY t.deadline ASC")
-    List<ToDoItem> findUpcomingDeadlines(@Param("startDate") OffsetDateTime startDate, @Param("endDate") OffsetDateTime endDate);
+    List<ToDoItem> findUpcomingDeadlines(@Param("startDate") OffsetDateTime startDate,
+            @Param("endDate") OffsetDateTime endDate);
+
+    @Query("SELECT t FROM ToDoItem t WHERE t.user_id = :user_id")
+    List<ToDoItem> findByUserId(@Param("user_id") Integer user_id);
 }

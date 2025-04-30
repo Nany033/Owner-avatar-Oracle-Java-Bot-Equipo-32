@@ -59,4 +59,6 @@ public interface ToDoItemService {
      * @return Lista de elementos guardados con sus IDs generados
      */
     List<ToDoItem> saveAll(List<ToDoItem> toDoItems);
+
+    public List<ToDoItem> findByUserId(int userId);
 }

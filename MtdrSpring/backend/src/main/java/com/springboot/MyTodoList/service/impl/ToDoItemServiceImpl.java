@@ -87,4 +87,10 @@ public class ToDoItemServiceImpl implements ToDoItemService {
     public List<ToDoItem> saveAll(List<ToDoItem> toDoItems) {
         return toDoItemRepository.saveAll(toDoItems);
     }
+
+    @Override
+    public List<ToDoItem> findByUserId(int user_id) {
+        return toDoItemRepository.findByUserId(user_id); // assuming a repository method exists
+    }
+
 }
