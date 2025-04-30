@@ -1,22 +1,22 @@
-import React from 'react';
 import KPIcard from '../components/KPIcard';
 import Filter from '../components/Filter';
+import React, { useState } from 'react';
 
-export default function KPIsDashboard() {
+export default function KPIsDashboard({ options }) {
+    const [selectedUserId, setSelectedUserId] = useState('');
     return (
         <div>
             <h1>KPIs Dashboard</h1>
             <p>Welcome to the KPIs Dashboard. Here you can view key performance indicators.</p>
-            <Filter />
+            <Filter options={options} onSelect={setSelectedUserId} />
             <div>
                 <table className='kpi-table'>
-                    <tr>
-                        <td><KPIcard /></td>
-                        <td><KPIcard /></td>
-                        <td><KPIcard /></td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td><KPIcard userId={selectedUserId} /></td>
+                        </tr>
+                    </tbody>
                 </table>
-                <KPIcard />
             </div>
         </div>
     );
