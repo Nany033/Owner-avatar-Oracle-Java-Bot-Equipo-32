@@ -1,6 +1,7 @@
 import KPIcard from '../components/KPIcard';
 import Filter from '../components/Filter';
 import React, { useState, useEffect } from 'react';
+import TasksSummary from '../components/TasksSummary';
 
 
 export default function KPIsDashboard({ options }) {
@@ -26,11 +27,14 @@ export default function KPIsDashboard({ options }) {
             <p>Welcome to the KPIs Dashboard. Here you can view key performance indicators.</p>
             <Filter options={options} onSelect={handleSelect} />
             <div>
+                <div>
+                                <TasksSummary userId={selectedUserId} userName={userName} />
+                </div>
                 <table className='kpi-table'>
                     <tbody>
                         <tr>
                             <td>
-                                <KPIcard userId={selectedUserId} userName={userName} />
+                                <KPIcard userId={selectedUserId} />
                             </td>
                         </tr>
                     </tbody>
