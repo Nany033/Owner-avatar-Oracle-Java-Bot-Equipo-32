@@ -25,6 +25,7 @@ jobs:
 
     - name: Build and start Spring Boot backend
       run: |
+        cd MtdrSpring/backend
         mvn clean package -DskipTests
         nohup java -jar target/*.jar &
 
