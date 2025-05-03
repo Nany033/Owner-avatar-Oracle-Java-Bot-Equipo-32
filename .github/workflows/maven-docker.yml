@@ -66,6 +66,8 @@ jobs:
     needs: set-up
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
     - name: Run Selenium Firefox tests
       env:
         DISPLAY: :99
