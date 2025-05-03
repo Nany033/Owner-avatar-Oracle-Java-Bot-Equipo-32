@@ -70,7 +70,7 @@ jobs:
       env:
         DISPLAY: :99
       run: |
-        ls -R
+        ls 
         cd src/test
         python3 addTaskTest.py
         python3 completeTaskTest.py
