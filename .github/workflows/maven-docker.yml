@@ -3,9 +3,11 @@ name: Maven Build and Docker Image
 on:
   push:
     branches: [ CI/CD, testing]
+  pull_request:
+    branches: [JorgeArizpe, jess]
 
 jobs:
-  build-and-test:
+  set-up:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,15 +20,62 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
 
-    - name: Build with Maven
-      run: cd MtdrSpring/backend && mvn clean install
+    - name: Set up Maven
+      run: sudo apt-get install -y maven
 
-    - name: Run tests
-      run: mvn test
+    - name: Build and start Spring Boot backend
+      run: |
+        mvn clean package -DskipTests
+        nohup java -jar target/*.jar &
 
+    - name: Wait for server to start
+      run: |
+        echo "Waiting for server to start..."
+        sleep 20
+        curl --fail http://localhost:8080 || (echo "Server failed to start" && exit 1)
+
+    - name: Install Firefox and Geckodriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y firefox
+        GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+        wget "https://github.com/mozilla/geckodriver/releases/download/v$GECKO_VERSION/geckodriver-v$GECKO_VERSION-linux64.tar.gz"
+        tar -xvzf geckodriver-v$GECKO_VERSION-linux64.tar.gz
+        chmod +x geckodriver
+        sudo mv geckodriver /usr/local/bin/
+
+    - name: Start virtual display (Xvfb)
+      run: |
+        sudo apt-get install -y xvfb
+        export DISPLAY=:99
+        nohup Xvfb :99 -screen 0 1920x1080x24 &
+
+    - name: Install Python + Selenium dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install selenium
+        
+  selenium-test:
+    runs-on: ubuntu-latest
+    needs: set-up
+
+    steps:
+    - name: Run Selenium Firefox tests
+      env:
+        DISPLAY: :99
+      run: |
+        cd backend/src/test
+        python3 addTaskTest.py
+        python3 completeTaskTest.py
+        python3 kpiTeamViewTest.py
+        python3 kpiVisualizationTest.py
+        python3 pieChartTest.py
+        python3 taskViewTes.py
+        python3 updateUserListTest.py
+        
   docker:
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: selenium-test
 
     steps:
     - name: Checkout code
