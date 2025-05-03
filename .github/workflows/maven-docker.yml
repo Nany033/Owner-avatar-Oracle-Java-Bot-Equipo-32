@@ -22,6 +22,11 @@ jobs:
 
     - name: Set up Maven
       run: sudo apt-get install -y maven
+      
+    - name: Set up Node.js (for frontend build)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'  # Adjust
 
     - name: Build and start Spring Boot backend
       run: |
