@@ -72,8 +72,7 @@ jobs:
       env:
         DISPLAY: :99
       run: |
-        ls 
-        cd src/test
+        cd MtdrSpring/backend/src/test
         python3 addTaskTest.py
         python3 completeTaskTest.py
         python3 kpiTeamViewTest.py
