@@ -3,40 +3,38 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ToDoList from './pages/ToDoList';
 import KpisDashboard from './pages/KPIsDashboard';
+
 import API from './API';
+
 
 function App() {
     const [userOptions, setUserOptions] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // Fetch user options from the API on component mount to populate the filter dropdown
+    // and pass them to the KPIs Dashboard page.
     useEffect(() => {
         fetch(API.USERS)
             .then(res => res.json())
             .then(data => {
-                const formatted = data.map(user => ({
-                    id: user.id,
-                    label: user.name,
-                    value: user.id
-                }));
-                setUserOptions(formatted);
-                // console.log(formatted);
+                setUserOptions(data); 
                 setLoading(false);
             });
-    }, []);
+}, []);
 
-    if (loading) return <p>Loading app...</p>;
+if (loading) return <p>Loading app...</p>;
+return (
+    <Router>
+        <Navbar />
+        <div className='page-container'>
+            <Routes>
+                <Route path="/" element={<ToDoList />} />
+                <Route path="/dashboard" element={<KpisDashboard options={userOptions} />} />
+            </Routes>
+        </div>
 
-    return (
-        <Router>
-            <Navbar />
-            <div className='page-container'>
-                <Routes>
-                    <Route path="/" element={<ToDoList />} />
-                    <Route path="/dashboard" element={<KpisDashboard options={userOptions} />} />
-                </Routes>
-            </div>
-        </Router>
-    );
+    </Router>
+);
 }
 
 export default App;

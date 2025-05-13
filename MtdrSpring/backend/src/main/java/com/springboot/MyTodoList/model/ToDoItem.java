@@ -9,10 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/*
-    Representation of the TODOITEM table that exists already
-    in the autonomous database.
- */
+
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
@@ -45,14 +42,14 @@ public class ToDoItem {
     
     @Column(name = "REAL_TIME")
     private Integer real_time;
-
+    
     @Column(name = "COMPLETION_DATE")
     private OffsetDateTime completion_date;
 
     public ToDoItem() {
     }
 
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, Integer user_id, int estimated_hours, Integer sprint_id) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done, OffsetDateTime deadline, int estimated_hours, Integer user_id, int sprint_id, OffsetDateTime completion_date) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
@@ -61,7 +58,7 @@ public class ToDoItem {
         this.estimated_hours = estimated_hours;
         this.user_id = user_id;
         this.sprint_id = sprint_id;
-
+        this.completion_date = completion_date;
     }
 
     public int getID() {
@@ -104,7 +101,6 @@ public class ToDoItem {
         this.deadline = deadline;
     }
 
-    // Fixed method names to match the field name (lowercase 'h')
     public int getEstimated_hours() {
         return estimated_hours;
     }
@@ -144,32 +140,7 @@ public class ToDoItem {
     public void setCompletion_date(OffsetDateTime completion_date) {
         this.completion_date = completion_date;
     }
-
-    public static void printCompletionStats(List<ToDoItem> items) {
-        long totalCompleted = items.stream()
-                .filter(item -> item.getCompletion_date() != null)
-                .count();
-
-        if (totalCompleted == 0) {
-            System.out.println("No tasks have been completed yet.");
-            return;
-        }
-
-        long onTime = items.stream()
-                .filter(item -> item.getCompletion_date() != null)
-                .filter(item -> !item.getCompletion_date().isAfter(item.getDeadline()))
-                .count();
-
-        long late = totalCompleted - onTime;
-
-        double onTimePercentage = (onTime * 100.0) / totalCompleted;
-        double latePercentage = (late * 100.0) / totalCompleted;
-
-        System.out.printf("Completed on time: %.2f%%\n", onTimePercentage);
-        System.out.printf("Completed late: %.2f%%\n", latePercentage);
-    }
-
-
+    
     @Override
     public String toString() {
         return "ToDoItem{" +
@@ -182,9 +153,8 @@ public class ToDoItem {
                 ", user_id=" + user_id +
                 ", real_time=" + real_time +
                 ", sprint_id=" + sprint_id +
+                ", user_id='" + user_id + '\'' +
                 ", completion_date=" + completion_date +
-                // Future columns commented
-                // ", creator_id=" + creator_id +
                 '}';
     }
 }

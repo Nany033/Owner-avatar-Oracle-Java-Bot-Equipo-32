@@ -1,15 +1,16 @@
 package com.springboot.MyTodoList.service.impl;
 
-import com.springboot.MyTodoList.model.ToDoItem;
-import com.springboot.MyTodoList.repository.ToDoItemRepository;
-import com.springboot.MyTodoList.service.ToDoItemService;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.repository.ToDoItemRepository;
+import com.springboot.MyTodoList.service.ToDoItemService;
 
 /**
  * Implementación de la interfaz ToDoItemService que provee
@@ -20,13 +21,25 @@ public class ToDoItemServiceImpl implements ToDoItemService {
 
     @Autowired
     private ToDoItemRepository toDoItemRepository;
-    
+
     @Override
     public List<ToDoItem> findAll() {
         List<ToDoItem> todoItems = toDoItemRepository.findAll();
         return todoItems;
     }
-    
+
+    @Override
+    public List<ToDoItem> findAllActiveItems() {
+
+        return toDoItemRepository.findAllActiveItems();
+    }
+
+    @Override
+    public List<ToDoItem> findAllCompletedItems() {
+
+        return toDoItemRepository.findAllCompletedItems();
+    }
+
     @Override
     public ResponseEntity<ToDoItem> getItemById(int id) {
         Optional<ToDoItem> todoData = toDoItemRepository.findById(id);
@@ -36,7 +49,7 @@ public class ToDoItemServiceImpl implements ToDoItemService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
     @Override
     public ToDoItem addToDoItem(ToDoItem toDoItem) {
         return toDoItemRepository.save(toDoItem);
@@ -47,15 +60,15 @@ public class ToDoItemServiceImpl implements ToDoItemService {
         try {
             toDoItemRepository.deleteById(id);
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
-    
+
     @Override
     public ToDoItem updateToDoItem(int id, ToDoItem td) {
         Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
-        if(toDoItemData.isPresent()) {
+        if (toDoItemData.isPresent()) {
             ToDoItem toDoItem = toDoItemData.get();
             toDoItem.setID(id);
             toDoItem.setCreation_ts(td.getCreation_ts());
@@ -69,4 +82,15 @@ public class ToDoItemServiceImpl implements ToDoItemService {
             return null;
         }
     }
+
+    @Override
+    public List<ToDoItem> saveAll(List<ToDoItem> toDoItems) {
+        return toDoItemRepository.saveAll(toDoItems);
+    }
+
+    @Override
+    public List<ToDoItem> findByUserId(int user_id) {
+        return toDoItemRepository.findByUserId(user_id); // assuming a repository method exists
+    }
+
 }

@@ -5,7 +5,7 @@ export default function ToDoList () {
     return (
         <div className='todo-list'>
             <h1>To-Do List</h1>
-            <p>Welcome to your To-Do List!</p>
+            <p>Welcome to your To-Do List.</p>
             <ToDoItems />
         </div>
     );

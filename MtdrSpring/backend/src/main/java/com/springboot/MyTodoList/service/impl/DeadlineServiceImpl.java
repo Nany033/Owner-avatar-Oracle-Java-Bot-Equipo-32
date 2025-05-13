@@ -26,13 +26,13 @@ public class DeadlineServiceImpl implements DeadlineService {
     public ToDoItem setDeadline(int todoItemId, OffsetDateTime deadline) {
         Optional<ToDoItem> todoItemOpt = toDoItemRepository.findById(todoItemId);
         
-        if (todoItemOpt.isPresent()) {
-            ToDoItem todoItem = todoItemOpt.get();
-            todoItem.setDeadline(deadline);
-            return toDoItemRepository.save(todoItem);
+        if (!todoItemOpt.isPresent()) {
+            return null;
         }
         
-        return null;
+        ToDoItem todoItem = todoItemOpt.get();
+        todoItem.setDeadline(deadline);
+        return toDoItemRepository.save(todoItem);
     }
     
     @Override
@@ -55,23 +55,16 @@ public class DeadlineServiceImpl implements DeadlineService {
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime future = now.plusDays(daysAhead);
         
-        return toDoItemRepository.findAll().stream()
-            .filter(item -> !item.isDone())
-            .filter(item -> item.getDeadline() != null)
-            .filter(item -> item.getDeadline().isAfter(now) && 
-                           item.getDeadline().isBefore(future))
-            .collect(Collectors.toList());
+        // Use the optimized repository method instead of findAll()
+        return toDoItemRepository.findUpcomingDeadlines(now, future);
     }
     
     @Override
     public List<ToDoItem> getOverdueItems() {
         OffsetDateTime now = OffsetDateTime.now();
         
-        return toDoItemRepository.findAll().stream()
-            .filter(item -> !item.isDone())
-            .filter(item -> item.getDeadline() != null)
-            .filter(item -> item.getDeadline().isBefore(now))
-            .collect(Collectors.toList());
+        // Use the existing repository method
+        return toDoItemRepository.findOverdueItems(now);
     }
     
     @Override

@@ -1,3 +1,5 @@
+import TaskPieChart from "./TaskPieChart";
+export default function KPIcard({userId}) {
 import React, { useEffect, useState } from 'react';
 import PieChart from './PieChart';
 import API from '../API';
@@ -23,6 +25,9 @@ export default function KPIcard({ userId }) {
 
     return (
         <div className="kpi-card">
+            <h2>KPI Card</h2>
+            <p>This is a KPI card.</p>
+            <TaskPieChart userId={userId} />
             {loading ? (
                 <p>Loading...</p>
             ) : userId ? (
@@ -42,3 +47,4 @@ export default function KPIcard({ userId }) {
         </div>
     );
 }
+

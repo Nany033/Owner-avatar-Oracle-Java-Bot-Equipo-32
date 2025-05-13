@@ -13,6 +13,18 @@ public interface ToDoItemService {
     List<ToDoItem> findAll();
     
     /**
+     * Encuentra todos los elementos activos (no completados) de la lista de tareas.
+     * @return Una lista de elementos ToDoItem activos
+     */
+    List<ToDoItem> findAllActiveItems();
+    
+    /**
+     * Encuentra todos los elementos completados de la lista de tareas.
+     * @return Una lista de elementos ToDoItem completados
+     */
+    List<ToDoItem> findAllCompletedItems();
+    
+    /**
      * Busca un elemento de la lista de tareas por su identificador.
      * @param id El identificador del elemento a buscar
      * @return ResponseEntity con el elemento si se encuentra, o un estado NOT_FOUND
@@ -40,4 +52,13 @@ public interface ToDoItemService {
      * @return El elemento actualizado, o null si no se encuentra
      */
     ToDoItem updateToDoItem(int id, ToDoItem td);
+    
+    /**
+     * Guarda múltiples elementos de la lista de tareas en una operación batch.
+     * @param toDoItems Lista de elementos a guardar
+     * @return Lista de elementos guardados con sus IDs generados
+     */
+    List<ToDoItem> saveAll(List<ToDoItem> toDoItems);
+
+    public List<ToDoItem> findByUserId(int userId);
 }
