@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Sector, ResponsiveContainer } from 'recharts';
-import API from '../API';
+import API from '../../API';
 
 const getChartData = (tasks) => {
   const completedTasks = tasks.filter(task => task.completed).length;

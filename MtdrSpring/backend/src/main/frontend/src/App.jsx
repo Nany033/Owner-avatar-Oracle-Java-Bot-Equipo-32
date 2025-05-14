@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from './components/layout/Navbar';
 import ToDoList from './pages/ToDoList';
 import KpisDashboard from './pages/KPIsDashboard';
 
@@ -12,7 +12,7 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     // Fetch user options from the API on component mount to populate the filter dropdown
-    // and pass them to the KPIs Dashboard page.
+    // and pass them to the KPIs Dashboard page and ToDoList page.
     useEffect(() => {
         fetch(API.USERS)
             .then(res => res.json())
@@ -28,7 +28,7 @@ return (
         <Navbar />
         <div className='page-container'>
             <Routes>
-                <Route path="/" element={<ToDoList />} />
+                <Route path="/" element={<ToDoList options={userOptions} />} />
                 <Route path="/dashboard" element={<KpisDashboard options={userOptions} />} />
             </Routes>
         </div>

@@ -61,4 +61,6 @@ public interface ToDoItemService {
     List<ToDoItem> saveAll(List<ToDoItem> toDoItems);
 
     public List<ToDoItem> findByUserId(int userId);
+
+    public List<ToDoItem> findBySprintId(int sprintId);
 }

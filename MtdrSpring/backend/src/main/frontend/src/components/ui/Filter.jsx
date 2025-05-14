@@ -18,13 +18,15 @@ const Filter = ({ options, onSelect }) => {
                 onChange={handleChange}
             >
                 <option value="">Select an option</option>
-                {options.map(option => (
+                {Array.isArray(options) && options.map(option => (
                     <option key={option.userId} value={option.userId}>
                         {option.name}
                     </option>
                 ))}
+
             </select>
-            {selectedOption && <p>You selected: {selectedOption}</p>}
+            {selectedOption && <p>You selected: {options.find(o => o.userId === selectedOption)?.name}</p>}
+            <p>Selected User ID: {selectedOption}</p>
         </div>
     );
 };

@@ -93,4 +93,8 @@ public class ToDoItemServiceImpl implements ToDoItemService {
         return toDoItemRepository.findByUserId(user_id); // assuming a repository method exists
     }
 
+    @Override
+    public List<ToDoItem> findBySprintId(int sprint_id) {
+        return toDoItemRepository.findBySprintId(sprint_id); // assuming a repository method exists
+    }
 }
