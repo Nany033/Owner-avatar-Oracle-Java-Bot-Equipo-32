@@ -101,24 +101,7 @@ h2 {
 }
 
 
-/* === Task Summary Card === */
-.taskSummary-card {
-  width: 100%;
-  height: auto;
-  background: var(--oracle-light-gray);
-  color: var(--oracle-black);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  margin: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 18px 0 rgba(0, 0, 0, 0.1), 0 4.5rem 8rem 0 rgba(0, 0, 0, 0.1);
-}
 
-
-/* === Icon Span === */
 .icon {
   display: inline-flex;
   align-items: center;
@@ -142,27 +125,28 @@ h2 {
 /* === Filter Component === */
 .Filter {
   margin: 1rem 0;
+  background-color: transparent;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   font-family: var(--font-primary);
   color: var(--oracle-black);
-  width: 200px;
+  width: 300px;
   padding: 0.5rem;
 }
-
 .Filter label {
-  font-weight: 600;
   font-size: 1rem;
+  color: var(--oracle-dark-red);
+  font-weight: bold;
 }
 
 .Filter select {
-  width: 200px;
+  width: 300px;
   padding: 1rem;
   border: 1px solid var(--oracle-gray);
   border-radius: 0.375rem;
   font-size: 1rem;
-  background-color: var(--oracle-white);
+  background-color: var(--oracle-light-gray);
   color: var(--oracle-black);
   font-family: var(--font-primary);
   transition: border-color 0.2s ease-in-out;
@@ -175,18 +159,5 @@ h2 {
 }
 
 
-/* === KPI Card === */
-.kpi-card {
-  width: 100%;
-  height: auto;
-  background: var(--oracle-light-gray);
-  color: var(--oracle-black);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  margin: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 18px 0 rgba(0, 0, 0, 0.1), 0 4.5rem 8rem 0 rgba(0, 0, 0, 0.1);
-}
+
+

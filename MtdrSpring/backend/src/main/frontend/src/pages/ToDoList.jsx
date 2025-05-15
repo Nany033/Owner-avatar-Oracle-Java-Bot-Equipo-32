@@ -22,7 +22,6 @@ export default function ToDoList({ options }) {
     return (
         <div className='todo-list'>
             <h1>To-Do List</h1>
-            <p>Welcome to your To-Do List.</p>
             <Filter options={options} onSelect={handleSelect} />
             <ToDoItems userId={selectedUserId} users={options} />
         </div>

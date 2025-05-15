@@ -1,11 +1,14 @@
-import React from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 
-const SprintBarChart = ({ data }) => {
+const SprintBarChart = ({ data, isLoading }) => {
+    if (isLoading) {
+        return <p>Loading chart data...</p>;
+    }
+
     if (!data || data.length === 0) {
-        return <p>No data available for the chart.</p>;
+        return <p> </p>;
     }
 
     const chartData = data.map((item) => ({
@@ -15,19 +18,21 @@ const SprintBarChart = ({ data }) => {
     }));
 
     return (
-        <div style={{ width: '100%', height: 400 }}>
-            <h3 style={{ textAlign: 'center' }}>Sprint Hours Overview</h3>
-            <ResponsiveContainer>
-                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="sprint" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="estimated" fill="#8884d8" name="Estimated Hours" />
-                    <Bar dataKey="actual" fill="#82ca9d" name="Actual Hours" />
-                </BarChart>
-            </ResponsiveContainer>
+        <div>
+            <h2>Sprint Hours Overview</h2>
+            <div style={{ width: '90%', height: 400, margin: 'auto auto' }}>
+                <ResponsiveContainer>
+                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="sprint" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="estimated" fill="#3a3632" name="Estimated Hours" />
+                        <Bar dataKey="actual" fill="#c40000" name="Actual Hours" />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 };

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import ToDoList from './pages/ToDoList';
 import KpisDashboard from './pages/KPIsDashboard';
+import './index.css';
 
 import API from './API';
 

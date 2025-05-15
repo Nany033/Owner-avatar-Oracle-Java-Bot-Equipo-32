@@ -11,7 +11,6 @@ const Filter = ({ options, onSelect }) => {
 
     return (
         <div className='Filter'>
-            <label htmlFor="filter-dropdown">Filter Options:</label>
             <select
                 id="filter-dropdown"
                 value={selectedOption}
@@ -23,10 +22,9 @@ const Filter = ({ options, onSelect }) => {
                         {option.name}
                     </option>
                 ))}
-
             </select>
-            {selectedOption && <p>You selected: {options.find(o => o.userId === selectedOption)?.name}</p>}
-            <p>Selected User ID: {selectedOption}</p>
+            {/* {selectedOption && <p>You selected: {options.find(o => o.userId === selectedOption)?.name}</p>} */}
+            {/* <p>Selected User ID: {selectedOption}</p> */}
         </div>
     );
 };

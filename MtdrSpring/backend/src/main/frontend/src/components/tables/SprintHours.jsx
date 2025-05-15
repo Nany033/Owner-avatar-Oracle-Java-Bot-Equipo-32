@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import API from '../../API';
 import SprintBarChart from '../charts/SprintBarChart'; // Make sure path is correct
@@ -27,7 +27,7 @@ const SprintHours = () => {
       <h2>Sprint Hours (All Users)</h2>
 
       {/* Table view */}
-      <table>
+      <table className="table">
         <thead>
           <tr>
             <th>Sprint</th>

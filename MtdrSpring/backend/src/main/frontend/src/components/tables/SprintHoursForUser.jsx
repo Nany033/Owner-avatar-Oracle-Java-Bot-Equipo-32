@@ -35,7 +35,7 @@ const SprintHoursForUser = ({ userId, userName }) => {
       ) : (
         <>
           {/* Table View */}
-          <table>
+          <table className='table'>
             <thead>
               <tr>
                 <th>Sprint Name</th>
