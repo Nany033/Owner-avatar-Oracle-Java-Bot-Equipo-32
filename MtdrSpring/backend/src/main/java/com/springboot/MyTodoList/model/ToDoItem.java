@@ -157,4 +157,9 @@ public class ToDoItem {
                 ", completion_date=" + completion_date +
                 '}';
     }
+
+    public static ToDoItem[] findBySprintId(int sprintId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findBySprintId'");
+    }
 }

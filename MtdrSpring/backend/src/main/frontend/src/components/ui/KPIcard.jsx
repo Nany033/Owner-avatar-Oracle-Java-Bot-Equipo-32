@@ -1,4 +1,4 @@
-import TaskPieChart from "./TaskPieChart";
+import TaskPieChart from "../charts/TaskPieChart";
 export default function KPIcard({userId}) {
 import React, { useEffect, useState } from 'react';
 import PieChart from './PieChart';

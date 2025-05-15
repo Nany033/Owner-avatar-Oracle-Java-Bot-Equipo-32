@@ -1,56 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import API from '../API';
 
 export default function TasksSummary({ userId, userName }) {
     const [tasks, setTasks] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-    if (!userId) return;
+        let isInitial = true;
 
-    const userIdInt = parseInt(userId, 10);
+        const fetchTasks = async () => {
+            const endpoint = userId
+                ? `${API.TODOS}/user/${parseInt(userId, 10)}`
+                : `${API.TODOS}`;
 
-    const fetchTasks = () => {
-        fetch(`${API.TODOS}/user/${userIdInt}`)
-            .then(res => res.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    setTasks([...data]);
-                } else {
-                    setTasks([]);
+            try {
+                const res = await fetch(endpoint);
+                const data = await res.json();
+
+                const validData = Array.isArray(data) ? data : [];
+
+                // Compare previous and new data
+                const oldDataString = JSON.stringify(tasks);
+                const newDataString = JSON.stringify(validData);
+
+                if (oldDataString !== newDataString) {
+                    setTasks(validData);
                 }
-            })
-            .catch(err => {
+
+                if (isInitial) {
+                    setLoading(false);
+                    isInitial = false;
+                }
+            } catch (err) {
                 console.error('Error fetching tasks:', err);
-                setTasks([]);
-            });
-    };
+                if (isInitial) {
+                    setTasks([]);
+                    setLoading(false);
+                    isInitial = false;
+                }
+            }
+        };
 
-    fetchTasks(); // primera carga
-    const intervalId = setInterval(fetchTasks, 5000); // 🔁 actualiza cada 5 segundos
+        fetchTasks();
+        const intervalId = setInterval(fetchTasks, 5000);
 
-    return () => clearInterval(intervalId); // limpia el intervalo al desmontar
-}, [userId]);
-
+        return () => clearInterval(intervalId);
+    }, [userId]);
 
     return (
-        <div className="taskSummary-card">
+        <div >
             {loading ? (
                 <p>Loading...</p>
-            ) : userId ? (
+            ) : (
                 <div>
-                    <h1>Tasks Summary</h1>
-                    <h2>User ID: {userId}</h2>
-                    <h2>User Name: {userName}</h2>
+                    <h2>Tasks Summary</h2>
+                    {userId && <h2>User ID: {userId}</h2>}
+                    {userName && <h2>User Name: {userName}</h2>}
                     <p>Total Tasks: {tasks.length}</p>
                     <p>Completed Tasks: {tasks.filter(task => task.completed).length}</p>
                     <p>Pending Tasks: {tasks.filter(task => !task.completed).length}</p>
                     <p>
-                        Overdue Tasks: {tasks.filter(task => new Date(task.dueDate) < new Date() && !task.completed).length}
+                        Overdue Tasks: {tasks.filter(task =>
+                            new Date(task.dueDate) < new Date() && !task.completed
+                        ).length}
                     </p>
                 </div>
-            ) : (
-                <p>Please select a user to see KPIs.</p>
             )}
         </div>
     );
