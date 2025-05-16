@@ -53,9 +53,8 @@ export default function TasksSummary({ userId, userName }) {
                 <p>Loading...</p>
             ) : (
                 <div>
-                    <h2>Tasks Summary</h2>
-                    {userId && <h2>User ID: {userId}</h2>}
-                    {userName && <h2>User Name: {userName}</h2>}
+                    {!userId && <h2>Tasks Summary</h2>}
+                    {userId && <h2>Tasks Summary for {userName} (<span>{userId}</span>)</h2>}
                     <p>Total Tasks: {tasks.length}</p>
                     <p>Completed Tasks: {tasks.filter(task => task.done).length}</p>
                     <p>Pending Tasks: {tasks.filter(task => !task.done).length}</p>
