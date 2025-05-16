@@ -1,8 +1,7 @@
 package com.springboot.MyTodoList.model;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,33 +13,33 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ID;
-
+    
     @Column(name = "DESCRIPTION")
     private String description;
-
+    
     @Column(name = "CREATION_TS")
     private OffsetDateTime creation_ts;
-
+    
     @Column(name = "DONE")
     private boolean done;
-
+    
     @Column(name = "DEADLINE")
     private OffsetDateTime deadline;
-
+    
     // Fixed naming to be consistent
     @Column(name = "ESTIMATED_HOURS")
     private int estimated_hours;
 
     @Column(name = "USER_ID")
     private Integer user_id;
-
+    
     @Column(name = "SPRINT_ID")
     private Integer sprint_id;
-
+    
     @Column(name = "REAL_TIME")
     private Integer real_time;
     

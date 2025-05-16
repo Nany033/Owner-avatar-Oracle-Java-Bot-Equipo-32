@@ -184,10 +184,24 @@ public class ConversationHandler {
 
         // Asignar la tarea
         if (taskData.getItemId() != null) {
-            ToDoItem assignedTask = taskAssignmentService.assignTaskToUser(taskData.getItemId(), developerId);
-            if (assignedTask != null) {
+            // Check if this is a split task
+            List<ToDoItem> relatedTasks = toDoItemService.findRelatedTasks(taskData.getItemId());
+            if (relatedTasks != null && !relatedTasks.isEmpty()) {
+                // Assign all related tasks to the developer
+                for (ToDoItem task : relatedTasks) {
+                    taskAssignmentService.assignTaskToUser(task.getID(), developerId);
+                }
                 stateManager.clearState(chatId);
-                return createSuccessMessage(chatId, BotMessages.TASK_ASSIGNED_SUCCESS.getMessage() + developerId);
+                return createSuccessMessage(chatId, 
+                    String.format("Se asignaron %d tareas al desarrollador %s", 
+                    relatedTasks.size(), developerId));
+            } else {
+                // Single task assignment
+                ToDoItem assignedTask = taskAssignmentService.assignTaskToUser(taskData.getItemId(), developerId);
+                if (assignedTask != null) {
+                    stateManager.clearState(chatId);
+                    return createSuccessMessage(chatId, BotMessages.TASK_ASSIGNED_SUCCESS.getMessage() + developerId);
+                }
             }
         }
 
@@ -244,6 +258,7 @@ public class ConversationHandler {
                 toDoItemService.deleteToDoItem(itemId);
                 
                 // Return the first subtask for assignment
+                // Note: The actual developer assignment will happen in handleDeveloperIdInput
                 return savedSubtasks.isEmpty() ? null : savedSubtasks.get(0);
             }
         } catch (Exception e) {

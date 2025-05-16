@@ -43,4 +43,7 @@ public interface ToDoItemRepository extends JpaRepository<ToDoItem, Integer> {
 
     @Query("SELECT t FROM ToDoItem t WHERE t.sprint_id = :sprint_id")
     List<ToDoItem> findBySprintId(int sprint_id);
+
+    @Query("SELECT t FROM ToDoItem t WHERE t.creation_ts >= :startTime AND t.creation_ts <= :endTime ORDER BY t.creation_ts")
+    List<ToDoItem> findTasksCreatedNearTime(@Param("startTime") OffsetDateTime startTime, @Param("endTime") OffsetDateTime endTime);
 }
