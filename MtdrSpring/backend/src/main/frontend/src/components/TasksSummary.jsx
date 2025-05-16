@@ -1,49 +1,12 @@
 import { useEffect, useState } from 'react';
 import TaskPieChart from './charts/TaskPieChart';
-import API from '../API';
 
-export default function TasksSummary({ userId, userName }) {
-    const [tasks, setTasks] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function TasksSummary({ userId, userName, tasks, loading}) {
 
     useEffect(() => {
-        let isInitial = true;
 
-        const fetchTasks = async () => {
-            const endpoint = userId
-                ? `${API.TODOS}/user/${parseInt(userId, 10)}`
-                : `${API.TODOS}`;
-
-            try {
-                const res = await fetch(endpoint);
-                const data = await res.json();
-
-                const validData = Array.isArray(data) ? data : [];
-
-                // Compare previous and new data
-                const oldDataString = JSON.stringify(tasks);
-                const newDataString = JSON.stringify(validData);
-
-                if (oldDataString !== newDataString) {
-                    setTasks(validData);
-                }
-
-                if (isInitial) {
-                    setLoading(false);
-                    isInitial = false;
-                }
-            } catch (err) {
-                console.error('Error fetching tasks:', err);
-                if (isInitial) {
-                    setTasks([]);
-                    setLoading(false);
-                    isInitial = false;
-                }
-            }
-        };
-
-        fetchTasks();
-        const intervalId = setInterval(fetchTasks, 5000);
+        
+        const intervalId = setInterval(tasks, 5000);
 
         return () => clearInterval(intervalId);
     }, [userId]);

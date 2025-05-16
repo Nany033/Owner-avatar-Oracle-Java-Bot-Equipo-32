@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import API from '../../API';
 import SprintBarChart from '../charts/SprintBarChart'; // Make sure this path is correct
+import TaskCompletion from '../charts/TasksCompleted';
 
 const SprintHoursForUser = ({ userId, userName }) => {
   const [sprintData, setSprintData] = useState([]);
@@ -56,6 +57,7 @@ const SprintHoursForUser = ({ userId, userName }) => {
 
           {/* Chart View */}
           <SprintBarChart data={sprintData} />
+          <TaskCompletion data={sprintData} />
         </>
       )}
     </div>
