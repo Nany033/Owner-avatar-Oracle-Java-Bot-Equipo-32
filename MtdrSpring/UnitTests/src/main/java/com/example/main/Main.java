@@ -1,3 +1,5 @@
+package com.example.main;
+import com.example.bot.MiBot;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 
 public class Main {
