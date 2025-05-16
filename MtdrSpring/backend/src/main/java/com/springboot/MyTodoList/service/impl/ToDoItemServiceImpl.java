@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.service.impl;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,5 +97,22 @@ public class ToDoItemServiceImpl implements ToDoItemService {
     @Override
     public List<ToDoItem> findBySprintId(int sprint_id) {
         return toDoItemRepository.findBySprintId(sprint_id); // assuming a repository method exists
+    }
+
+    @Override
+    public List<ToDoItem> findRelatedTasks(int taskId) {
+        // Get the task to find its creation timestamp
+        Optional<ToDoItem> taskOpt = toDoItemRepository.findById(taskId);
+        if (!taskOpt.isPresent()) {
+            return List.of();
+        }
+
+        ToDoItem task = taskOpt.get();
+        OffsetDateTime timestamp = task.getCreation_ts();
+        OffsetDateTime startTime = timestamp.minusSeconds(1);
+        OffsetDateTime endTime = timestamp.plusSeconds(1);
+        
+        // Find all tasks created within 1 second of this task
+        return toDoItemRepository.findTasksCreatedNearTime(startTime, endTime);
     }
 }

@@ -63,4 +63,11 @@ public interface ToDoItemService {
     public List<ToDoItem> findByUserId(int userId);
 
     public List<ToDoItem> findBySprintId(int sprintId);
+
+    /**
+     * Finds all tasks that were created as part of the same task split operation.
+     * @param taskId The ID of one of the tasks in the split group
+     * @return List of related tasks, or empty list if none found
+     */
+    public List<ToDoItem> findRelatedTasks(int taskId);
 }
