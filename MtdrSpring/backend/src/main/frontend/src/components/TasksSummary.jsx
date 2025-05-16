@@ -57,11 +57,11 @@ export default function TasksSummary({ userId, userName }) {
                     {userId && <h2>User ID: {userId}</h2>}
                     {userName && <h2>User Name: {userName}</h2>}
                     <p>Total Tasks: {tasks.length}</p>
-                    <p>Completed Tasks: {tasks.filter(task => task.completed).length}</p>
-                    <p>Pending Tasks: {tasks.filter(task => !task.completed).length}</p>
+                    <p>Completed Tasks: {tasks.filter(task => task.done).length}</p>
+                    <p>Pending Tasks: {tasks.filter(task => !task.done).length}</p>
                     <p>
                         Overdue Tasks: {tasks.filter(task =>
-                            new Date(task.dueDate) < new Date() && !task.completed
+                            new Date(task.dueDate) < new Date() && !task.done
                         ).length}
                     </p>
                 </div>

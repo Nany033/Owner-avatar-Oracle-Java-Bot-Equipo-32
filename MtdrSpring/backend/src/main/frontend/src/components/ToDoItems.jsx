@@ -41,11 +41,14 @@ export default function ToDoItems({ userId }) {
   useEffect(() => {
     fetch(API.USERS)
       .then(response => {
+        setLoading(true);
         if (!response.ok) throw new Error('Error cargando usuarios');
         return response.json();
       })
       .then(data => {
         setUsers(data);
+        console.log('Fetched users:', data);
+        setLoading(false);
       })
       .catch(err => {
         setError(err.message);
@@ -55,8 +58,9 @@ export default function ToDoItems({ userId }) {
 
   // Get user name by userId for displaying in the table
   const getUserName = (userId) => {
-    if (!userId || !Array.isArray(users) || users.length === 0) return 'Sin asignar';
-    const user = users.find(u => u.userId === userId);
+    if (!userId) return 'Sin asignar';
+    const user = users.find(u => u.userId == userId);
+    console.log('User:', user);
     return user ? user.name : 'Sin asignar';
   };
 
