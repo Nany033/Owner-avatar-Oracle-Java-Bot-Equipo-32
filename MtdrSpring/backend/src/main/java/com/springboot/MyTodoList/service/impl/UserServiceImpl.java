@@ -108,5 +108,4 @@ public class UserServiceImpl implements UserService {
         logger.info("Obteniendo todos los usuarios");
         return usersRepository.findAll();
     }
-
 }

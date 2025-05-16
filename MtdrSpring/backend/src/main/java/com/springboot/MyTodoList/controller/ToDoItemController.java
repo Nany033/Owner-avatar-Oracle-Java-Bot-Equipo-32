@@ -110,11 +110,15 @@ public class ToDoItemController {
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/todolist/completion-stats")
-    public ResponseEntity<Map<String, Object>> getCompletionStats() {
-        List<ToDoItem> todoItems = toDoItemService.findAll();
-        Map<String, Object> stats = ToDoItem.getCompletionStats(todoItems);
-        return new ResponseEntity<>(stats, HttpStatus.OK);
+    @GetMapping("/todolist/user/{user_id}")
+    public ResponseEntity<List<ToDoItem>> getItemsByUserId(@PathVariable int user_id) {
+        List<ToDoItem> userItems = toDoItemService.findByUserId(user_id);
+
+        if (userItems.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Or OK with empty list
+        }
+
+        return new ResponseEntity<>(userItems, HttpStatus.OK);
     }
 
 }

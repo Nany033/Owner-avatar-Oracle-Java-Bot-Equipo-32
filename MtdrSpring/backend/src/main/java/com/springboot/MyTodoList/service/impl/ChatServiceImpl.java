@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Chat updateLastActivity(Long chatId) {
-        // No tenemos columna de última actividad, pero podríamos actualizar created_at
+        
         logger.info("Actualizando actividad para chat ID: {}", chatId);
         Optional<Chat> chatOpt = chatRepository.findById(chatId);
         if (chatOpt.isPresent()) {
@@ -66,7 +66,7 @@ public class ChatServiceImpl implements ChatService {
     public Chat saveChat(Chat chat) {
         logger.info("Guardando chat: {}", chat);
         
-        // Asegurarnos de que tenga una fecha de creación
+        
         if (chat.getCreatedAt() == null) {
             chat.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         }
@@ -75,7 +75,7 @@ public class ChatServiceImpl implements ChatService {
             return chatRepository.save(chat);
         } catch (Exception e) {
             logger.error("Error al guardar chat: " + e.getMessage(), e);
-            // Devolver el objeto sin persistir
+            
             return chat;
         }
     }

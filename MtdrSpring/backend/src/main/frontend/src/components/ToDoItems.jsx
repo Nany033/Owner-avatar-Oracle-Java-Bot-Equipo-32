@@ -1,16 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { CircularProgress } from '@mui/material';
 import { StatusCircle } from '../assets/icons';
 import Moment from 'react-moment';
 import API from '../API';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-export default function ToDoItems() {
+
+export default function ToDoItems({ userId }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [users, setUsers] = useState([]);
 
+  // Fetch all tasks if no userId
   useEffect(() => {
+    if (userId) return; // Skip if userId is present
     setLoading(true);
     fetch(API.TODOS)
       .then(response => {
@@ -19,118 +29,190 @@ export default function ToDoItems() {
       })
       .then(data => {
         setItems(data);
-        // console.log(data);
         setLoading(false);
       })
       .catch(err => {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [userId]);
 
-
+  // Fetch users to display names in the table
   useEffect(() => {
     fetch(API.USERS)
       .then(response => {
+        setLoading(true);
         if (!response.ok) throw new Error('Error cargando usuarios');
         return response.json();
       })
       .then(data => {
         setUsers(data);
-        // console.log(data);
+        console.log('Fetched users:', data);
+        setLoading(false);
       })
       .catch(err => {
         setError(err.message);
       });
   }, []);
 
+
+  // Get user name by userId for displaying in the table
   const getUserName = (userId) => {
-    if (userId == null || !Array.isArray(users) || users.length === 0) return 'Sin asignar';
+    if (!userId) return 'Sin asignar';
     const user = users.find(u => u.userId == userId);
+    console.log('User:', user);
     return user ? user.name : 'Sin asignar';
   };
 
+  // Fetch tasks for specific userId when selecting a user in the filter
+  useEffect(() => {
+    if (!userId) return;
 
-  if (loading) return <CircularProgress />;
+    const userIdInt = parseInt(userId, 10);
+    setLoading(true);
+    const fetchItems = () => {
+      fetch(`${API.TODOS}/user/${userIdInt}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setItems([...data]);
+            console.log('Fetched tasks for user:', data);
+            setLoading(false);
+          } else {
+            setItems([]);
+            setLoading(false);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching tasks:', err);
+          setItems([]);
+          setLoading(false);
+        });
+    };
+
+    fetchItems(); // Initial load
+    const intervalId = setInterval(fetchItems, 5000); // Auto-refresh every 5s
+
+    return () => clearInterval(intervalId); // Clean up on unmount
+  }, [userId]);
+
+  // Compute and split items into pending and done 
+  const { pendingItems, doneItems } = useMemo(() => {
+    const filtered = userId
+      ? items.filter(item => item.user_id == userId)
+      : [...items];
+
+    const sorted = filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
+    return {
+      pendingItems: sorted.filter(item => !item.done),
+      doneItems: sorted.filter(item => item.done),
+    };
+  }, [items, userId]);
+
+  // Render states
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+        <CircularProgress />
+      </div>
+    );
+  }
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
-      <h2>Pending Tasks</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Sprint</th>
-            <th>Status</th>
-            <th>Assigned member</th>
-            <th>Estimated Hours</th>
-            <th>Deadline</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.filter(item => !item.done).map(item => (
-            <tr key={item.id}>
-              <td>{item.description}</td>
-              <td>{item.sprint_id} </td>
-              <td>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <StatusCircle className="table-icon" status={item.done ? 'done' : 'pending'} />
-                  <span className="icon">{item.done ? 'Done' : 'Pending'}</span>
-                </div>
-              </td>
-              <td>{getUserName(item.user_id)}</td>
-              <td>{item.estimated_hours}</td>
-              <td>
-                {item.deadline && (
-                  <Moment format="MMM Do YYYY">{item.deadline}</Moment>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <h2>Done Tasks</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Sprint</th>
-            <th>Status</th>
-            <th>Assigned member</th>
-            <th>Estimated Hours</th>
-            <th>Deadline</th>
-            <th>Completion Date</th>
-            <th>Real Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.filter(item => item.done).map(item => (
-            <tr key={item.id}>
-              <td>{item.description}</td>
-              <td>{item.sprint_id}</td>
-              <td>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <StatusCircle className="table-icon" status={item.done ? 'done' : 'pending'} />
-                  <span className="icon">{item.done ? 'Done' : 'Pending'}</span>
-                </div>
-              </td>
-              <td>{getUserName(item.user_id)}</td>
-              <td>{item.estimated_hours}</td>
-              <td>
-                {item.deadline && (
-                  <Moment format="MMM Do YYYY">{item.deadline}</Moment>
-                )}
-              </td>
-              <td> {item.completion_date && (
-                <Moment format="MMM Do YYYY">{item.completion_date}</Moment>
-              )}</td>
-              <td>{item.real_time}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      {/* Accordion for Pending Tasks */}
+      <Accordion sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+        <AccordionSummary
+          expandIcon={
+            <ExpandMoreIcon sx={{ fontSize: 32 }} /> // default is ~24px
+          }
+        >
+          <Typography variant="h6">Pending Tasks</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {pendingItems.length === 0 ? (
+            <p>No pending tasks found.</p>
+          ) : (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Sprint</th>
+                  <th>Status</th>
+                  <th>Assigned member</th>
+                  <th>Deadline</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingItems.map(item => (
+                  <tr key={item.id}>
+                    <td>{item.description}</td>
+                    <td>{item.sprint_id}</td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <StatusCircle className="table-icon" status="pending" />
+                        <span className="icon">Pending</span>
+                      </div>
+                    </td>
+                    <td>{getUserName(item.user_id)}</td>
+                    <td>
+                      {item.deadline && (
+                        <Moment format="MMM Do YYYY">{item.deadline}</Moment>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </AccordionDetails>
+      </Accordion>
+      {/* Accordion for Done Tasks */}
+      <Accordion sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+        <AccordionSummary
+          expandIcon={
+            <ExpandMoreIcon sx={{ fontSize: 32 }} /> // default is ~24px
+          }
+        >
+          <Typography variant="h6">Done Tasks</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {doneItems.length === 0 ? (
+            <p>No completed tasks found.</p>
+          ) : (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Sprint</th>
+                  <th>Deadline</th>
+                  <th>Completion Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doneItems.map(item => (
+                  <tr key={item.id}>
+                    <td>{item.description}</td>
+                    <td>{item.sprint_id}</td>
+                    <td>
+                      {item.deadline && (
+                        <Moment format="MMM Do YYYY">{item.deadline}</Moment>
+                      )}
+                    </td>
+                    <td>
+                      {item.completion_date && (
+                        <Moment format="MMM Do YYYY">{item.completion_date}</Moment>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </AccordionDetails>
+      </Accordion>
+    </div >
   );
 }

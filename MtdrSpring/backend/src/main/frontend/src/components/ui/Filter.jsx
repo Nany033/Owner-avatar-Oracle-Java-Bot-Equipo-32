@@ -6,25 +6,25 @@ const Filter = ({ options, onSelect }) => {
     const handleChange = (event) => {
         const value = event.target.value;
         setSelectedOption(value);
-        onSelect(value); // notifica al componente padre
+        onSelect(value); // Notify parent
     };
 
     return (
         <div className='Filter'>
-            <label htmlFor="filter-dropdown">Filter Options:</label>
             <select
                 id="filter-dropdown"
                 value={selectedOption}
                 onChange={handleChange}
             >
                 <option value="">Select an option</option>
-                {options.map(option => (
-                    <option key={option.id} value={option.value}>
-                        {option.label}
+                {Array.isArray(options) && options.map(option => (
+                    <option key={option.userId} value={option.userId}>
+                        {option.name}
                     </option>
                 ))}
             </select>
-            {selectedOption && <p>You selected: {selectedOption}</p>}
+            {/* {selectedOption && <p>You selected: {options.find(o => o.userId === selectedOption)?.name}</p>} */}
+            {/* <p>Selected User ID: {selectedOption}</p> */}
         </div>
     );
 };
