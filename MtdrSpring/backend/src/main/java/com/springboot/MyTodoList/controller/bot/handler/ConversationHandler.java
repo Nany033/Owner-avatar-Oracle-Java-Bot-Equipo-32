@@ -194,7 +194,7 @@ public class ConversationHandler {
         stateManager.clearState(chatId);
         return createErrorMessage(chatId, "Error al asignar la tarea.");
     }
-
+    // Para Manager
     private ToDoItem createTaskAndReturn(long chatId, TaskData taskData) {
         try {
             // Create the base task
@@ -216,22 +216,51 @@ public class ConversationHandler {
 
             // Set the estimated hours
             if (estimatedHoursService.checkEstimatedHours(taskData.getEstimatedHours())) {
+                // Simple task
                 savedItem = estimatedHoursService.setEstimatedHours(itemId, taskData.getEstimatedHours());
+                
+                // Try to assign to a sprint
+                Sprints appropriateSprint = assignItemToSprintService.findAppropriateSprint(savedItem);
+                if (appropriateSprint != null) {
+                    savedItem = assignItemToSprintService.assignItemToSprint(itemId, appropriateSprint.getSprint_id());
+                }
+                
                 return savedItem;
             } else {
                 // Task needs division
+                savedItem.setEstimated_hours(taskData.getEstimatedHours());
+                savedItem = toDoItemService.updateToDoItem(itemId, savedItem);
+
+                // Generate subtasks
+                List<ToDoItem> splitTasks = estimatedHoursService.splitTask(savedItem);
+
+                // Save all subtasks in batch
+                List<ToDoItem> savedSubtasks = toDoItemService.saveAll(splitTasks);
+
+                // Assign all subtasks to sprints in batch
+                assignItemToSprintService.assignItemsToSprints(savedSubtasks);
+
+                // Delete the original task
                 toDoItemService.deleteToDoItem(itemId);
-                return null;
+                
+                // Return the first subtask for assignment
+                return savedSubtasks.isEmpty() ? null : savedSubtasks.get(0);
             }
         } catch (Exception e) {
             logger.error("Error creating task: " + e.getMessage(), e);
             return null;
         }
     }
-
+    // Para Developer
     private SendMessage createTask(long chatId, TaskData taskData) {
-        // Código existente de createTask...
         try {
+            // Get the developer's ID who is creating the task
+            Optional<User> developerOpt = userService.findByChatId(chatId);
+            if (!developerOpt.isPresent()) {
+                return createErrorMessage(chatId, "No se pudo identificar al desarrollador.");
+            }
+            String developerId = developerOpt.get().getUserId();
+
             // Create the base task
             ToDoItem newItem = new ToDoItem();
             newItem.setDescription(taskData.getDescription());
@@ -258,6 +287,9 @@ public class ConversationHandler {
                 String successMessage;
 
                 if (savedItem != null) {
+                    // Assign task to the developer who created it
+                    savedItem = taskAssignmentService.assignTaskToUser(itemId, developerId);
+                    
                     Sprints appropriateSprint = assignItemToSprintService.findAppropriateSprint(savedItem);
 
                     if (appropriateSprint != null) {
@@ -265,16 +297,16 @@ public class ConversationHandler {
                                 appropriateSprint.getSprint_id());
                         if (assignedTask != null) {
                             successMessage = String.format(
-                                    "Tarea creada con duración de %d horas y asignada automáticamente al sprint %d.",
+                                    "Tarea creada con duración de %d horas, asignada a ti y asignada automáticamente al sprint %d.",
                                     taskData.getEstimatedHours(), appropriateSprint.getSprint_id());
                         } else {
                             successMessage = String.format(
-                                    "Tarea creada con duración de %d horas. Error al asignar al sprint %d.",
+                                    "Tarea creada con duración de %d horas y asignada a ti. Error al asignar al sprint %d.",
                                     taskData.getEstimatedHours(), appropriateSprint.getSprint_id());
                         }
                     } else {
                         successMessage = String.format(
-                                "Tarea creada con duración de %d horas. No se encontró un sprint adecuado para la fecha límite.",
+                                "Tarea creada con duración de %d horas y asignada a ti. No se encontró un sprint adecuado para la fecha límite.",
                                 taskData.getEstimatedHours());
                     }
                 } else {
@@ -295,7 +327,10 @@ public class ConversationHandler {
                 // Save all subtasks in batch
                 List<ToDoItem> savedSubtasks = toDoItemService.saveAll(splitTasks);
 
-                // Assign all subtasks to sprints in batch
+                // Assign all subtasks to the developer and sprints in batch
+                for (ToDoItem subtask : savedSubtasks) {
+                    taskAssignmentService.assignTaskToUser(subtask.getID(), developerId);
+                }
                 Map<Integer, Integer> assignmentResults = assignItemToSprintService.assignItemsToSprints(savedSubtasks);
 
                 // Count successful assignments
@@ -309,15 +344,15 @@ public class ConversationHandler {
                 String successMessage;
                 if (assignedCount == savedSubtasks.size()) {
                     successMessage = String.format(
-                            "Tarea dividida en %d partes y todas fueron asignadas automáticamente a sprints.",
+                            "Tarea dividida en %d partes, todas asignadas a ti y asignadas automáticamente a sprints.",
                             savedSubtasks.size());
                 } else if (assignedCount > 0) {
                     successMessage = String.format(
-                            "Tarea dividida en %d partes. %d subtareas fueron asignadas automáticamente a sprints.",
+                            "Tarea dividida en %d partes y asignada a ti. %d subtareas fueron asignadas automáticamente a sprints.",
                             savedSubtasks.size(), assignedCount);
                 } else {
                     successMessage = String.format(
-                            "Tarea dividida en %d partes. No se encontraron sprints adecuados para las fechas límite.",
+                            "Tarea dividida en %d partes y asignada a ti. No se encontraron sprints adecuados para las fechas límite.",
                             savedSubtasks.size());
                 }
 
