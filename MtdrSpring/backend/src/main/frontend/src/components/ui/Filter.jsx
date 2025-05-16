@@ -16,7 +16,7 @@ const Filter = ({ options, onSelect }) => {
                 value={selectedOption}
                 onChange={handleChange}
             >
-                <option value="">Select an option</option>
+                <option value="">Team Overview</option>
                 {Array.isArray(options) && options.map(option => (
                     <option key={option.userId} value={option.userId}>
                         {option.name}

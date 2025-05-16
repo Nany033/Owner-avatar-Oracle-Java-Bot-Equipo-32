@@ -28,7 +28,7 @@ const SprintHoursForUser = ({ userId, userName }) => {
 
   return (
     <div>
-      <h2>Sprint Hours for {userName}</h2>
+      <h2>Sprint Hours for {userName} <span>({userId})</span></h2>
 
       {sprintData.length === 0 ? (
         <p>No sprint data available for this user.</p>
