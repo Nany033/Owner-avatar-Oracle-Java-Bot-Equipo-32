@@ -2,20 +2,35 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 
-const TaskCompletion = ({ data, isLoading, tasks }) => {
+const TaskCompletion = ({ isLoading, tasks }) => {
     if (isLoading) {
         return <p>Loading task data...</p>;
     }
 
-    if (!data || data.length === 0) {
+    if (!tasks || tasks.length === 0) {
         return <p>No data available.</p>;
     }
 
-    // Transforming the input data
-    const chartData = data.map((item) => ({
-        sprint: item.sprintName ?? `Sprint ${item.sprintId}`,
-        completedTasks: tasks.filter(task => task.sprintId === item.sprintId).length ?? 0,
-    }));
+    console.log('TaskCompletion tasks:', tasks);
+    // Crear los datos para el gráfico
+    const chartDataMap = tasks.reduce((acc, task) => {
+        const sprintKey = task.sprintName ?? `Sprint ${task.sprint_id}`;
+        if (!acc[sprintKey]) {
+            acc[sprintKey] = {
+                sprint: sprintKey,
+                completedTasks: 0,
+            };
+        }
+        if (task.done) {
+            acc[sprintKey].completedTasks += 1;
+        }
+        return acc;
+    }, {});
+
+    const chartData = Object.values(chartDataMap);
+
+
+    console.log('Chart data:', chartData);
 
     return (
         <div>

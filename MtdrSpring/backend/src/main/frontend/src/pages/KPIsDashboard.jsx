@@ -67,7 +67,7 @@ export default function KPIsDashboard({ options }) {
                     <>
                         <SprintHours tasks={tasks} />
                         <SprintBarChart />
-                        <TaskCompletion />
+                        <TaskCompletion tasks={tasks} />
                     </>
                 )}
                 {selectedUserId && <SprintHoursForUser userId={selectedUserId} userName={userName} />}

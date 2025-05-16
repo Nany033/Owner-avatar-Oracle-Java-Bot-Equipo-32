@@ -57,7 +57,6 @@ const SprintHoursForUser = ({ userId, userName }) => {
 
           {/* Chart View */}
           <SprintBarChart data={sprintData} />
-          <TaskCompletion data={sprintData} />
         </>
       )}
     </div>
