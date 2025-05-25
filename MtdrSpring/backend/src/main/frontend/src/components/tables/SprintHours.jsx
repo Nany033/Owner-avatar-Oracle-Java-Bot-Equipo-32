@@ -50,6 +50,7 @@ const SprintHours = ({ tasks }) => {
 
       {/* Chart view */}
       <SprintBarChart data={sprintData} />
+      <TaskCompletion data={sprintData} tasks={tasks} isLoading={loading} />
     </div>
   );
 };
