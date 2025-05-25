@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import API from '../../API';
 import SprintBarChart from '../charts/SprintBarChart'; // Make sure path is correct
+import TaskCompletion from '../charts/TasksCompleted';
 
 const SprintHours = ({ tasks }) => {
   const [sprintData, setSprintData] = useState([]);
