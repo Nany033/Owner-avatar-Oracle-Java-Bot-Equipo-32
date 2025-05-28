@@ -12,6 +12,7 @@ env:
     DOCKER_USERNAME: ${DOCKER_USERNAME}
     DOCKER_PASSWORD: ${DOCKER_PASSWORD}
     DOCKER_REGISTRY: ${REGION}
+    OCI_REGION: ${REGION}
 
 
   exportedVariables:
@@ -21,6 +22,7 @@ env:
     - REGION
     - UI_USERNAME
     - DOCKER_REGISTRY
+    - OCI_REGION
 
 steps:
   - type: Command
@@ -41,12 +43,18 @@ steps:
     command: |
       cd MtdrSpring/backend
       export DOCKER_REGISTRY=mx-queretaro-1.ocir.io
+      export OCI_REGION=mx-queretaro-1
+      mvn clean package spring-boot:repackage
       ./build.sh
 
   - type: Command
     name: "Deploy to Kubernetes"
     command: |
       cd MtdrSpring/backend
+      export DOCKER_REGISTRY=mx-queretaro-1.ocir.io
+      export OCI_REGION=mx-queretaro-1
+      export TODO_PDB_NAME=${TODO_PDB_NAME}
+      export UI_USERNAME=${UI_USERNAME}
       ./deploy.sh
 
 
