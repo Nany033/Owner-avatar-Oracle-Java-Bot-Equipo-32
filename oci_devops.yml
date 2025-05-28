@@ -13,6 +13,7 @@ env:
     DOCKER_PASSWORD: ${DOCKER_PASSWORD}
     DOCKER_REGISTRY: ${REGION}
     OCI_REGION: ${REGION}
+    TENANCY_NAME: axixsctxuqtl
 
 
   exportedVariables:
@@ -23,6 +24,7 @@ env:
     - UI_USERNAME
     - DOCKER_REGISTRY
     - OCI_REGION
+    - TENANCY_NAME
 
 steps:
   - type: Command
@@ -52,8 +54,8 @@ steps:
       # Verify the JAR file exists
       ls -l target/MyTodoList-0.0.1-SNAPSHOT.jar
       # Build and push Docker image
-      docker build -t ${DOCKER_REGISTRY}/todolistapp-springboot:0.1 .
-      docker push ${DOCKER_REGISTRY}/todolistapp-springboot:0.1
+      docker build -t ${DOCKER_REGISTRY}/${TENANCY_NAME}/todolistapp-springboot:0.1 .
+      docker push ${DOCKER_REGISTRY}/${TENANCY_NAME}/todolistapp-springboot:0.1
 
   - type: Command
     name: "Deploy to Kubernetes"
@@ -66,7 +68,7 @@ steps:
       # Create deployment YAML
       export CURRENTTIME=$(date '+%F_%H:%M:%S')
       cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-${CURRENTTIME}.yaml
-      sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}/${TENANCY_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
