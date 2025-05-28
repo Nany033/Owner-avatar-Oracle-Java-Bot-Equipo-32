@@ -44,8 +44,16 @@ steps:
       cd MtdrSpring/backend
       export DOCKER_REGISTRY=mx-queretaro-1.ocir.io
       export OCI_REGION=mx-queretaro-1
-      mvn clean package spring-boot:repackage
-      ./build.sh
+      # Install Node.js and npm
+      curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+      yum install -y nodejs
+      # Build the application
+      mvn clean package spring-boot:repackage -DskipTests
+      # Verify the JAR file exists
+      ls -l target/MyTodoList-0.0.1-SNAPSHOT.jar
+      # Build and push Docker image
+      docker build -t ${DOCKER_REGISTRY}/todolistapp-springboot:0.1 .
+      docker push ${DOCKER_REGISTRY}/todolistapp-springboot:0.1
 
   - type: Command
     name: "Deploy to Kubernetes"
@@ -55,7 +63,15 @@ steps:
       export OCI_REGION=mx-queretaro-1
       export TODO_PDB_NAME=${TODO_PDB_NAME}
       export UI_USERNAME=${UI_USERNAME}
-      ./deploy.sh
+      # Create deployment YAML
+      export CURRENTTIME=$(date '+%F_%H:%M:%S')
+      cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-${CURRENTTIME}.yaml
+      sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      sed -i "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      # Apply the deployment
+      kubectl apply -f todolistapp-springboot-${CURRENTTIME}.yaml -n mtdrworkshop
 
 
 
