@@ -11,6 +11,7 @@ env:
     UI_USERNAME: ${UI_USERNAME}
     DOCKER_USERNAME: ${DOCKER_USERNAME}
     DOCKER_PASSWORD: ${DOCKER_PASSWORD}
+    DOCKER_REGISTRY: ${REGION}
 
 
   exportedVariables:
@@ -19,6 +20,7 @@ env:
     - TODO_PDB_NAME
     - REGION
     - UI_USERNAME
+    - DOCKER_REGISTRY
 
 steps:
   - type: Command
@@ -38,6 +40,7 @@ steps:
     name: "Build and Push Docker Image"
     command: |
       cd MtdrSpring/backend
+      export DOCKER_REGISTRY=mx-queretaro-1.ocir.io
       ./build.sh
 
   - type: Command
