@@ -44,34 +44,34 @@ steps:
     name: "Build and Push Docker Image"
     command: |
       cd MtdrSpring/backend
-      export DOCKER_REGISTRY=mx-queretaro-1.ocir.io
-      export OCI_REGION=mx-queretaro-1
       # Install Node.js and npm
       curl -sL https://rpm.nodesource.com/setup_16.x | bash -
       yum install -y nodejs
+      
       # Build the application
       mvn clean package spring-boot:repackage -DskipTests
-      # Verify the JAR file exists
-      ls -l target/MyTodoList-0.0.1-SNAPSHOT.jar
-      # Build and push Docker image
-      docker build -t ${DOCKER_REGISTRY}/${TENANCY_NAME}/todolistapp-springboot:0.1 .
-      docker push ${DOCKER_REGISTRY}/${TENANCY_NAME}/todolistapp-springboot:0.1
+      
+      # Build and push Docker image to CORRECT repository
+      docker build -t mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj/todolistapp-springboot:0.1 .
+      docker push mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj/todolistapp-springboot:0.1
 
   - type: Command
     name: "Deploy to Kubernetes"
     command: |
       cd MtdrSpring/backend
-      export DOCKER_REGISTRY=mx-queretaro-1.ocir.io
-      export OCI_REGION=mx-queretaro-1
-      export TODO_PDB_NAME=${TODO_PDB_NAME}
-      export UI_USERNAME=${UI_USERNAME}
       # Create deployment YAML
       export CURRENTTIME=$(date '+%F_%H:%M:%S')
       cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-${CURRENTTIME}.yaml
-      sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}/${TENANCY_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      
+      # Use CORRECT repository path in YAML
+      sed -i "s|%DOCKER_REGISTRY%|mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      
+      # Create namespace if not exists
+      kubectl create namespace mtdrworkshop --dry-run=client -o yaml | kubectl apply -f -
+      
       # Apply the deployment
       kubectl apply -f todolistapp-springboot-${CURRENTTIME}.yaml -n mtdrworkshop
 
