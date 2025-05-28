@@ -32,7 +32,7 @@ steps:
   - type: Command
     name: "Docker Login"
     command: |
-      echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" ${REGION}.ocir.io
+      echo "${DOCKER_PASSWORD}" | docker login ${REGION} -u "${DOCKER_USERNAME}" --password-stdin
 
   - type: Command
     name: "Build and Push Docker Image"
