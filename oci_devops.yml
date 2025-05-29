@@ -7,13 +7,6 @@ env:
   variables:
     JAVA_HOME: /usr/lib64/graalvm/graalvm22-ee-java17
 
-  exportedVariables:
-    - docker_username
-    - docker_password
-    - docker_registry
-    - region
-    - ui_username
-
 steps:
   - type: Command
     name: "Install dependencies"
