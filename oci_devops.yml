@@ -56,6 +56,8 @@ steps:
     command: |
       export CURRENTTIME=$(date '+%F_%H-%M-%S')
       export BUILD_TIMESTAMP=$(date +%s)
+
+      # Render deployment.yaml from original YAML template
       cp MtdrSpring/backend/src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-${CURRENTTIME}.yaml
 
       sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-${CURRENTTIME}.yaml
@@ -67,10 +69,15 @@ steps:
         | (.spec.template.spec.containers[].imagePullPolicy) = "Always"
       ' -i todolistapp-springboot-${CURRENTTIME}.yaml
 
+      # Prepare artifact folder
       mkdir -p artifacts
+
+      # Copy all manifest files to the artifact folder
       cp todolistapp-springboot-${CURRENTTIME}.yaml artifacts/deployment.yaml
+      cp MtdrSpring/backend/src/main/resources/service.yaml artifacts/service.yaml
+      cp MtdrSpring/backend/src/main/resources/router.yaml artifacts/router.yaml
 
 outputArtifacts:
   - name: deployment-manifest
     type: BINARY
-    location: artifacts/deployment.yaml
+    location: artifacts
