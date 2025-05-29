@@ -80,10 +80,10 @@ steps:
 outputArtifacts:
   - name: deployment-manifest
     type: BINARY
-    location: artifacts
+    location: artifacts/deployment.yaml
   - name: service-manifest
     type: BINARY
-    location: artifacts
+    location: artifacts/service.yaml
   - name: router-manifest
     type: BINARY
-    location: artifacts
+    location: artifacts/router.yaml
