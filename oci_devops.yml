@@ -6,18 +6,13 @@ shell: bash
 env:
   variables:
     JAVA_HOME: /usr/lib64/graalvm/graalvm22-ee-java17
-    UI_USERNAME: ${ui_username}
-    DOCKER_USERNAME: ${docker_username}
-    DOCKER_PASSWORD: ${docker_password}
-    DOCKER_REGISTRY: ${docker_registry}
-    REGION: ${region}
 
   exportedVariables:
-    - DOCKER_USERNAME
-    - DOCKER_PASSWORD
-    - UI_USERNAME
-    - DOCKER_REGISTRY
-    - REGION
+    - docker_username
+    - docker_password
+    - docker_registry
+    - region
+    - ui_username
 
 steps:
   - type: Command
@@ -35,15 +30,15 @@ steps:
   - type: Command
     name: "Docker Login"
     command: |
-      echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin ${DOCKER_REGISTRY}
+      echo "${docker_password}" | docker login -u "${docker_username}" --password-stdin ${docker_registry}
 
   - type: Command
     name: "Build Java App and Docker Image"
     command: |
       cd MtdrSpring/backend
       mvn clean package spring-boot:repackage -DskipTests
-      docker build -t ${DOCKER_REGISTRY}/todolistapp-springboot:0.1 .
-      docker push ${DOCKER_REGISTRY}/todolistapp-springboot:0.1
+      docker build -t ${docker_registry}/todolistapp-springboot:0.1 .
+      docker push ${docker_registry}/todolistapp-springboot:0.1
 
   - type: Command
     name: "Render Kubernetes YAML"
@@ -56,9 +51,9 @@ steps:
       # Render Deployment YAML
       cp MtdrSpring/backend/src/main/resources/deployment.yaml artifacts/deployment.yaml
 
-      sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" artifacts/deployment.yaml
-      sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" artifacts/deployment.yaml
-      sed -i "s|%REGION%|${REGION}|g" artifacts/deployment.yaml
+      sed -i "s|%docker_registry%|${docker_registry}|g" artifacts/deployment.yaml
+      sed -i "s|%ui_username%|${ui_username}|g" artifacts/deployment.yaml
+      sed -i "s|%region%|${region}|g" artifacts/deployment.yaml
 
       # Only patch the Deployment YAML
       yq e '
