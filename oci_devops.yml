@@ -68,30 +68,27 @@ steps:
     name: "Deploy to Kubernetes"
     command: |
       cd MtdrSpring/backend
-      export CURRENTTIME=$(date '+%F_%H:%M:%S')
+      export CURRENTTIME=$(date '+%F_%H-%M-%S')
+      export BUILD_TIMESTAMP=$(date +%s)
       cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-${CURRENTTIME}.yaml
-      
-      # Use CORRECT repository path in YAML
+
+      # Reemplaza los placeholders
       sed -i "s|%DOCKER_REGISTRY%|mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
-      
-      # ADDED: Force Kubernetes to always pull the image
-      echo "  template:" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      echo "    metadata:" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      echo "      annotations:" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      echo "        build.timestamp: \"$(date +%s)\"" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      echo "    spec:" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      echo "      containers:" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      echo "        - name: todolistapp-springboot" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      echo "          imagePullPolicy: Always" >> todolistapp-springboot-${CURRENTTIME}.yaml
-      
-      # Create namespace if not exists
+
+      # Añade anotación y política de pull al contenedor del deployment usando yq (más seguro que echo)
+      yq e '
+        (.spec.template.metadata.annotations."build.timestamp") = strenv(BUILD_TIMESTAMP)
+        | (.spec.template.spec.containers[].imagePullPolicy) = "Always"
+      ' -i todolistapp-springboot-${CURRENTTIME}.yaml
+
+      # Crea el namespace si no existe
       kubectl create namespace mtdrworkshop --dry-run=client -o yaml | kubectl apply -f -
-      
-      # Apply the deployment
+
+      # Aplica el deployment
       kubectl apply -f todolistapp-springboot-${CURRENTTIME}.yaml -n mtdrworkshop
-      
-      # ADDED: Force rollout restart to ensure new pods are created
+
+      # Reinicia el deployment para forzar la recreación de pods
       kubectl rollout restart deployment/todolistapp-springboot -n mtdrworkshop
