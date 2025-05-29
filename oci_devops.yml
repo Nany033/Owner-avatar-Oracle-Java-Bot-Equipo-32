@@ -54,6 +54,7 @@ steps:
   - type: Command
     name: "Render Kubernetes YAML"
     command: |
+      cd MtdrSpring/backend
       export CURRENTTIME=$(date '+%F_%H-%M-%S')
       export BUILD_TIMESTAMP=$(date +%s)
       cp src/main/resources/todolistapp-springboot.template.yaml todolistapp-springboot-${CURRENTTIME}.yaml
