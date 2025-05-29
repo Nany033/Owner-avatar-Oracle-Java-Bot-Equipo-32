@@ -69,3 +69,8 @@ steps:
 
       mkdir -p artifacts
       cp todolistapp-springboot-${CURRENTTIME}.yaml artifacts/deployment.yaml
+
+outputArtifacts:
+  - name: deployment-manifest
+    type: BINARY
+    location: artifacts/deployment.yaml
