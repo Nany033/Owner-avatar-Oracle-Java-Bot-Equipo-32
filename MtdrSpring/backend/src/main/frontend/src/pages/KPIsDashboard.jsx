@@ -4,14 +4,54 @@ import TasksSummary from '../components/TasksSummary';
 import SprintHours from '../components/tables/SprintHours';
 import SprintHoursForUser from '../components/tables/SprintHoursForUser';
 import SprintBarChart from '../components/charts/SprintBarChart';
+import TaskCompletion from '../components/charts/TasksCompleted';
+import API from '../API';
 
 export default function KPIsDashboard({ options }) {
     const [selectedUserId, setSelectedUserId] = useState('');
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [userName, setUserName] = useState('');
 
     useEffect(() => {
         const selectedUser = options.find(option => option.userId === selectedUserId);
         setUserName(selectedUser ? selectedUser.name : '');
+
+        let isInitial = true;
+        const fetchTasks = async () => {
+            const endpoint = selectedUserId
+                ? `${API.TODOS}/user/${parseInt(selectedUserId, 10)}`
+                : `${API.TODOS}`;
+
+            try {
+                const res = await fetch(endpoint);
+                const data = await res.json();
+
+                const validData = Array.isArray(data) ? data : [];
+
+                // Compare previous and new data
+                const oldDataString = JSON.stringify(tasks);
+                const newDataString = JSON.stringify(validData);
+
+                if (oldDataString !== newDataString) {
+                    setTasks(validData);
+                }
+
+                if (isInitial) {
+                    setLoading(false);
+                    isInitial = false;
+                }
+            } catch (err) {
+                console.error('Error fetching tasks:', err);
+                if (isInitial) {
+                    setTasks([]);
+                    setLoading(false);
+                    isInitial = false;
+                }
+            }
+        };
+
+        fetchTasks();
     }, [selectedUserId, options]);
 
     const handleSelect = (userId) => {
@@ -22,17 +62,18 @@ export default function KPIsDashboard({ options }) {
         <div>
             <h1>KPIs Dashboard</h1>
             <Filter options={options} onSelect={handleSelect} />
-            <div >
+            <div>
                 {!selectedUserId && (
                     <>
-                        <SprintHours />
+                        <SprintHours tasks={tasks} />
                         <SprintBarChart />
+                        <TaskCompletion tasks={tasks} />
                     </>
                 )}
                 {selectedUserId && <SprintHoursForUser userId={selectedUserId} userName={userName} />}
             </div>
             <div>
-                <TasksSummary userId={selectedUserId} userName={userName} />
+                <TasksSummary userId={selectedUserId} userName={userName} tasks={tasks} loading={loading} />
             </div>
         </div>
     );

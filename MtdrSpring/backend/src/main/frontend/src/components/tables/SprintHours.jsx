@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import API from '../../API';
 import SprintBarChart from '../charts/SprintBarChart'; // Make sure path is correct
+import TaskCompletion from '../charts/TasksCompleted';
 
-const SprintHours = () => {
+const SprintHours = ({ tasks }) => {
   const [sprintData, setSprintData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,6 +34,7 @@ const SprintHours = () => {
             <th>Sprint</th>
             <th>Estimated Hours</th>
             <th>Actual Hours</th>
+            <th>Number of tasks completed</th>
           </tr>
         </thead>
         <tbody>
@@ -41,6 +43,7 @@ const SprintHours = () => {
               <td>{sprint.sprintName ?? `Sprint ${sprint.sprintId}`}</td>
               <td>{sprint.estimated_hours ?? '–'}</td>
               <td>{sprint.totalHours ?? '–'}</td>
+              <td>{tasks.filter(task => task.sprintId === sprint.sprintId).length}</td>
             </tr>
           ))}
         </tbody>
@@ -48,8 +51,10 @@ const SprintHours = () => {
 
       {/* Chart view */}
       <SprintBarChart data={sprintData} />
+      <TaskCompletion data={sprintData} tasks={tasks} isLoading={loading} />
     </div>
   );
 };
+
 
 export default SprintHours;

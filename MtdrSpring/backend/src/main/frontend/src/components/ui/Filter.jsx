@@ -30,3 +30,4 @@ const Filter = ({ options, onSelect }) => {
 };
 
 export default Filter;
+
