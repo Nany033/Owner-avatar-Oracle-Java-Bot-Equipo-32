@@ -81,3 +81,9 @@ outputArtifacts:
   - name: deployment-manifest
     type: BINARY
     location: artifacts
+  - name: service-manifest
+    type: BINARY
+    location: artifacts
+  - name: router-manifest
+    type: BINARY
+    location: artifacts
