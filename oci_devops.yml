@@ -50,6 +50,12 @@ steps:
       oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.mx-queretaro-1.aaaaaaaa7bcwi7l2xd6x52um7s2okot57tkqhlas3jau37icoctcpejkkmga --region mx-queretaro-1 --token-version 2.0.0
 
   - type: Command
+    name: "Install yq"
+    command: |
+      wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+      chmod +x /usr/local/bin/yq
+
+  - type: Command
     name: "Build and Push Docker Image"
     command: |
       cd MtdrSpring/backend
@@ -91,4 +97,4 @@ steps:
       kubectl apply -f todolistapp-springboot-${CURRENTTIME}.yaml -n mtdrworkshop
 
       # Reinicia el deployment para forzar la recreación de pods
-      kubectl rollout restart deployment/todolistapp-springboot -n mtdrworkshop
+      kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
