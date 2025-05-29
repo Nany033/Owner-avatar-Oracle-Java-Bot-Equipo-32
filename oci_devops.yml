@@ -6,13 +6,13 @@ shell: bash
 env:
   variables:
     JAVA_HOME: /usr/lib64/graalvm/graalvm22-ee-java17
-    TODO_PDB_NAME: ${TODO_PDB_NAME}
-    REGION: ${REGION}
-    UI_USERNAME: ${UI_USERNAME}
-    DOCKER_USERNAME: ${DOCKER_USERNAME}
-    DOCKER_PASSWORD: ${DOCKER_PASSWORD}
-    DOCKER_REGISTRY: ${REGION}
-    OCI_REGION: ${REGION}
+    TODO_PDB_NAME: 	telegrambotl46xj
+    REGION: mx-queretaro-1
+    UI_USERNAME: admin
+    DOCKER_USERNAME: axixsctxuqtl/a01637441@tec.mx
+    DOCKER_PASSWORD: x6Lx61Y(Md_uTTvO(kVa
+    DOCKER_REGISTRY: mx-queretaro-1.ocir.io
+    OCI_REGION: mx-queretaro-1
     TENANCY_NAME: axixsctxuqtl
 
   exportedVariables:
@@ -39,7 +39,6 @@ steps:
     command: |
       echo "x6Lx61Y(Md_uTTvO(kVa" | docker login -u "axixsctxuqtl/a01637441@tec.mx" --password-stdin mx-queretaro-1.ocir.io
 
-  # NEW STEP: Install kubectl and configure cluster access
   - type: Command
     name: "Install kubectl"
     command: |
