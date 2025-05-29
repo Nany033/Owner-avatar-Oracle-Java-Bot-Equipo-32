@@ -48,7 +48,7 @@ steps:
       install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
       
       # Configure Kubernetes access
-      oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.mx-queretaro-1.aaaaaaaa7bcwi7l2xd6x52um7s2okot57tkqhlas3jau37icoctcpejkkmga --region mx-queretaro-1.ocir.io --token-version 2.0.0
+      oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.mx-queretaro-1.aaaaaaaa7bcwi7l2xd6x52um7s2okot57tkqhlas3jau37icoctcpejkkmga --region mx-queretaro-1 --token-version 2.0.0
 
   - type: Command
     name: "Build and Push Docker Image"
