@@ -11,7 +11,7 @@ env:
     UI_USERNAME: admin
     DOCKER_USERNAME: axixsctxuqtl/a01637441@tec.mx
     DOCKER_PASSWORD: x6Lx61Y(Md_uTTvO(kVa
-    DOCKER_REGISTRY: mx-queretaro-1.ocir.io
+    DOCKER_REGISTRY: mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj
     OCI_REGION: mx-queretaro-1
     TENANCY_NAME: axixsctxuqtl
 
@@ -27,74 +27,51 @@ env:
 
 steps:
   - type: Command
-    name: "Install GraalVM Enterprise 22.x Native Image for Java17"
-    command: yum -y install graalvm22-ee-17-native-image
-
-  - type: Command
-    name: "Set PATH Variable"
-    command: export PATH=$JAVA_HOME/bin:$PATH
-
-  - type: Command
-    name: "Docker Login"
+    name: "Install dependencies"
     command: |
-      echo "x6Lx61Y(Md_uTTvO(kVa" | docker login -u "axixsctxuqtl/a01637441@tec.mx" --password-stdin mx-queretaro-1.ocir.io
-
-  - type: Command
-    name: "Install kubectl"
-    command: |
-      # Install kubectl
-      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      yum -y install graalvm22-ee-17-native-image
+      export PATH=$JAVA_HOME/bin:$PATH
+      curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-      
-      # Configure Kubernetes access
-      oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.mx-queretaro-1.aaaaaaaa7bcwi7l2xd6x52um7s2okot57tkqhlas3jau37icoctcpejkkmga --region mx-queretaro-1 --token-version 2.0.0
-
-  - type: Command
-    name: "Install yq"
-    command: |
+      curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+      yum install -y nodejs
       wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
       chmod +x /usr/local/bin/yq
 
   - type: Command
-    name: "Build and Push Docker Image"
+    name: "Docker Login"
     command: |
-      cd MtdrSpring/backend
-      # Install Node.js and npm
-      curl -sL https://rpm.nodesource.com/setup_16.x | bash -
-      yum install -y nodejs
-      
-      # Build the application
-      mvn clean package spring-boot:repackage -DskipTests
-      
-      # Build and push Docker image
-      docker build -t mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj/todolistapp-springboot:0.1 .
-      docker push mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj/todolistapp-springboot:0.1
+      echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin ${DOCKER_REGISTRY}
 
   - type: Command
-    name: "Deploy to Kubernetes"
+    name: "Build Java App and Docker Image"
     command: |
       cd MtdrSpring/backend
+      mvn clean package spring-boot:repackage -DskipTests
+      docker build -t ${DOCKER_REGISTRY}/todolistapp-springboot:0.1 .
+      docker push ${DOCKER_REGISTRY}/todolistapp-springboot:0.1
+
+  - type: Command
+    name: "Render Kubernetes YAML"
+    command: |
       export CURRENTTIME=$(date '+%F_%H-%M-%S')
       export BUILD_TIMESTAMP=$(date +%s)
-      cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-${CURRENTTIME}.yaml
+      cp src/main/resources/todolistapp-springboot.template.yaml todolistapp-springboot-${CURRENTTIME}.yaml
 
-      # Reemplaza los placeholders
-      sed -i "s|%DOCKER_REGISTRY%|mx-queretaro-1.ocir.io/axixsctxuqtl/telegrambot/l46xj|g" todolistapp-springboot-${CURRENTTIME}.yaml
-      sed -i "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
-      sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-${CURRENTTIME}.yaml
       sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml
+      sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml
 
-      # Añade anotación y política de pull al contenedor del deployment usando yq (más seguro que echo)
       yq e '
         (.spec.template.metadata.annotations."build.timestamp") = strenv(BUILD_TIMESTAMP)
         | (.spec.template.spec.containers[].imagePullPolicy) = "Always"
       ' -i todolistapp-springboot-${CURRENTTIME}.yaml
 
-      # Crea el namespace si no existe
-      kubectl create namespace mtdrworkshop --dry-run=client -o yaml | kubectl apply -f -
+      mkdir -p artifacts
+      cp todolistapp-springboot-${CURRENTTIME}.yaml artifacts/deployment.yaml
 
-      # Aplica el deployment
-      kubectl apply -f todolistapp-springboot-${CURRENTTIME}.yaml -n mtdrworkshop
-
-      # Reinicia el deployment para forzar la recreación de pods
-      kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
+artifacts:
+  - name: deploy-manifest
+    type: FILE
+    source:
+      path: artifacts/deployment.yaml
