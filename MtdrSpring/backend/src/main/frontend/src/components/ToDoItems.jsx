@@ -59,7 +59,7 @@ export default function ToDoItems({ userId }) {
   // Get user name by userId for displaying in the table
   const getUserName = (userId) => {
     if (!userId) return 'Sin asignar';
-    const user = users.find(u => u.userId === userId);
+    const user = users.find(u => u.userId == userId);
     console.log('User:', user);
     return user ? user.name : 'Sin asignar';
   };
@@ -99,7 +99,7 @@ export default function ToDoItems({ userId }) {
   // Compute and split items into pending and done 
   const { pendingItems, doneItems } = useMemo(() => {
     const filtered = userId
-      ? items.filter(item => item.user_id === userId)
+      ? items.filter(item => item.user_id == userId)
       : [...items];
   
     const sorted = filtered.sort((a, b) => {
