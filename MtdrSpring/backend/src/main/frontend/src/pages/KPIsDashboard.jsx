@@ -4,7 +4,6 @@ import TasksSummary from '../components/TasksSummary';
 import SprintHours from '../components/tables/SprintHours';
 import SprintHoursForUser from '../components/tables/SprintHoursForUser';
 import SprintBarChart from '../components/charts/SprintBarChart';
-import TaskCompletion from '../components/charts/TasksCompleted';
 import API from '../API';
 
 export default function KPIsDashboard({ options }) {
@@ -67,7 +66,6 @@ export default function KPIsDashboard({ options }) {
                     <>
                         <SprintHours tasks={tasks} />
                         <SprintBarChart />
-                        <TaskCompletion tasks={tasks} />
                     </>
                 )}
                 {selectedUserId && <SprintHoursForUser userId={selectedUserId} userName={userName} />}
