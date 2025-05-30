@@ -26,10 +26,15 @@ steps:
       echo "${docker_password}" | docker login -u "${docker_username}" --password-stdin ${docker_registry}
 
   - type: Command
-    name: "Build Java App and Docker Image"
+    name: "Build Java App"
     command: |
       cd MtdrSpring/backend
       mvn clean package spring-boot:repackage -DskipTests
+
+  - type: Command
+    name: "Build Docker Image"
+    command: |
+      cd MtdrSpring/backend
       docker build -t ${docker_registry}/todolistapp-springboot:0.1 .
       docker push ${docker_registry}/todolistapp-springboot:0.1
 
