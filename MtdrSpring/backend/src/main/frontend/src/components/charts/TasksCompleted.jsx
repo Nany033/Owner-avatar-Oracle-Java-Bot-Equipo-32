@@ -1,8 +1,11 @@
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
+import { toPng } from 'html-to-image';
+import React, { useRef } from 'react';
 
 const TaskCompletion = ({ isLoading, tasks }) => {
+    const chartRef = useRef();
     if (isLoading) {
         return <p>Loading task data...</p>;
     }
@@ -31,11 +34,27 @@ const TaskCompletion = ({ isLoading, tasks }) => {
 
 
     console.log('Chart data:', chartData);
+    const downloadChart = () => {
+        if (!chartRef.current) return;
+        toPng(chartRef.current)
+        .then((dataUrl) => {
+            const link = document.createElement('a');
+                link.download = 'tasks_chart.png';
+                link.href = dataUrl;
+                link.click();
+            })
+            .catch((error) => {
+                console.error('Error generating image:', error);
+            });
+    };
 
     return (
         <div>
             <h2>Tasks Completed Per Sprint</h2>
-            <div style={{ width: '90%', height: 400, margin: 'auto auto' }}>
+            <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+                <button onClick={downloadChart}>Download Chart</button>
+            </div>
+            <div ref={chartRef} style={{ width: '90%', height: 400, margin: 'auto', background: 'white' }}>
                 <ResponsiveContainer>
                     <BarChart
                         data={chartData}
