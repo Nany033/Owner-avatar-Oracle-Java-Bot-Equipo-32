@@ -1,45 +1,60 @@
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
+import { toPng } from 'html-to-image';
+import React, { useRef } from 'react';
 
 const TaskPerDev = ({ isLoading, tasks, users }) => {
+    const chartRef = useRef();
+
     if (isLoading) return <p>Loading task data...</p>;
     if (!tasks || tasks.length === 0) return <p>No data available.</p>;
 
-    // Helper to get developer name
     const getUserName = (userId) => {
         if (!userId) return 'Sin asignar';
         const user = users.find(u => String(u.userId) === String(userId));
         return user ? user.name : 'Sin asignar';
     };
 
-    // Step 1: Group task count by sprint and developer
     const sprintMap = {};
 
     tasks.forEach(task => {
-        if (!task.done) return; // Only include completed tasks
-
+        if (!task.done) return;
         const sprintKey = task.sprintName ?? `Sprint ${task.sprint_id}`;
         const devName = getUserName(task.user_id);
-
         if (!sprintMap[sprintKey]) {
             sprintMap[sprintKey] = { sprint: sprintKey };
         }
-
         sprintMap[sprintKey][devName] = (sprintMap[sprintKey][devName] || 0) + 1;
     });
 
     const chartData = Object.values(sprintMap);
-
-    // Step 2: Collect all developer names for bar series
     const developers = [...new Set(tasks.map(task => getUserName(task.user_id)))];
+    const colors = ['#00CCFF', '#FFEA00', '#FF005B', '#AA3960', '#407380', '#807A40'];
 
-    const colors = ['#b9030f', '#9e0004', '#70160e', '#161917', '#e1e3db', '#ff7300', '#3a3632'];
+    const downloadChart = () => {
+        if (!chartRef.current) return;
+        toPng(chartRef.current)
+            .then((dataUrl) => {
+                const link = document.createElement('a');
+                link.download = 'tasks_chart.png';
+                link.href = dataUrl;
+                link.click();
+            })
+            .catch((error) => {
+                console.error('Error generating image:', error);
+            });
+    };
 
     return (
         <div>
             <h2>Completed Tasks per Developer per Sprint</h2>
-            <div style={{ width: '90%', height: 400, margin: 'auto' }}>
+
+            <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+                <button onClick={downloadChart}>Download Chart</button>
+            </div>
+
+            <div ref={chartRef} style={{ width: '90%', height: 400, margin: 'auto', background: 'white' }}>
                 <ResponsiveContainer>
                     <BarChart
                         data={chartData}
