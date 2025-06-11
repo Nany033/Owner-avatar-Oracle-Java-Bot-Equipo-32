@@ -9,6 +9,8 @@
 :root {
   --oracle-red: #e60000;
   --oracle-dark-red: #c40000;
+  --oracle-orange: #d63b25;
+  --oracle-darker-red: #7D0000FF; /* Added a darker shade for hover effects */
   --oracle-gray: #3a3632;
   --oracle-light-gray: #efefef; /* Fixed typo */
   --oracle-white: #ffffff;
@@ -16,22 +18,26 @@
   --font-primary: "Oracle Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.body{
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background-color: var(--oracle-light-gray);
+}
 
 /* === Container === */
 .page-container {
-  background: var(--oracle-light-gray);
-  color: var(--oracle-black);
-  display: flex;
-  flex-direction: column;
-  font-size: max(12px, min(2vw, 18px));
-  font-family: var(--font-primary);
-  margin-top: 1rem;
-  padding: 2rem;
-  position: relative;
-  box-shadow: 0 10px 18px 0 rgba(0, 0, 0, 0.2), 0 4.5rem 8rem 0 rgba(0, 0, 0, 0.1);
-  border-radius: 0.5rem;
+    background: var(--oracle-light-gray);
+    border-radius: .5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
+    color: var(--oracle-black);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-primary);
+    font-size: max(12px, min(2vw, 18px));
+    position: relative;
+    overflow: hidden;
 }
-
 
 /* === Headings === */
 h1 {
@@ -75,10 +81,7 @@ h2 {
 
 /* === Pages === */
 .page {
-  display: none;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  background-color: var(--oracle-light-gray);
+  padding: 2rem;
   align-items: start;
   justify-content: start;
 }
@@ -99,8 +102,6 @@ h2 {
   padding: 1rem;
   border-bottom: 1px solid var(--oracle-gray);
 }
-
-
 
 .icon {
   display: inline-flex;
@@ -134,6 +135,7 @@ h2 {
   width: 300px;
   padding: 0.5rem;
 }
+
 .Filter label {
   font-size: 1rem;
   color: var(--oracle-dark-red);
@@ -158,6 +160,114 @@ h2 {
   color: var(--oracle-gray);
 }
 
+.auth-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* centers it horizontally */
+  align-items: center;     /* centers it vertically */
+  width: 90%;
+  height: 90vh;
+  margin: 2rem auto;
+  font-family: var(--font-primary);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background-color: white;
+}
 
 
+.auth-left {
+  flex: 1;
+  background: linear-gradient(135deg, var(--oracle-darker-red), var(--oracle-red)); 
+  border-radius: 0.5rem 0 0 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 2rem;
+  height: 100%;
+  box-sizing: border-box; /* Ensures padding is included in width/height */
+}
 
+.auth-left h1 {
+  font-size: 4.5rem;
+  font-family: var(--font-primary);
+  margin: 0;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+}
+
+.auth-left p {
+  max-width: 600px;
+  height: 100px;
+  text-align: center;
+  font-family: var(--font-primary);
+  color: white;
+  line-height: 1.5;
+}
+
+.auth-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.auth-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.auth-container input {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-family: var(--font-primary);
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(90deg, var(--oracle-orange), var(--oracle-orange));
+  color: var(--oracle-white);
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-family: var(--font-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease;
+}
+
+.auth-container button:hover {
+  background: linear-gradient(90deg, var(--oracle-darker-red), var(--oracle-dark-red));
+  transform: scale(1.02);
+}
+
+.auth-container a {
+  color: var(--oracle-dark-red);
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 1rem;
+  display: inline-block;
+  transition: color 0.2s ease-in-out;
+}
+
+.auth-container a:hover {
+  color: var(--oracle-red);
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+  width: 100%;
+}

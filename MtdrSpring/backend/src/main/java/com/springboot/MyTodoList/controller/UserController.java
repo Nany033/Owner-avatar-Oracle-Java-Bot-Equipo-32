@@ -11,7 +11,7 @@ import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.service.UserService;
 
 @RestController
-@RequestMapping("/users") 
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired

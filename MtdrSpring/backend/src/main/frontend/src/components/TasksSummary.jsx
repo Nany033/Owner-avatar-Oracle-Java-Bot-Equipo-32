@@ -4,7 +4,6 @@ import TaskPieChart from './charts/TaskPieChart';
 export default function TasksSummary({ userId, userName, tasks, loading}) {
 
     useEffect(() => {
-
         
         const intervalId = setInterval(tasks, 5000);
 

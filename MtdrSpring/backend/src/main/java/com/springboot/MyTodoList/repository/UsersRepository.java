@@ -23,4 +23,5 @@ public interface UsersRepository extends JpaRepository<User, String> {
      * @return true si existe, false si no
      */
     boolean existsByChatId(Long chatId);
+
 }

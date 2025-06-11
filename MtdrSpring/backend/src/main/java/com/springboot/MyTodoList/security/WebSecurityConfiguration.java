@@ -1,45 +1,91 @@
 package com.springboot.MyTodoList.security;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-            .csrf().disable()
-            .authorizeRequests()
-                .anyRequest().authenticated()
-            .and()
-            .formLogin()
-                .permitAll()
-            .and()
-            .logout()
-                .permitAll();
-    }
+    private static final Logger logger = LoggerFactory.getLogger(WebSecurityConfiguration.class);
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withUsername("admin")
-            .password("password")
-            .roles("USER")
-            .build();
-        return new InMemoryUserDetailsManager(user);
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        logger.info("🔐 Configuring SecurityFilterChain...");
+
+        http
+            .csrf().disable()
+
+            // ✅ Session configuration added here
+            .sessionManagement(session -> session
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false)
+            )
+
+            .authorizeRequests(authorize -> authorize
+                // Public REST API endpoints
+                .antMatchers(
+                    "/api/signup",
+                    "/api/users",
+                    "/api/KPIs/**",
+                    "/api/todolist/**",
+                    "/index.css",
+                    "/static/**",
+                    "/manifest.json",
+                    "/favicon.ico",
+                    "/logo192.png",
+                    "/logo512.png"
+                ).permitAll()
+
+                // React frontend public routes
+                .antMatchers("/", "/signup").permitAll()
+
+                // All other requests require authentication
+                .anyRequest().authenticated()
+            )
+
+            .formLogin(form -> form
+                .loginPage("/") // frontend login page
+                .loginProcessingUrl("/login")
+                .successHandler((request, response, authentication) -> {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"message\":\"Login successful\"}");
+                })
+                .failureHandler((request, response, exception) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Login failed\"}");
+                })
+                .permitAll()
+            )
+
+            .logout()
+            .logoutUrl("/logout")
+            .logoutSuccessHandler((req, res, auth) -> {
+                logger.info("🚪 LOGOUT triggered for session: {}",
+                        req.getSession(false) != null ? req.getSession().getId() : "no session");
+                res.setStatus(HttpStatus.OK.value());
+                res.setContentType("application/json");
+                res.getWriter().write("{\"message\":\"Logout successful\"}");
+            });
+
+        logger.info("✅ SecurityFilterChain fully configured.");
+
+        return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance(); // For development only
+        logger.info("🔑 Initializing BCryptPasswordEncoder...");
+        return new BCryptPasswordEncoder();
     }
 }

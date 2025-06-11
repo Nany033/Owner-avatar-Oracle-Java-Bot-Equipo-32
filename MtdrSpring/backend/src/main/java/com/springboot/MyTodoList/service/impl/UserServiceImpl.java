@@ -6,6 +6,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.springboot.MyTodoList.model.Chat;
@@ -14,8 +18,10 @@ import com.springboot.MyTodoList.repository.UsersRepository;
 import com.springboot.MyTodoList.service.ChatService;
 import com.springboot.MyTodoList.service.UserService;
 
+import java.util.Collections;
+
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -56,14 +62,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserById(String userId) {
-        logger.info("Buscando usuario por ID: {}", userId);
+        logger.info("🔍 Buscando usuario por ID: {}", userId);
         Optional<User> user = usersRepository.findById(userId);
+
         if (user.isPresent()) {
             logger.info("Usuario encontrado: {}", user.get());
         } else {
-            logger.info("Usuario no encontrado con ID: {}", userId);
+            logger.warn("Usuario NO encontrado con ID: {}", userId);
         }
+
         return user;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        logger.info("Intentando cargar UserDetails para username: {}", username);
+
+        User user = getUserById(username)
+                .orElseThrow(() -> {
+                    logger.error("Usuario NO encontrado durante autenticación: {}", username);
+                    return new UsernameNotFoundException("User not found: " + username);
+                });
+
+        logger.info("UserDetails cargado correctamente para usuario: {} con rol: ROLE_{}", user.getUserId(),
+                user.getRol());
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUserId(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRol())));
     }
 
     @Override

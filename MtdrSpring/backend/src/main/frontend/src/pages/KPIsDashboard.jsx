@@ -23,7 +23,10 @@ export default function KPIsDashboard({ options }) {
                 : `${API.TODOS}`;
 
             try {
-                const res = await fetch(endpoint);
+                const res = await fetch(endpoint, {
+                    credentials: 'include'
+                });
+
                 const data = await res.json();
 
                 const validData = Array.isArray(data) ? data : [];
@@ -58,7 +61,7 @@ export default function KPIsDashboard({ options }) {
     };
 
     return (
-        <div>
+        <div className="page">
             <h1>KPIs Dashboard</h1>
             <Filter options={options} onSelect={handleSelect} />
             <div>
@@ -68,7 +71,7 @@ export default function KPIsDashboard({ options }) {
                         <SprintBarChart />
                     </>
                 )}
-                {selectedUserId && <SprintHoursForUser userId={selectedUserId} userName={userName} />}
+                {selectedUserId && <SprintHoursForUser userId={selectedUserId} userName={userName} tasks={tasks} />}
             </div>
             <div>
                 <TasksSummary userId={selectedUserId} userName={userName} tasks={tasks} loading={loading} />

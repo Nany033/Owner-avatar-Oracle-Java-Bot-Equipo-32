@@ -1,5 +1,7 @@
 package com.springboot.MyTodoList.config;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -8,30 +10,30 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-
-import java.util.Collections;
-import java.util.List;
-/*
-    This class configures CORS, and specifies which methods are allowed
-    along with which origins and headers
-    @author: peter.song@oracle.com
-
- */
 @Configuration
 public class CorsConfig {
     Logger logger = LoggerFactory.getLogger(CorsConfig.class);
-    public CorsFilter corsFilter(){
+
+    @Bean
+    public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000","https://objectstorage.us-phoenix-1.oraclecloud.com",
+
+        config.setAllowedOrigins(List.of(
+                "http://localhost:3000", // Your React dev server
+                "https://objectstorage.us-phoenix-1.oraclecloud.com",
                 "https://petstore.swagger.io"));
-        config.setAllowedMethods(List.of("GET","POST","PUT","OPTIONS","DELETE","PATCH"));
-        config.setAllowedOrigins(Collections.singletonList("*"));
-        config.addAllowedHeader("*");
+
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // frontend origin only
         config.addExposedHeader("location");
+
+        // ✅ This is crucial to allow session cookies
+        config.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        CorsFilter filter = new CorsFilter(source);
-        return filter;
-    }
 
+        return new CorsFilter(source);
+    }
 }

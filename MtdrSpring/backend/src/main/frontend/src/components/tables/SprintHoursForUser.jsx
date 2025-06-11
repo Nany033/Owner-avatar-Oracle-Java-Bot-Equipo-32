@@ -4,7 +4,7 @@ import API from '../../API';
 import SprintBarChart from '../charts/SprintBarChart'; // Make sure this path is correct
 import TaskCompletion from '../charts/TasksCompleted';
 
-const SprintHoursForUser = ({ userId, userName }) => {
+const SprintHoursForUser = ({ userId, userName, tasks }) => {
   const [sprintData, setSprintData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -12,7 +12,9 @@ const SprintHoursForUser = ({ userId, userName }) => {
     if (!userId) return;
 
     setLoading(true);
-    axios.get(`${API.KPI}/hours-per-sprint/${userId}`)
+    axios.get(`${API.KPI}/hours-per-sprint/${userId}`, {
+      withCredentials: true
+    })
       .then(response => {
         setSprintData(response.data);
         console.log('Sprint data for user:', response.data);
@@ -42,6 +44,7 @@ const SprintHoursForUser = ({ userId, userName }) => {
                 <th>Sprint Name</th>
                 <th>Estimated Hours</th>
                 <th>Actual Hours</th>
+                <th>Tasks Completed</th>
               </tr>
             </thead>
             <tbody>
@@ -50,6 +53,7 @@ const SprintHoursForUser = ({ userId, userName }) => {
                   <td>{sprint.sprintName ?? `Sprint ${sprint.sprintId}`}</td>
                   <td>{sprint.estimated_hours ?? '–'}</td>
                   <td>{sprint.totalHours ?? '–'}</td>
+                  <td>{tasks.filter(task => task.sprint_id === sprint.sprintId).length}</td>
                 </tr>
               ))}
             </tbody>

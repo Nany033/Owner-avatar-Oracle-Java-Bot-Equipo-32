@@ -15,9 +15,14 @@ const SprintHours = ({ tasks }) => {
       try {
         // Fetch both sprint data and users in parallel
         const [sprintRes, usersRes] = await Promise.all([
-          axios.get(`${API.KPI}/hours-per-sprint`),
-          axios.get(API.USERS)
+          axios.get(`${API.KPI}/hours-per-sprint`, {
+            withCredentials: true
+          }),
+          axios.get(API.USERS, {
+            withCredentials: true
+          })
         ]);
+
 
         setSprintData(sprintRes.data);
         setUsers(usersRes.data);
@@ -30,6 +35,8 @@ const SprintHours = ({ tasks }) => {
 
     fetchData();
   }, []);
+
+
 
   if (loading) return <p>Loading sprint data...</p>;
   console.log(users)
@@ -54,7 +61,7 @@ const SprintHours = ({ tasks }) => {
               <td>{sprint.sprintName ?? `Sprint ${sprint.sprintId}`}</td>
               <td>{sprint.estimated_hours ?? '–'}</td>
               <td>{sprint.totalHours ?? '–'}</td>
-              <td>{tasks.filter(task => task.sprintId === sprint.sprintId).length}</td>
+              <td>{tasks.filter(task => task.sprint_id === sprint.sprintId).length}</td>
             </tr>
           ))}
         </tbody>

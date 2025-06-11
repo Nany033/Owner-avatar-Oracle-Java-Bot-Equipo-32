@@ -24,7 +24,10 @@ public class User {
     
     @Column(name = "CHAT_ID")
     private Long chatId;
-    
+
+    @Column(name= "USER_PASSWORD")
+    private String password;
+
     // Constructor vacío requerido por JPA
     public User() {
     }
@@ -36,12 +39,13 @@ public class User {
     
     
     // Constructor completo
-    public User(String userId, String name, String rol, Integer equipoId, Long chatId) {
+    public User(String userId, String name, String rol, Integer equipoId, Long chatId, String password) {
         this.userId = userId;
         this.name = name;
         this.rol = rol;
         this.equipoId = equipoId;
         this.chatId = chatId;
+        this.password = password;
     }
     
     // Getters y setters
@@ -84,6 +88,12 @@ public class User {
     public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
     
     @Override
     public String toString() {
@@ -93,6 +103,7 @@ public class User {
                 ", rol='" + rol + '\'' +
                 ", equipoId=" + equipoId +
                 ", chatId=" + chatId +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

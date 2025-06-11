@@ -1,41 +1,70 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // ✅ Add this
+import { useState, useEffect } from 'react';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
-import ToDoList from './pages/ToDoList';
-import KpisDashboard from './pages/KPIsDashboard';
+import AppRoutes from './routes';
 import './index.css';
 
 import API from './API';
 
-
 function App() {
+    return (
+        <BrowserRouter>
+            <MainLayout />
+        </BrowserRouter>
+    );
+}
+
+function MainLayout() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const hideNavbarRoutes = ['/', '/signup'];
+    const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
+
     const [userOptions, setUserOptions] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch user options from the API on component mount to populate the filter dropdown
-    // and pass them to the KPIs Dashboard page and ToDoList page.
     useEffect(() => {
-        fetch(API.USERS)
-            .then(res => res.json())
-            .then(data => {
-                setUserOptions(data); 
-                setLoading(false);
-            });
-}, []);
+        if (!shouldHideNavbar) {
+            // ✅ Check session
+            fetch(API.SESSION, {
+                credentials: 'include',
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('Session invalid');
+                    return res.json();
+                })
+                .then(() => {
+                    return fetch(API.USERS, {
+                        credentials: 'include',
+                    });
+                })
+                .then(res => res.json())
+                .then(data => {
+                    setUserOptions(data);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.warn("Not authenticated, redirecting to login:", err);
+                    navigate('/'); // redirect if not authenticated
+                });
+        } else {
+            // ✅ Public routes: set loading false directly
+            setLoading(false);
+        }
+    }, [shouldHideNavbar, navigate]);
 
-if (loading) return <p>Loading app...</p>;
-return (
-    <Router>
-        <Navbar />
-        <div className='page-container'>
-            <Routes>
-                <Route path="/" element={<ToDoList options={userOptions} />} />
-                <Route path="/dashboard" element={<KpisDashboard options={userOptions} />} />
-            </Routes>
-        </div>
+    if (loading) return <p>Loading app...</p>;
 
-    </Router>
-);
+    return (
+        <>
+            {!shouldHideNavbar && <Navbar />}
+            <div className='page-container'>
+                <AppRoutes userOptions={userOptions} />
+            </div>
+        </>
+    );
 }
 
 export default App;

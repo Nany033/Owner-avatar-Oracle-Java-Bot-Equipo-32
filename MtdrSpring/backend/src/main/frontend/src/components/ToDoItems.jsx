@@ -22,7 +22,9 @@ export default function ToDoItems({ userId }) {
   useEffect(() => {
     if (userId) return; // Skip if userId is present
     setLoading(true);
-    fetch(API.TODOS)
+    fetch(API.TODOS, {
+      credentials: 'include',
+    })
       .then(response => {
         if (!response.ok) throw new Error('Something went wrong ...');
         return response.json();
@@ -39,7 +41,9 @@ export default function ToDoItems({ userId }) {
 
   // Fetch users to display names in the table
   useEffect(() => {
-    fetch(API.USERS)
+    fetch(API.USERS, {
+      credentials: 'include',
+    })
       .then(response => {
         setLoading(true);
         if (!response.ok) throw new Error('Error cargando usuarios');
@@ -71,7 +75,9 @@ export default function ToDoItems({ userId }) {
     const userIdInt = parseInt(userId, 10);
     setLoading(true);
     const fetchItems = () => {
-      fetch(`${API.TODOS}/user/${userIdInt}`)
+      fetch(`${API.TODOS}/user/${userIdInt}`, {
+        credentials: 'include',
+      })
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -101,19 +107,19 @@ export default function ToDoItems({ userId }) {
     const filtered = userId
       ? items.filter(item => item.user_id == userId)
       : [...items];
-  
+
     const sorted = filtered.sort((a, b) => {
       const nameA = (users.find(u => u.userId === a.user_id)?.name || 'Sin asignar').toLowerCase();
       const nameB = (users.find(u => u.userId === b.user_id)?.name || 'Sin asignar').toLowerCase();
       return nameA.localeCompare(nameB);
     });
-  
+
     return {
       pendingItems: sorted.filter(item => !item.done),
       doneItems: sorted.filter(item => item.done),
     };
   }, [items, userId, users]);
-  
+
 
   // Render states
   if (loading) {
@@ -192,6 +198,7 @@ export default function ToDoItems({ userId }) {
                 <tr>
                   <th>Task</th>
                   <th>Sprint</th>
+                  <th>Assigned member</th>
                   <th>Deadline</th>
                   <th>Completion Date</th>
                 </tr>
@@ -201,6 +208,7 @@ export default function ToDoItems({ userId }) {
                   <tr key={item.id}>
                     <td>{item.description}</td>
                     <td>{item.sprint_id}</td>
+                    <td>{getUserName(item.user_id)}</td>
                     <td>
                       {item.deadline && (
                         <Moment format="MMM Do YYYY">{item.deadline}</Moment>

@@ -13,7 +13,7 @@ import com.springboot.MyTodoList.DTO.SprintHoursDTO;
 import com.springboot.MyTodoList.service.KPIsService;
 
 @RestController
-@RequestMapping("/KPIs")
+@RequestMapping("api/KPIs")
 public class KPIsController {
 
     @Autowired

@@ -17,9 +17,12 @@
 // Example: const API_LIST = 'https://di2eyonlz5s7kmuektcddaw5zq.apigateway.<region>.oci.customer-oci.com/todolist';
 // const API_LIST = 'https://di2eyonlz5s7kmuektcddaw5zq.apigateway.eu-frankfurt-1.oci.customer-oci.com/todolist';
 const API = {
-  TODOS: '/todolist',
-  USERS: '/users',
-  KPI: '/KPIs'
+    TODOS: '/api/todolist',
+    USERS: '/api/users',
+    KPI: '/api/KPIs',
+    SIGNUP: '/api/signup',
+    SESSION: '/api/session'
 };
 
 export default API;
+

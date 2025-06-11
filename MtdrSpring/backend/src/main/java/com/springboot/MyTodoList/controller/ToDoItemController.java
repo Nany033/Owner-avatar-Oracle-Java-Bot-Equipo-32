@@ -21,13 +21,13 @@ public class ToDoItemController {
     private DeadlineService deadlineService;
 
     // @CrossOrigin
-    @GetMapping(value = "/todolist")
+    @GetMapping(value = "/api/todolist")
     public List<ToDoItem> getAllToDoItems() {
         return toDoItemService.findAll();
     }
 
     // @CrossOrigin
-    @GetMapping(value = "/todolist/{id}")
+    @GetMapping(value = "/api/todolist/{id}")
     public ResponseEntity<ToDoItem> getToDoItemById(@PathVariable int id) {
         try {
             ResponseEntity<ToDoItem> responseEntity = toDoItemService.getItemById(id);
@@ -38,7 +38,7 @@ public class ToDoItemController {
     }
 
     // @CrossOrigin
-    @PostMapping(value = "/todolist")
+    @PostMapping(value = "/api/todolist")
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
         ToDoItem td = toDoItemService.addToDoItem(todoItem);
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -51,7 +51,7 @@ public class ToDoItemController {
     }
 
     // @CrossOrigin
-    @PutMapping(value = "todolist/{id}")
+    @PutMapping(value = "/api/todolist/{id}")
     public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable int id) {
         try {
             ToDoItem toDoItem1 = toDoItemService.updateToDoItem(id, toDoItem);
@@ -63,7 +63,7 @@ public class ToDoItemController {
     }
 
     // @CrossOrigin
-    @DeleteMapping(value = "todolist/{id}")
+    @DeleteMapping(value = "/api/todolist/{id}")
     public ResponseEntity<Boolean> deleteToDoItem(@PathVariable("id") int id) {
         Boolean flag = false;
         try {
@@ -74,19 +74,19 @@ public class ToDoItemController {
         }
     }
 
-    @GetMapping(value = "/todolist/upcoming/{days}")
+    @GetMapping(value = "/api/todolist/upcoming/{days}")
     public ResponseEntity<List<ToDoItem>> getUpcomingDeadlines(@PathVariable int days) {
         List<ToDoItem> upcomingItems = deadlineService.getUpcomingDeadlines(days);
         return new ResponseEntity<>(upcomingItems, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/todolist/overdue")
+    @GetMapping(value = "/api/todolist/overdue")
     public ResponseEntity<List<ToDoItem>> getOverdueItems() {
         List<ToDoItem> overdueItems = deadlineService.getOverdueItems();
         return new ResponseEntity<>(overdueItems, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/todolist/{id}/deadline")
+    @PostMapping(value = "/api/todolist/{id}/deadline")
     public ResponseEntity<ToDoItem> setDeadline(@PathVariable int id, @RequestBody String deadlineStr) {
         ToDoItem updatedItem = deadlineService.setDeadlineFromString(id, deadlineStr);
 
@@ -97,7 +97,7 @@ public class ToDoItemController {
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/todolist/{id}/deadline")
+    @DeleteMapping(value = "/api/todolist/{id}/deadline")
     public ResponseEntity<ToDoItem> removeDeadline(@PathVariable int id) {
         ToDoItem updatedItem = deadlineService.removeDeadline(id);
 
@@ -108,7 +108,7 @@ public class ToDoItemController {
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 
-    @GetMapping("/todolist/user/{user_id}")
+    @GetMapping("/api/todolist/user/{user_id}")
     public ResponseEntity<List<ToDoItem>> getItemsByUserId(@PathVariable int user_id) {
         List<ToDoItem> userItems = toDoItemService.findByUserId(user_id);
 

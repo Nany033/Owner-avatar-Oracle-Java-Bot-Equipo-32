@@ -13,7 +13,9 @@ export default function KPIcard({ userId }) {
 
         setLoading(true);
 
-        fetch(`${API.TODOS}?assignedTo=${userId}`)
+        fetch(`${API.TODOS}?assignedTo=${userId}`, {
+            credentials: 'include'
+        })
             .then(res => res.json())
             .then(data => {
                 setTasks(data);
