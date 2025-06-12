@@ -59,6 +59,7 @@ h2 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: right;
 }
 
 .navbar ul {
@@ -270,4 +271,308 @@ h2 {
 .form-group {
   margin-bottom: 1.25rem;
   width: 100%;
+}
+
+/* Analytics Page Styles */
+.analytics-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--oracle-light-gray);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 3px solid var(--oracle-red);
+}
+
+.analytics-header h1 {
+  color: var(--oracle-gray);
+  margin-bottom: 1rem;
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--oracle-red), var(--oracle-dark-red));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.analytics-subtitle {
+  color: var(--oracle-gray);
+  font-size: 1.2rem;
+  margin: 0;
+  opacity: 0.9;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.analytics-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-description {
+  flex: 1;
+}
+
+.analytics-description h3 {
+  color: var(--oracle-red);
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.analytics-description ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.analytics-description li {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.analytics-description li:last-child {
+  border-bottom: none;
+}
+
+.generate-analytics-button {
+  background: linear-gradient(135deg, var(--oracle-red), var(--oracle-dark-red)) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 16px 32px !important;
+  border-radius: 12px !important;
+  text-transform: none !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 4px 15px rgba(230, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  align-self: center;
+  min-width: 300px;
+  min-height: 56px;
+}
+
+.generate-analytics-button:hover {
+  box-shadow: 0 6px 20px rgba(230, 0, 0, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+.generate-analytics-button:disabled {
+  background: #ccc !important;
+  box-shadow: none !important;
+  transform: none;
+}
+
+.last-generated {
+  text-align: right;
+  margin-bottom: 1rem;
+  color: var(--oracle-gray);
+  font-style: italic;
+}
+
+.analytics-content {
+  min-height: 400px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading-container p {
+  margin-top: 1rem;
+  color: var(--oracle-gray);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.error-alert {
+  margin: 2rem 0 !important;
+  border-radius: 8px !important;
+}
+
+.analytics-result {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.analytics-result-header {
+  background: linear-gradient(135deg, var(--oracle-red), var(--oracle-dark-red));
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.analytics-result-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.analytics-result-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.analytics-text {
+  padding: 2.5rem;
+  line-height: 1.8;
+  color: var(--oracle-black);
+  font-family: var(--font-primary);
+}
+
+.analytics-h2 {
+  color: var(--oracle-red) !important;
+  border-bottom: 2px solid var(--oracle-red) !important;
+  padding-bottom: 0.5rem !important;
+  margin: 2.5rem 0 1.5rem 0 !important;
+  font-size: 1.6rem !important;
+  font-weight: 600 !important;
+}
+
+.analytics-h3 {
+  color: var(--oracle-gray) !important;
+  margin: 2rem 0 1rem 0 !important;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  background: var(--oracle-light-gray);
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  border-left: 4px solid var(--oracle-red);
+}
+
+.analytics-ul {
+  margin: 1.5rem 0 !important;
+  padding-left: 0 !important;
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 1rem !important;
+}
+
+.analytics-li {
+  margin: 0.8rem 0 !important;
+  list-style: none !important;
+  padding: 0.5rem 0 !important;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  padding-left: 1.5rem !important;
+}
+
+.analytics-li::before {
+  content: "▸";
+  color: var(--oracle-red);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.analytics-li:last-child {
+  border-bottom: none;
+}
+
+.analytics-strong {
+  color: var(--oracle-red) !important;
+  font-weight: 600 !important;
+}
+
+.analytics-em {
+  color: var(--oracle-gray) !important;
+  font-style: italic !important;
+}
+
+.analytics-footer {
+  background: var(--oracle-light-gray);
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.analytics-footer small {
+  color: var(--oracle-gray);
+  font-style: italic;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  color: var(--oracle-gray);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.empty-state p {
+  color: var(--oracle-gray);
+  font-size: 1.1rem;
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .analytics-container {
+    padding: 1rem;
+  }
+  
+  .analytics-header h1 {
+    font-size: 2rem;
+  }
+  
+  .analytics-controls {
+    padding: 1.5rem;
+  }
+  
+  .generate-analytics-button {
+    min-width: 250px !important;
+    font-size: 1rem !important;
+  }
+  
+  .analytics-text {
+    padding: 1.5rem;
+  }
+  
+  .analytics-result-header {
+    padding: 1.5rem;
+  }
+  
+  .analytics-h2 {
+    font-size: 1.4rem !important;
+  }
+  
+  .analytics-h3 {
+    font-size: 1.2rem !important;
+  }
 }
