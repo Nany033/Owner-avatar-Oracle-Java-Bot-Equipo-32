@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import KPIsDashboard from './pages/KPIsDashboard';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ToDoList from './pages/ToDoList';
-import Login from './components/Login';
-import Signup from './components/Signup';
+import Analytics from './pages/Analytics';
 
 const AppRoutes = ({ userOptions }) => {
     return (
@@ -15,7 +15,9 @@ const AppRoutes = ({ userOptions }) => {
             {/* Protected routes */}
             <Route path="/todopage" element={<ToDoList options={userOptions} />} />
             <Route path="/dashboard" element={<KPIsDashboard options={userOptions} />} />
-        </Routes>
+                <Route path="/analytics" element={<Analytics />} />
+            </Routes>
+        </Router>
     );
 };
 

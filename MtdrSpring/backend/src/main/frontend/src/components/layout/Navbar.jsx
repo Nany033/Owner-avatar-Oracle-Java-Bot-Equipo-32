@@ -29,6 +29,9 @@ export default function Navbar() {
                 <li><Link to="/todopage">ToDo List</Link></li>
                 <li><Link to="/dashboard">Dashboard</Link></li>
                 <li><a href="#" onClick={handleLogout}>Logout</a></li>
+                <li>
+                    <Link to="/analytics">Analytics</Link>
+                </li>
             </ul>
         </nav>
     );

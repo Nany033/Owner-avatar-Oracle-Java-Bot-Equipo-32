@@ -21,7 +21,8 @@ const API = {
     USERS: '/api/users',
     KPI: '/api/KPIs',
     SIGNUP: '/api/signup',
-    SESSION: '/api/session'
+    SESSION: '/api/session',
+    ANALYTICS: '/api/analytics'
 };
 
 export default API;
