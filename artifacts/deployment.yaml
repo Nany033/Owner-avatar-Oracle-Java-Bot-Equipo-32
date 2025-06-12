@@ -33,7 +33,7 @@ spec:
                 secretKeyRef:
                   name: openai-credentials  # Name of the secret
                   key: apikey              # Key within the secret
-                  optional: false          # Make it required
+                  optional: false          
             - name: dbpassword
               valueFrom:
                 secretKeyRef:
