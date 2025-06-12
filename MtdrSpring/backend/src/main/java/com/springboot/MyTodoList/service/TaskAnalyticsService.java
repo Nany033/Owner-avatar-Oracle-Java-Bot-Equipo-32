@@ -35,7 +35,8 @@ public class TaskAnalyticsService {
     @Autowired
     private SprintsRepository sprintsRepository;
     
-    private String openAiApiKey = System.getenv("OPENAI_API_KEY");
+    @Value("${openai.api.key:}")
+    private String openAiApiKey;
     
     private OpenAiService openAiService;
     
@@ -98,7 +99,7 @@ public class TaskAnalyticsService {
 
             // Construir prompt completo (no reducido)
             String prompt = buildOptimizedPrompt(tasks, users, sprints);
-            String model = "gpt-3.5-turbo";
+            String model = "gpt-4o";
 
             logger.info("🚀 Intentando con {} (prompt completo)...", model);
             try {
