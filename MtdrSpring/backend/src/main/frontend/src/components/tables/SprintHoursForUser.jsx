@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import API from '../../API';
-import SprintBarChart from '../charts/SprintBarChart'; // Make sure this path is correct
-import TaskCompletion from '../charts/TasksCompleted';
+import SprintBarChart from '../charts/SprintBarChart';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const SprintHoursForUser = ({ userId, userName }) => {
   const [sprintData, setSprintData] = useState([]);
@@ -24,6 +25,25 @@ const SprintHoursForUser = ({ userId, userName }) => {
       });
   }, [userId]);
 
+  const downloadExcel = () => {
+    const tableData = sprintData.map(sprint => ({
+      Sprint: sprint.sprintName ?? `Sprint ${sprint.sprintId}`,
+      'Estimated Hours': sprint.estimated_hours ?? '',
+      'Actual Hours': sprint.totalHours ?? '',
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(tableData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sprint Hours');
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    saveAs(blob, `sprint_hours_${userName}.xlsx`);
+  };
+
   if (!userId) return <p>Select a user to view their sprint hours.</p>;
   if (loading) return <p>Loading sprint data for {userName}...</p>;
 
@@ -31,11 +51,14 @@ const SprintHoursForUser = ({ userId, userName }) => {
     <div>
       <h2>Sprint Hours for {userName} <span>({userId})</span></h2>
 
+      <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+        <button onClick={downloadExcel}>Download as Excel</button>
+      </div>
+
       {sprintData.length === 0 ? (
         <p>No sprint data available for this user.</p>
       ) : (
         <>
-          {/* Table View */}
           <table className='table'>
             <thead>
               <tr>
@@ -55,7 +78,6 @@ const SprintHoursForUser = ({ userId, userName }) => {
             </tbody>
           </table>
 
-          {/* Chart View */}
           <SprintBarChart data={sprintData} />
         </>
       )}
