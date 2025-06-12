@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.MyTodoList.service.TaskAnalyticsService;
 
 @RestController
-@RequestMapping("/analytics")
+@RequestMapping("/api/analytics")
 @CrossOrigin(origins = "*") 
 public class AnalyticsController {
 

@@ -30,7 +30,20 @@ const TaskPerDev = ({ isLoading, tasks, users }) => {
 
     const chartData = Object.values(sprintMap);
     const developers = [...new Set(tasks.map(task => getUserName(task.user_id)))];
-    const colors = ['#00CCFF', '#FFEA00', '#FF005B', '#AA3960', '#407380', '#807A40'];
+    const colors = [
+        // Reds (Oracle red & tonal accents)
+        '#AC4D32FF',  // Warm coral red
+        '#B00020', // Deep crimson red
+
+        // Greens (Oracle-style dark greens / teals)
+        '#004129FF', // Deep teal green
+        '#038065FF', // Soft accent green
+
+        // Blues (Oracle blue & tonal accents)
+        '#0D365DFF', // Deep blue
+        '#0B4880FF', // Bright blue
+    ];
+
 
     const downloadChart = () => {
         if (!chartRef.current) return;
