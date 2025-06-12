@@ -35,7 +35,7 @@ public class TaskAnalyticsService {
     @Autowired
     private SprintsRepository sprintsRepository;
     
-    @Value("${openai_api_key}")
+    @Value("${openai.api.key}")
     private String openAiApiKey;
     
     private OpenAiService openAiService;
