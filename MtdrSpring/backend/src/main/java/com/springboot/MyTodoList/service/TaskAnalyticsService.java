@@ -98,7 +98,7 @@ public class TaskAnalyticsService {
 
             // Construir prompt completo (no reducido)
             String prompt = buildOptimizedPrompt(tasks, users, sprints);
-            String model = "gpt-4o";
+            String model = "gpt-3.5-turbo";
 
             logger.info("🚀 Intentando con {} (prompt completo)...", model);
             try {
