@@ -29,7 +29,12 @@ steps:
     name: "Build Java App"
     command: |
       cd MtdrSpring/backend
-      mvn clean package spring-boot:repackage -DskipTests -Dopenai.api.key="${openai_apikey}"
+
+      # Inject OpenAI API key into application.properties
+      sed -i "s|^openai.api.key=.*|openai.api.key=${openai_apikey}|" src/main/resources/application.properties
+
+      mvn clean package spring-boot:repackage -DskipTests
+
 
   - type: Command
     name: "Build Docker Image"
