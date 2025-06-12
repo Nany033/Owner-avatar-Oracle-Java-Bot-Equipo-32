@@ -62,7 +62,7 @@ const SprintHoursForUser = ({ userId, userName, tasks }) => {
       <h2>Sprint Hours for {userName} <span>({userId})</span></h2>
 
       <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-        <button onClick={downloadExcel}>Download as Excel</button>
+        <button className='download-button' onClick={downloadExcel}>Download as Excel</button>
       </div>
 
       {sprintData.length === 0 ? (

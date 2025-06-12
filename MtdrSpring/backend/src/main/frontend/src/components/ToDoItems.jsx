@@ -212,7 +212,7 @@ export default function ToDoItems({ userId }) {
     <div>
       {/* Download Button */}
       <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-        <button onClick={downloadExcel}>Download Tasks as Excel</button>
+        <button className='download-button' onClick={downloadExcel}>Download Tasks as Excel</button>
       </div>
 
       {/* Accordion for Pending Tasks */}

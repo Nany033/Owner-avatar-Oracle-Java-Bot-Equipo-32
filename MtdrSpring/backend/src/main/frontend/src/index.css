@@ -9,8 +9,9 @@
 :root {
   --oracle-red: #e60000;
   --oracle-dark-red: #c40000;
+    --oracle-dark-red-transparent: #B1250CFF;
   --oracle-orange: #d63b25;
-  --oracle-darker-red: #7D0000FF; /* Added a darker shade for hover effects */
+  --oracle-darker-red: #7d0000FF; /* Added a darker shade for hover effects */
   --oracle-gray: #3a3632;
   --oracle-light-gray: #efefef; /* Fixed typo */
   --oracle-white: #ffffff;
@@ -18,7 +19,7 @@
   --font-primary: "Oracle Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.body{
+.body {
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -27,16 +28,16 @@
 
 /* === Container === */
 .page-container {
-    background: var(--oracle-light-gray);
-    border-radius: .5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
-    color: var(--oracle-black);
-    display: flex;
-    flex-direction: column;
-    font-family: var(--font-primary);
-    font-size: max(12px, min(2vw, 18px));
-    position: relative;
-    overflow: hidden;
+  background: var(--oracle-light-gray);
+  border-radius: .5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
+  color: var(--oracle-black);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary);
+  font-size: max(12px, min(2vw, 18px));
+  position: relative;
+  overflow: hidden;
 }
 
 /* === Headings === */
@@ -176,10 +177,9 @@ h2 {
   background-color: white;
 }
 
-
 .auth-left {
   flex: 1;
-  background: linear-gradient(135deg, var(--oracle-darker-red), var(--oracle-red)); 
+  background: linear-gradient(135deg, var(--oracle-darker-red), var(--oracle-red));
   border-radius: 0.5rem 0 0 0.5rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   color: white;
@@ -217,7 +217,6 @@ h2 {
   justify-content: center;
   align-items: center;
 }
-
 
 .auth-container label {
   display: block;
@@ -546,33 +545,60 @@ h2 {
   .analytics-container {
     padding: 1rem;
   }
-  
+
   .analytics-header h1 {
     font-size: 2rem;
   }
-  
+
   .analytics-controls {
     padding: 1.5rem;
   }
-  
+
   .generate-analytics-button {
     min-width: 250px !important;
     font-size: 1rem !important;
   }
-  
+
   .analytics-text {
     padding: 1.5rem;
   }
-  
+
   .analytics-result-header {
     padding: 1.5rem;
   }
-  
+
   .analytics-h2 {
     font-size: 1.4rem !important;
   }
-  
+
   .analytics-h3 {
     font-size: 1.2rem !important;
   }
+}
+
+.download-button {
+  padding: 0.75rem;
+  background: var(--oracle-orange);
+  color: var(--oracle-white);
+  border: none;
+  border-radius: 0.375rem;
+  font-family: var(--font-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease;
+}
+
+.download-button:hover {
+  background: var(--oracle-darker-red);
+  transform: scale(1.02);
+}
+
+.download-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart{
+  margin: 2rem auto;
+  padding: 1rem;
 }

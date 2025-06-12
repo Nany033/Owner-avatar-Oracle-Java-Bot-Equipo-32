@@ -70,7 +70,7 @@ const SprintHours = ({ tasks }) => {
       <h2>Sprint Hours (All Users)</h2>
 
       <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-        <button onClick={downloadExcel}>Download as Excel</button>
+        <button className='download-button' onClick={downloadExcel}>Download as Excel</button>
       </div>
 
       <table className="table">
@@ -95,9 +95,9 @@ const SprintHours = ({ tasks }) => {
       </table>
 
       {/* Chart views */}
-      <SprintBarChart data={sprintData} />
-      <TaskCompletion data={sprintData} tasks={tasks} isLoading={loading} />
-      <HoursPerDev tasks={tasks} users={users} isLoading={loading} />
+      <SprintBarChart  data={sprintData} />
+      <TaskCompletion  data={sprintData} tasks={tasks} isLoading={loading} />
+      <HoursPerDev  tasks={tasks} users={users} isLoading={loading} />
     </div>
   );
 };

@@ -28,9 +28,9 @@ export default function TaskPieChart({ completed, pending, overdue }) {
     };
 
     return (
-        <ResponsiveContainer ref={chartRef} width="100%" height={300} style={{ width: '90%', height: 400, margin: 'auto', background: 'white' }}>
+        <ResponsiveContainer ref={chartRef} width="100%" height={300} style={{ width: '90%', height: 400, margin: 'auto'}}>
             <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-                <button onClick={downloadChart}>Download Chart</button>
+                <button className='download-button' onClick={downloadChart}>Download Chart</button>
             </div>
             <PieChart>
                 <Pie
