@@ -28,6 +28,8 @@ spec:
               value: "oracle.jdbc.OracleDriver"
             - name: OCI_REGION
               value: "${region}"
+            - name: openai_api_key
+              value: "${openai_apikey}"
             - name: dbpassword
               valueFrom:
                 secretKeyRef:
@@ -42,8 +44,6 @@ spec:
                   name: frontendadmin
                   key: password
                   optional: true
-            - name: openai_api_key
-              value: "${openai_apikey}"
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds
