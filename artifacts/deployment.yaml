@@ -29,7 +29,11 @@ spec:
             - name: OCI_REGION
               value: "${region}"
             - name: OPENAI_API_KEY
-              value: "${openai_apikey}"
+              valueFrom:
+                secretKeyRef:
+                  name: openai-credentials  # Name of the secret
+                  key: apikey              # Key within the secret
+                  optional: false          # Make it required
             - name: dbpassword
               valueFrom:
                 secretKeyRef:
