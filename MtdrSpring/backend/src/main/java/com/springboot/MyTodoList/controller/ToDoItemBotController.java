@@ -40,8 +40,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private final ConversationHandler conversationHandler;
     private final AuthenticationHandler authenticationHandler;
     private final List<CommandHandler> commandHandlers;
-    @Value("${openai.api.key}")
-    private String openAiApiKey;
+    private String openAiApiKey = System.getenv("OPENAI_API_KEY");
     
     public ToDoItemBotController(String botToken, String botName, 
                                 ToDoItemService toDoItemService,
