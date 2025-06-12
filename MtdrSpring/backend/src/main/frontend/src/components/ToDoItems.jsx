@@ -10,6 +10,9 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
 
 
 export default function ToDoItems({ userId }) {
@@ -170,14 +173,53 @@ export default function ToDoItems({ userId }) {
     );
   }
   if (error) return <div>Error: {error}</div>;
+  const downloadExcel = () => {
+    const pendingData = pendingItems.map(item => ({
+      Task: item.description,
+      Sprint: item.sprint_id,
+      Status: 'Pending',
+      'Assigned Member': getUserName(item.user_id),
+      Deadline: item.deadline,
+    }));
+
+    const doneData = doneItems.map(item => ({
+      Task: item.description,
+      Sprint: item.sprint_id,
+      Status: 'Done',
+      Deadline: item.deadline,
+      'Completion Date': item.completion_date,
+    }));
+
+    const workbook = XLSX.utils.book_new();
+
+    const pendingSheet = XLSX.utils.json_to_sheet(pendingData);
+    XLSX.utils.book_append_sheet(workbook, pendingSheet, 'Pending Tasks');
+
+    const doneSheet = XLSX.utils.json_to_sheet(doneData);
+    XLSX.utils.book_append_sheet(workbook, doneSheet, 'Done Tasks');
+
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    const filename = userId ? `tasks_user_${userId}.xlsx` : 'all_tasks.xlsx';
+    saveAs(blob, filename);
+  };
+
 
   return (
     <div>
+      {/* Download Button */}
+      <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+        <button className='download-button' onClick={downloadExcel}>Download Tasks as Excel</button>
+      </div>
+
       {/* Accordion for Pending Tasks */}
       <Accordion sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
         <AccordionSummary
           expandIcon={
-            <ExpandMoreIcon sx={{ fontSize: 32 }} /> // default is ~24px
+            <ExpandMoreIcon sx={{ fontSize: 32 }} />
           }
         >
           <Typography variant="h6">Pending Tasks</Typography>
@@ -220,11 +262,12 @@ export default function ToDoItems({ userId }) {
           )}
         </AccordionDetails>
       </Accordion>
+
       {/* Accordion for Done Tasks */}
       <Accordion sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
         <AccordionSummary
           expandIcon={
-            <ExpandMoreIcon sx={{ fontSize: 32 }} /> // default is ~24px
+            <ExpandMoreIcon sx={{ fontSize: 32 }} />
           }
         >
           <Typography variant="h6">Done Tasks</Typography>
@@ -266,6 +309,6 @@ export default function ToDoItems({ userId }) {
           )}
         </AccordionDetails>
       </Accordion>
-    </div >
+    </div>
   );
 }

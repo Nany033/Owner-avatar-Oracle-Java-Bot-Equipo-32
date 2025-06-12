@@ -19,7 +19,7 @@ export default function TasksSummary({ userId, userName, tasks, loading}) {
 
 
     return (
-        <div >
+        <div className='chart'>
             {loading ? (
                 <p>Loading...</p>
             ) : (
@@ -36,7 +36,7 @@ export default function TasksSummary({ userId, userName, tasks, loading}) {
                             ).length}
                         </li>
                     </ul>
-                    <TaskPieChart
+                    <TaskPieChart 
                         completed={completed}
                         pending={pending}
                         overdue={overdue}

@@ -37,8 +37,8 @@ const TaskCompletion = ({ isLoading, tasks }) => {
     const downloadChart = () => {
         if (!chartRef.current) return;
         toPng(chartRef.current)
-        .then((dataUrl) => {
-            const link = document.createElement('a');
+            .then((dataUrl) => {
+                const link = document.createElement('a');
                 link.download = 'tasks_chart.png';
                 link.href = dataUrl;
                 link.click();
@@ -49,10 +49,10 @@ const TaskCompletion = ({ isLoading, tasks }) => {
     };
 
     return (
-        <div>
+        <div className='chart'>
             <h2>Tasks Completed Per Sprint</h2>
             <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-                <button onClick={downloadChart}>Download Chart</button>
+                <button className='download-button' onClick={downloadChart}>Download Chart</button>
             </div>
             <div ref={chartRef} style={{ width: '90%', height: 400, margin: 'auto', background: 'white' }}>
                 <ResponsiveContainer>

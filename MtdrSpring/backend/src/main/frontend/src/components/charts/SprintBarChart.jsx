@@ -35,10 +35,10 @@ const SprintBarChart = ({ data, isLoading }) => {
     };
 
     return (
-        <div>
+        <div className='chart'>
             <h2>Sprint Hours Overview</h2>
             <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-                <button onClick={downloadChart}>Download Chart</button>
+                <button className='download-button' onClick={downloadChart}>Download Chart</button>
             </div>
             <div ref={chartRef} style={{ width: '90%', height: 400, margin: 'auto', background: 'white' }}>
                 <ResponsiveContainer>
