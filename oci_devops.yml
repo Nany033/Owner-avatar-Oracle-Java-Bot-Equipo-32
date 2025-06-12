@@ -29,7 +29,7 @@ steps:
     name: "Build Java App"
     command: |
       cd MtdrSpring/backend
-      mvn clean package spring-boot:repackage -DskipTests
+      mvn clean package spring-boot:repackage -DskipTests -Dopenai.api.key=${openai_apikey}
 
   - type: Command
     name: "Build Docker Image"
