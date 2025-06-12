@@ -12,6 +12,7 @@ const SprintHoursForUser = ({ userId, userName, tasks }) => {
     if (!userId) return;
 
     setLoading(true);
+
     axios.get(`${API.KPI}/hours-per-sprint/${userId}`, {
       withCredentials: true
     })
@@ -21,10 +22,18 @@ const SprintHoursForUser = ({ userId, userName, tasks }) => {
         setLoading(false);
       })
       .catch(error => {
-        console.error('Error fetching sprint hours for user:', error);
         setLoading(false);
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 401 || error.response.status === 403) {
+            console.warn('Session expired. Redirecting to login...');
+            window.location.href = '/'; // or use `navigate('/')`
+            return;
+          }
+        }
+        console.error('Error fetching sprint hours for user:', error);
       });
   }, [userId]);
+
 
   if (!userId) return <p>Select a user to view their sprint hours.</p>;
   if (loading) return <p>Loading sprint data for {userName}...</p>;

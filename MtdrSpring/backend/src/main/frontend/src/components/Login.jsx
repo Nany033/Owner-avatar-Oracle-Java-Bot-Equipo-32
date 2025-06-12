@@ -22,13 +22,13 @@ export default function Login() {
             body: formData
         })
             .then(res => {
-                console.log('Raw response:', res);
                 if (!res.ok) throw new Error('Login failed');
-                return res.json();
+                return res.json(); 
             })
             .then(data => {
                 console.log('Login success:', data);
                 navigate('/todopage');
+
             })
             .catch(err => {
                 console.error('Login error:', err);
@@ -37,43 +37,43 @@ export default function Login() {
     };
 
     return (
-            <div className="auth-page">
-                <div className="auth-left">
-                    <h1>Welcome to JavaBot</h1>
-                    <p>
-                        Designed for Teams. Built for Results.
-                    </p>
-                </div>
+        <div className="auth-page">
+            <div className="auth-left">
+                <h1>Welcome to JavaBot</h1>
+                <p>
+                    Designed for Teams. Built for Results.
+                </p>
+            </div>
 
-                <div className="auth-right">
-                    <div className="auth-container">
-                        <h2>Login</h2>
-                        <form onSubmit={handleSubmit}>
-                            <label>User ID:</label>
-                            <input
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Enter your user ID"
-                                required
-                            />
-                            <br />
-                            <label>Password:</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter your password"
-                                required
-                            />
-                            <br />
-                            <button type="submit">Login</button>
-                        </form>
+            <div className="auth-right">
+                <div className="auth-container">
+                    <h2>Login</h2>
+                    <form onSubmit={handleSubmit}>
+                        <label>User ID:</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter your user ID"
+                            required
+                        />
+                        <br />
+                        <label>Password:</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            required
+                        />
+                        <br />
+                        <button type="submit">Login</button>
+                    </form>
 
-                        <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
-                    </div>
+                    <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
                 </div>
             </div>
+        </div>
     );
 
 }

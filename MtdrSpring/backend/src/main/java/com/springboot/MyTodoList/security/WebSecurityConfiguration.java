@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Configuration
 public class WebSecurityConfiguration {
@@ -24,14 +25,12 @@ public class WebSecurityConfiguration {
         http
             .csrf().disable()
 
-            // ✅ Session configuration added here
             .sessionManagement(session -> session
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
             )
 
             .authorizeRequests(authorize -> authorize
-                // Public REST API endpoints
                 .antMatchers(
                     "/api/signup",
                     "/api/users",
@@ -44,16 +43,12 @@ public class WebSecurityConfiguration {
                     "/logo192.png",
                     "/logo512.png"
                 ).permitAll()
-
-                // React frontend public routes
                 .antMatchers("/", "/signup").permitAll()
-
-                // All other requests require authentication
                 .anyRequest().authenticated()
             )
 
             .formLogin(form -> form
-                .loginPage("/") // frontend login page
+                .loginPage("/")
                 .loginProcessingUrl("/login")
                 .successHandler((request, response, authentication) -> {
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -68,18 +63,21 @@ public class WebSecurityConfiguration {
                 .permitAll()
             )
 
-            .logout()
-            .logoutUrl("/logout")
-            .logoutSuccessHandler((req, res, auth) -> {
-                logger.info("🚪 LOGOUT triggered for session: {}",
-                        req.getSession(false) != null ? req.getSession().getId() : "no session");
-                res.setStatus(HttpStatus.OK.value());
-                res.setContentType("application/json");
-                res.getWriter().write("{\"message\":\"Logout successful\"}");
-            });
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessHandler((req, res, auth) -> {
+                    if (req.getSession(false) != null) {
+                        req.getSession().invalidate(); // 🔥 Invalidate session
+                    }
+                    SecurityContextHolder.clearContext(); // 🔥 Clear Spring Security context
+                    logger.info("🚪 LOGOUT completed: session invalidated and context cleared.");
+                    res.setStatus(HttpStatus.OK.value());
+                    res.setContentType("application/json");
+                    res.getWriter().write("{\"message\":\"Logout successful\"}");
+                })
+            );
 
         logger.info("✅ SecurityFilterChain fully configured.");
-
         return http.build();
     }
 

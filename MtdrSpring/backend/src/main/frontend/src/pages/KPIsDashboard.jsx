@@ -13,10 +13,11 @@ export default function KPIsDashboard({ options }) {
     const [userName, setUserName] = useState('');
 
     useEffect(() => {
-        const selectedUser = options.find(option => option.userId === selectedUserId);
+        const selectedUser = options.find(option => option.userId == selectedUserId);
         setUserName(selectedUser ? selectedUser.name : '');
 
         let isInitial = true;
+
         const fetchTasks = async () => {
             const endpoint = selectedUserId
                 ? `${API.TODOS}/user/${parseInt(selectedUserId, 10)}`
@@ -27,11 +28,18 @@ export default function KPIsDashboard({ options }) {
                     credentials: 'include'
                 });
 
-                const data = await res.json();
+                if (res.status === 401 || res.status === 403) {
+                    throw new Error('Session expired');
+                }
 
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || 'Failed to fetch tasks');
+                }
+
+                const data = await res.json();
                 const validData = Array.isArray(data) ? data : [];
 
-                // Compare previous and new data
                 const oldDataString = JSON.stringify(tasks);
                 const newDataString = JSON.stringify(validData);
 
@@ -45,6 +53,11 @@ export default function KPIsDashboard({ options }) {
                 }
             } catch (err) {
                 console.error('Error fetching tasks:', err);
+                if (err.message === 'Session expired') {
+                    window.location.href = '/'; // or use `navigate('/')`
+                    return;
+                }
+
                 if (isInitial) {
                     setTasks([]);
                     setLoading(false);
@@ -55,6 +68,7 @@ export default function KPIsDashboard({ options }) {
 
         fetchTasks();
     }, [selectedUserId, options]);
+
 
     const handleSelect = (userId) => {
         setSelectedUserId(userId);

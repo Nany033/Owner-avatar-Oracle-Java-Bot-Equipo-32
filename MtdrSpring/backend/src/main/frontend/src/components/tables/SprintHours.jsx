@@ -13,28 +13,33 @@ const SprintHours = ({ tasks }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch both sprint data and users in parallel
         const [sprintRes, usersRes] = await Promise.all([
-          axios.get(`${API.KPI}/hours-per-sprint`, {
-            withCredentials: true
-          }),
-          axios.get(API.USERS, {
-            withCredentials: true
-          })
+          axios.get(`${API.KPI}/hours-per-sprint`, { withCredentials: true }),
+          axios.get(API.USERS, { withCredentials: true })
         ]);
-
 
         setSprintData(sprintRes.data);
         setUsers(usersRes.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
         setLoading(false);
+
+        // Check for unauthorized session
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 401 || error.response.status === 403) {
+            console.warn('Session expired. Redirecting to login...');
+            window.location.href = '/'; // or use navigate('/')
+            return;
+          }
+        }
+
+        console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
   }, []);
+
 
 
 

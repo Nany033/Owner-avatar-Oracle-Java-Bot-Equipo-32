@@ -20,13 +20,19 @@ export default function ToDoItems({ userId }) {
 
   // Fetch all tasks if no userId
   useEffect(() => {
-    if (userId) return; // Skip if userId is present
+    if (userId) return;
+
     setLoading(true);
-    fetch(API.TODOS, {
-      credentials: 'include',
-    })
-      .then(response => {
-        if (!response.ok) throw new Error('Something went wrong ...');
+
+    fetch(API.TODOS, { credentials: 'include' })
+      .then(async (response) => {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Session expired');
+        }
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Fetch failed: ${text}`);
+        }
         return response.json();
       })
       .then(data => {
@@ -34,19 +40,32 @@ export default function ToDoItems({ userId }) {
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message);
+        console.error('Fetch error:', err);
+        if (err.message === 'Session expired') {
+          window.location.href = '/'; // Redirect to login
+        } else {
+          setError(err.message);
+        }
         setLoading(false);
       });
   }, [userId]);
 
+
   // Fetch users to display names in the table
   useEffect(() => {
+    setLoading(true);
+
     fetch(API.USERS, {
       credentials: 'include',
     })
-      .then(response => {
-        setLoading(true);
-        if (!response.ok) throw new Error('Error cargando usuarios');
+      .then(async (response) => {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Session expired');
+        }
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Error cargando usuarios: ${text}`);
+        }
         return response.json();
       })
       .then(data => {
@@ -55,9 +74,16 @@ export default function ToDoItems({ userId }) {
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message);
+        console.error('Error fetching users:', err);
+        if (err.message === 'Session expired') {
+          window.location.href = '/'; // or navigate('/')
+        } else {
+          setError(err.message);
+          setLoading(false);
+        }
       });
   }, []);
+
 
 
   // Get user name by userId for displaying in the table
@@ -74,15 +100,24 @@ export default function ToDoItems({ userId }) {
 
     const userIdInt = parseInt(userId, 10);
     setLoading(true);
+
     const fetchItems = () => {
       fetch(`${API.TODOS}/user/${userIdInt}`, {
         credentials: 'include',
       })
-        .then(res => res.json())
+        .then(async res => {
+          if (res.status === 401 || res.status === 403) {
+            throw new Error('Session expired');
+          }
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`Fetch error: ${text}`);
+          }
+          return res.json();
+        })
         .then(data => {
           if (Array.isArray(data)) {
             setItems([...data]);
-            console.log('Fetched tasks for user:', data);
             setLoading(false);
           } else {
             setItems([]);
@@ -91,16 +126,21 @@ export default function ToDoItems({ userId }) {
         })
         .catch(err => {
           console.error('Error fetching tasks:', err);
-          setItems([]);
-          setLoading(false);
+          if (err.message === 'Session expired') {
+            window.location.href = '/'; // or use `navigate('/')` if available
+          } else {
+            setItems([]);
+            setLoading(false);
+          }
         });
     };
 
-    fetchItems(); // Initial load
-    const intervalId = setInterval(fetchItems, 5000); // Auto-refresh every 5s
+    fetchItems(); // initial fetch
+    const intervalId = setInterval(fetchItems, 5000); // poll every 5s
 
-    return () => clearInterval(intervalId); // Clean up on unmount
+    return () => clearInterval(intervalId); // cleanup
   }, [userId]);
+
 
   // Compute and split items into pending and done 
   const { pendingItems, doneItems } = useMemo(() => {
@@ -109,8 +149,8 @@ export default function ToDoItems({ userId }) {
       : [...items];
 
     const sorted = filtered.sort((a, b) => {
-      const nameA = (users.find(u => u.userId === a.user_id)?.name || 'Sin asignar').toLowerCase();
-      const nameB = (users.find(u => u.userId === b.user_id)?.name || 'Sin asignar').toLowerCase();
+      const nameA = (users.find(u => u.userId == a.user_id)?.name || 'Sin asignar').toLowerCase();
+      const nameB = (users.find(u => u.userId == b.user_id)?.name || 'Sin asignar').toLowerCase();
       return nameA.localeCompare(nameB);
     });
 

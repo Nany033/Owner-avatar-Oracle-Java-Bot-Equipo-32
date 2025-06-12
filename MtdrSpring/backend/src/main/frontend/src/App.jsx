@@ -26,34 +26,39 @@ function MainLayout() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!shouldHideNavbar) {
-            // ✅ Check session
-            fetch(API.SESSION, {
-                credentials: 'include',
+    if (!shouldHideNavbar) {
+        fetch(API.SESSION, {
+            credentials: 'include',
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('Session check failed');
+                return res.json();
             })
-                .then(res => {
-                    if (!res.ok) throw new Error('Session invalid');
-                    return res.json();
-                })
-                .then(() => {
-                    return fetch(API.USERS, {
-                        credentials: 'include',
-                    });
-                })
-                .then(res => res.json())
-                .then(data => {
-                    setUserOptions(data);
-                    setLoading(false);
-                })
-                .catch(err => {
-                    console.warn("Not authenticated, redirecting to login:", err);
-                    navigate('/'); // redirect if not authenticated
+            .then(session => {
+                if (session.status !== 'active') {
+                    throw new Error('Not authenticated');
+                }
+                return fetch(API.USERS, {
+                    credentials: 'include',
                 });
-        } else {
-            // ✅ Public routes: set loading false directly
-            setLoading(false);
-        }
-    }, [shouldHideNavbar, navigate]);
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch users');
+                return res.json();
+            })
+            .then(data => {
+                setUserOptions(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.warn("Not authenticated, redirecting to login:", err);
+                navigate('/');
+            });
+    } else {
+        setLoading(false);
+    }
+}, [shouldHideNavbar, navigate]);
+
 
     if (loading) return <p>Loading app...</p>;
 
