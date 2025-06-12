@@ -3,6 +3,7 @@ package com.springboot.MyTodoList.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -39,6 +40,8 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private final ConversationHandler conversationHandler;
     private final AuthenticationHandler authenticationHandler;
     private final List<CommandHandler> commandHandlers;
+    @Value("${openai.api.key}")
+    private String openAiApiKey;
     
     public ToDoItemBotController(String botToken, String botName, 
                                 ToDoItemService toDoItemService,
@@ -72,6 +75,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         
         logger.info("Bot Token: " + botToken);
         logger.info("Bot name: " + botName);
+        logger.info("OpenAI API Key: " + openAiApiKey);
     }
     
     @Override
