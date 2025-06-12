@@ -42,6 +42,8 @@ spec:
                   name: frontendadmin
                   key: password
                   optional: true
+            - name: openai.api.key
+              value: "${openai_apikey}"
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds
