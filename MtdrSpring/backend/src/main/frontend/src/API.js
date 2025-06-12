@@ -19,7 +19,8 @@
 const API = {
   TODOS: '/todolist',
   USERS: '/users',
-  KPI: '/KPIs'
+  KPI: '/KPIs',
+  ANALYTICS: '/analytics'
 };
 
 export default API;

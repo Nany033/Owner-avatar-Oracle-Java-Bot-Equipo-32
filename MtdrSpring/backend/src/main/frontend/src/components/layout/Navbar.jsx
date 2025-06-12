@@ -11,6 +11,9 @@ const Navbar = () => {
                 <li>
                     <Link to="/dashboard">KPIs Dashboard</Link>
                 </li>
+                <li>
+                    <Link to="/analytics">Analytics</Link>
+                </li>
             </ul>
         </nav>
     );
