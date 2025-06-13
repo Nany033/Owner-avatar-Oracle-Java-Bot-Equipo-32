@@ -13,7 +13,7 @@ export default function Analytics() {
         setError(null);
         
         try {
-            const response = await fetch('/analytics/generate');
+            const response = await fetch(API.ANALYTICS + '/generate');
             
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: ${response.statusText}`);
