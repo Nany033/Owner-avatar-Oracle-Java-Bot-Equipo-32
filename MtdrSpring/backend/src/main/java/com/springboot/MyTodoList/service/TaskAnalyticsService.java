@@ -35,8 +35,7 @@ public class TaskAnalyticsService {
     @Autowired
     private SprintsRepository sprintsRepository;
     
-    @Value(System.getenv("OPENAI_API_KEY"))
-    private String openAiApiKey;
+    private String openAiApiKey = System.getenv("OPENAI_API_KEY");
     
     private OpenAiService openAiService;
     
