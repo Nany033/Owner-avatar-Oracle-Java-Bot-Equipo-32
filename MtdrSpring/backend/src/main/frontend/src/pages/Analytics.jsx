@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CircularProgress, Button, Alert } from '@mui/material';
+import API from '../API';
 
 
 export default function Analytics() {
